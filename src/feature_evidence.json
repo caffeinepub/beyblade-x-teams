@@ -2,11 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-create-team-ui-to-block-team-creation-when-the-signed-in-user-is-already-on-a-team-and-guide-the-user-to-their-current-team-instead",
-      "featureTitle": "Update the Create Team UI to block team creation when the signed-in user is already on a team, and guide the user to their current team instead.",
+      "featureId": "feature-configure-the-deployed-site-to-use-the-custom-domain-beyhubx-com-as-the-primary-website-url",
+      "featureTitle": "Configure the deployed site to use the custom domain \"beyhubx.com\" as the primary website URL.",
       "files": [
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/CreateTeamPage.tsx"
+        "frontend/index.html"
       ],
       "components": [
         "authorization@4.0.0",
@@ -18,16 +17,15 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-19"
+        "REQ-21"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-team-joining-ui-to-prevent-sending-join-requests-when-the-signed-in-user-is-already-on-a-different-team-including-clear-messaging",
-      "featureTitle": "Update team joining UI to prevent sending join requests when the signed-in user is already on a different team, including clear messaging.",
+      "featureId": "feature-update-the-frontend-html-head-metadata-to-reflect-the-canonical-site-url-https-beyhubx-com-e-g-canonical-link-and-or-open-graph-url-so-shared-links-and-previews-resolve-to-the-new-domain",
+      "featureTitle": "Update the frontend HTML head metadata to reflect the canonical site URL \"https://beyhubx.com\" (e.g., canonical link and/or Open Graph URL) so shared links and previews resolve to the new domain.",
       "files": [
-        "frontend/src/components/teams/JoinRequestButton.tsx",
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/index.html"
       ],
       "components": [
         "authorization@4.0.0",
@@ -39,7 +37,7 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-20"
+        "REQ-22"
       ],
       "confidence": "high"
     }

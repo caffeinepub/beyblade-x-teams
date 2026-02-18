@@ -1,71 +1,46 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-18T01:12:03.581Z",
+  "generatedAt": "2026-02-18T01:33:06.006Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
+    "total": 2,
     "implemented": 2,
     "items": [
       {
-        "id": "REQ-17",
-        "summary": "Enforce single-team membership on the backend: if a user is already a member of any existing team, prevent them from creating a new team, requesting to join another team, or being approved into another team.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-18",
-        "summary": "Add a backend query API that allows the frontend to determine whether the authenticated caller is currently on a team, and if so, which team.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-19",
-        "summary": "Update the Create Team UI to block team creation when the signed-in user is already on a team, and guide the user to their current team instead.",
+        "id": "REQ-21",
+        "summary": "Configure the deployed site to use the custom domain \"beyhubx.com\" as the primary website URL.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/CreateTeamPage.tsx"
+          "frontend/index.html"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/CreateTeamPage.tsx"
+          "frontend/index.html"
         ]
       },
       {
-        "id": "REQ-20",
-        "summary": "Update team joining UI to prevent sending join requests when the signed-in user is already on a different team, including clear messaging.",
+        "id": "REQ-22",
+        "summary": "Update the frontend HTML head metadata to reflect the canonical site URL \"https://beyhubx.com\" (e.g., canonical link and/or Open Graph URL) so shared links and previews resolve to the new domain.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/teams/JoinRequestButton.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/index.html"
         ],
         "matchedFiles": [
-          "frontend/src/components/teams/JoinRequestButton.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/index.html"
         ]
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/teams/JoinRequestButton.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/CreateTeamPage.tsx",
+    "frontend/index.html",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

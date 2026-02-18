@@ -1,83 +1,40 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-18T01:12:03.578Z",
-  "summary": "Frontend updates clearly add client-side blocking for creating/joining teams when the user is already on a team, and add a membership-status query hook. Backend shows introduction of a teamMembers mapping and a helper that traps when a principal is already in a team, plus an upgrade migration module. However, the diff summary is truncated and does not show the required new backend query method nor the modified logic inside createTeam/requestJoinTeam/approveJoinRequests/disband to fully verify REQ-17/REQ-18 acceptance criteria. The diff also includes multiple unrelated UI/features (Inbox, branding/theme, video uploads, dashboard changes) that were not requested.",
+  "generatedAt": "2026-02-18T01:33:06.003Z",
+  "summary": "REQ-22 appears implemented via updates to frontend/index.html adding canonical and social metadata for https://beyhubx.com. REQ-21 is only partially addressed: a client-side redirect script was added, but there is no evidence in the diff of deployment/DNS/hosting configuration to make https://beyhubx.com reachable as the primary domain.",
   "missing_requirements": [
     {
-      "id": "REQ-17",
-      "requirement": "Enforce single-team membership on the backend for createTeam, requestJoinTeam, and approveJoinRequests with all-or-nothing behavior and stable English error strings; ensure disbanding removes membership.",
-      "reason": "backend/main.mo is truncated before showing createTeam implementation and does not show requestJoinTeam, approveJoinRequests, or disband-team logic. While a teamMembers map and checkTeamMemberExists() trap exist, there is no visible evidence that (a) createTeam and requestJoinTeam call it, (b) approveJoinRequests traps all-or-nothing if any approved principal is already on another team, (c) disband removes principals from teamMembers so they are no longer considered on a team, or (d) the exact stable error strings match acceptance criteria across all paths.",
+      "id": "REQ-21",
+      "requirement": "Configure the deployed site to use the custom domain \"beyhubx.com\" as the primary website URL (app reachable at https://beyhubx.com/; old domain redirects to https://beyhubx.com/ preserving path and hash).",
+      "reason": "The diff shows a frontend client-side redirect script, but does not show any deployment/hosting configuration (e.g., custom domain binding, DNS, gateway/ingress, or platform config) that would make https://beyhubx.com/ actually serve the app. The acceptance criteria requires the app to be reachable at that URL, which cannot be verified/implemented solely by the shown HTML changes.",
       "evidence": [
-        "backend/main.mo (truncated; createTeam body not shown; requestJoinTeam/approveJoinRequests/disband not shown)"
-      ]
-    },
-    {
-      "id": "REQ-18",
-      "requirement": "Add an authenticated backend query method returning caller’s current team id (or null/none) and trapping unauthorized for anonymous callers.",
-      "reason": "Frontend calls actor.getTeamMembershipStatus(), but the backend diff excerpt does not show any new query method definition or its authorization/trap behavior. Because backend/main.mo is truncated, the required method cannot be verified from the provided diff summary.",
-      "evidence": [
-        "frontend/src/hooks/useQueries.ts (calls actor.getTeamMembershipStatus())",
-        "backend/main.mo (truncated; no getTeamMembershipStatus method visible)"
-      ]
-    },
-    {
-      "id": "REQ-20",
-      "requirement": "On TeamDetailPage, if viewer is authenticated and already on a different team, joining is not actionable with clear messaging; no regressions to other states.",
-      "reason": "JoinRequestButton implements the blocked 'Already on a Team' state, but the diff summary does not show TeamDetailPage wiring/usage of JoinRequestButton or confirm that existing leader/member/pending/full states remain correct in the actual TeamDetailPage rendering logic (file not included in the diff excerpt).",
-      "evidence": [
-        "frontend/src/components/teams/JoinRequestButton.tsx",
-        "frontend-file-summaries.txt (mentions TeamDetailPage but does not provide code evidence)"
+        "frontend/index.html"
       ]
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Introduced/expanded an in-app Inbox (“mail”) feature and Inbox route/link/badge UI.",
-      "reason": "Not requested by REQ-17..REQ-20; represents additional product surface area unrelated to single-team enforcement.",
+      "description": "Backend changes implementing/expanding user profile management, team/icon/video/mail-related logic (unrelated to custom domain change).",
+      "reason": "BuildRequest explicitly focuses on custom domain configuration and frontend head metadata; it also states not to change backend APIs or data models solely for the domain change. The diff shows substantial backend edits not requested for domain setup.",
       "evidence": [
-        "frontend-file-summaries.txt (App.tsx: \"including new Inbox route\"; AppHeader.tsx: \"new Inbox link with unread badge counter\"; InboxPage.tsx: \"Inbox page\")",
-        "backend/main.mo (defines Mail/MailType/MailContent types, mailboxes state, nextMailId)"
+        "backend/main.mo"
       ]
     },
     {
-      "description": "Rebranded/retitled UI and updated HomePage hero/feature cards and overall theme styling (OKLCH color system, tournament theme), plus HTML title change to “Bey Hub X”.",
-      "reason": "Not requested; BuildRequest is specifically about single-team membership enforcement and associated UI blocking/messages.",
+      "description": "Project documentation/state updates describing new app features (inbox, team footage uploads, etc.).",
+      "reason": "Not requested by the BuildRequest, which is limited to domain + metadata updates.",
       "evidence": [
-        "frontend-file-summaries.txt (HomePage.tsx branding/feature cards; index.css theme; tailwind.config.js theme; index.html updated title)"
-      ]
-    },
-    {
-      "description": "Added/changed \"team footage\" video upload/gallery features and replaced PDF components with placeholders.",
-      "reason": "Not requested; outside scope and explicitly unrelated to the single-team enforcement requirements.",
-      "evidence": [
-        "frontend-file-summaries.txt (TeamDetailPage: \"team footage section\"; PdfUploader.tsx/PdfList.tsx placeholders; project_state.json summary mentions \"team footage video uploads\")"
-      ]
-    },
-    {
-      "description": "Changed leader join-request management flow to direct leaders to Inbox instead of inline approvals on a dashboard.",
-      "reason": "Not requested and potentially impacts join approval UX beyond the single-team enforcement requirement.",
-      "evidence": [
-        "frontend-file-summaries.txt (LeaderDashboardPage.tsx: \"directing them to Inbox for pending join request management instead of inline approval UI\")"
-      ]
-    },
-    {
-      "description": "Added a backend upgrade migration module and wired it via `(with migration = Migration.run)`.",
-      "reason": "No requirement requested a data migration module/file; while it may support the new membership index, it is additional implementation beyond the stated requirements.",
-      "evidence": [
-        "backend/migration.mo (new file)",
-        "backend/main.mo (imports Migration and applies migration on upgrade)"
+        "project_state.json",
+        "frontend-file-summaries.txt"
       ]
     }
   ],
-  "confidence": 0.63,
+  "confidence": 0.74,
   "changed_files": [
     "backend/main.mo",
-    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/teams/JoinRequestButton.tsx",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/CreateTeamPage.tsx",
+    "frontend/index.html",
     "project_state.json"
   ]
 }

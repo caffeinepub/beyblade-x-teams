@@ -1,47 +1,34 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Frontend gating for single-team membership (create/join UI)",
+  "title": "Set custom site domain to beyhubx.com (frontend wiring)",
   "requirements": [
     {
-      "id": "REQ-19",
-      "summary": "Block Create Team UI when the signed-in user is already on a team and guide them to their current team.",
+      "id": "REQ-21",
+      "summary": "Add client-side redirect to ensure visits from any non-canonical host redirect to https://beyhubx.com while preserving path/query/hash.",
       "acceptanceCriteria": [
-        "When an authenticated user who is already on a team navigates to /create-team, the page clearly indicates they cannot create another team and provides a button/link to navigate to their current team detail page.",
-        "The Create Team submit action is disabled or prevented in this state (no backend call is attempted).",
-        "User-facing text is in English and consistent with existing app tone."
+        "The app is reachable at https://beyhubx.com/ in a browser.",
+        "If the app is also reachable via any previous default/temporary domain, visiting that domain redirects to https://beyhubx.com/ (preserving the path and hash fragment when present)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Add a React Query hook (e.g., useGetTeamMembershipStatus) that calls backend getTeamMembershipStatus and caches the caller’s current team id; also invalidate this query on successful team creation and team disband so the Create Team gating stays in sync."
-        },
-        {
-          "path": "frontend/src/pages/CreateTeamPage.tsx",
-          "operation": "modify",
-          "description": "Use the new membership-status query to detect when the authenticated user is already on a team; render an English blocking message plus a navigation control to the current team detail route, and ensure the form submit is disabled/prevented in this state so no createTeam call is attempted."
+          "description": "Add an early <script> in <head> that checks window.location.hostname and, when it is not \"beyhubx.com\", performs a replace redirect to \"https://beyhubx.com\" concatenated with the existing pathname, search, and hash to preserve full navigation context."
         }
       ]
     },
     {
-      "id": "REQ-20",
-      "summary": "Prevent sending join requests from the team joining UI when the user is already on a different team, with clear messaging and toast handling for the new backend error.",
+      "id": "REQ-22",
+      "summary": "Update HTML head metadata to use https://beyhubx.com as the canonical and share-preview URL.",
       "acceptanceCriteria": [
-        "On TeamDetailPage, if the viewer is authenticated and is already a member of some other team, the join/request-to-join control is not actionable (disabled or replaced) and indicates they are already on a team.",
-        "On any attempt to join (e.g., via JoinRequestButton mutation), if the backend returns the new single-team error, the UI shows a clear English toast/message (e.g., 'You are already on a team').",
-        "No regressions to existing states: leader sees no join button; members still see 'Already a Member'; pending requests still show 'Request Pending'; full teams still show 'Team Full'."
+        "The built frontend includes canonical/URL metadata referencing https://beyhubx.com (no references to an old domain in head metadata)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/teams/JoinRequestButton.tsx",
+          "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Integrate the membership-status query to detect when the signed-in user is on a different team than the current TeamDetailPage’s team; in that case, replace/disable the join action with clear English messaging indicating they are already on a team (optionally including a navigation control to their current team), and add a guard so clicking cannot trigger a join mutation."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Update the request-join mutation error mapping to recognize the stable new backend single-team error message and show an English toast like 'You are already on a team', without changing existing mappings for 'already a member', 'already requested', or other states."
+          "description": "Add/adjust head metadata to reference the canonical site URL \"https://beyhubx.com\" (e.g., <link rel=\"canonical\"> and social meta such as Open Graph URL), ensuring no old/default domain remains in head metadata."
         }
       ]
     }

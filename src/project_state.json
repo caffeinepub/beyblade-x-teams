@@ -1,6 +1,6 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 9,
+  "projectStateVersion": 11,
   "summary": "Website for the Bey Hub X tournament/community that lets users create teams of 1–3 with a team icon upload, request to join teams with leader approval, and includes an in-app inbox (“mail”) plus team footage video uploads.",
   "architectural_notes": [
     "User selected option B: implement a built-in in-app inbox (“mail”) within the website; do not rely on external email sending.",
@@ -138,6 +138,22 @@
         "REQ-20"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-configure-the-deployed-site-to-use-the-custom-domain-beyhubx-com-as-the-primary-website-url",
+      "title": "Configure the deployed site to use the custom domain \"beyhubx.com\" as the primary website URL.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-frontend-html-head-metadata-to-reflect-the-canonical-site-url-https-beyhubx-com-e-g-canonical-link-and-or-open-graph-url-so-shared-links-and-previews-resolve-to-the-new-domain",
+      "title": "Update the frontend HTML head metadata to reflect the canonical site URL \"https://beyhubx.com\" (e.g., canonical link and/or Open Graph URL) so shared links and previews resolve to the new domain.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -219,6 +235,12 @@
       "reqIds": [
         "REQ-18"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Set the website URL/domain to \"beyhubx.com\" (configure custom domain for the deployed site).",
+      "reqIds": [],
       "status": "pending"
     }
   ],

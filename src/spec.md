@@ -1,12 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Ensure each signed-in user can only belong to one team at a time by enforcing single-team membership in the backend and reflecting that restriction in the team creation and joining UI.
+**Goal:** Set the deployed site’s primary URL to the custom domain https://beyhubx.com and ensure site metadata reflects the new canonical domain.
 
 **Planned changes:**
-- Backend: Block create team, request-to-join, and approval flows when the caller (or any approval target) is already a member of a different team, with stable, human-readable English error messages and all-or-nothing approval behavior.
-- Backend: Add an authenticated query to return the caller’s current team id (or none) so the frontend can reliably detect membership.
-- Frontend: Update Create Team page to detect when the user is already on a team, prevent submission, and provide navigation to the user’s current team page.
-- Frontend: Update Team Detail joining controls to be non-actionable when the user is already on a different team, and show clear messaging/toasts while preserving existing join-button states.
+- Configure deployment to serve the app at https://beyhubx.com/.
+- Set up redirects from any previous default/temporary domain to https://beyhubx.com/ while preserving path and hash fragments.
+- Update frontend HTML head metadata (e.g., canonical link and Open Graph URL) to reference https://beyhubx.com and remove old-domain references.
 
-**User-visible outcome:** Users who are already on a team cannot create another team or request to join a different team; the app clearly explains why and directs them to their current team. Team leaders can no longer approve join requests for users already on other teams, and disbanding a team clears membership so the leader can create or join a team afterward.
+**User-visible outcome:** Users can access the app at https://beyhubx.com/, and any older domain redirects to it; shared links/previews resolve to the new domain.
