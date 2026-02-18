@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-18T01:33:06.006Z",
+  "generatedAt": "2026-02-18T04:48:12.354Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,8 +11,8 @@
     "implemented": 2,
     "items": [
       {
-        "id": "REQ-21",
-        "summary": "Configure the deployed site to use the custom domain \"beyhubx.com\" as the primary website URL.",
+        "id": "REQ-23",
+        "summary": "Remove the hard-coded redirect-to-domain behavior so the app no longer forces navigation to https://beyhubx.com and remains reachable on the platform’s default/working URL.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/index.html"
@@ -22,8 +22,8 @@
         ]
       },
       {
-        "id": "REQ-22",
-        "summary": "Update the frontend HTML head metadata to reflect the canonical site URL \"https://beyhubx.com\" (e.g., canonical link and/or Open Graph URL) so shared links and previews resolve to the new domain.",
+        "id": "REQ-24",
+        "summary": "Update frontend HTML head metadata to stop hard-coding https://beyhubx.com as the canonical/preview URL (canonical link, og:url, twitter:url) so metadata does not point to an unreachable domain while DNS is not configured.",
         "status": "implemented",
         "plannedFiles": [
           "frontend/index.html"
@@ -35,7 +35,6 @@
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",

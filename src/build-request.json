@@ -1,52 +1,64 @@
 {
   "kind": "build_request",
-  "title": "Set custom site domain to beyhubx.com",
+  "title": "Revert forced beyhubx.com redirect and canonical metadata",
   "projectName": "Bey Hub X",
-  "priority": "normal",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-21",
-      "text": "Configure the deployed site to use the custom domain \"beyhubx.com\" as the primary website URL.",
-      "target": "unknown",
-      "source": {
-        "messageIds": [
-          "msg-6"
-        ],
-        "quotes": [
-          "make the url \"beyhubx.com\""
-        ]
-      },
-      "acceptanceCriteria": [
-        "The app is reachable at https://beyhubx.com/ in a browser.",
-        "If the app is also reachable via any previous default/temporary domain, visiting that domain redirects to https://beyhubx.com/ (preserving the path and hash fragment when present)."
-      ]
-    },
-    {
-      "id": "REQ-22",
-      "text": "Update the frontend HTML head metadata to reflect the canonical site URL \"https://beyhubx.com\" (e.g., canonical link and/or Open Graph URL) so shared links and previews resolve to the new domain.",
+      "id": "REQ-23",
+      "text": "Remove the hard-coded redirect-to-domain behavior so the app no longer forces navigation to https://beyhubx.com and remains reachable on the platform’s default/working URL.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-4"
         ],
         "quotes": [
-          "make the url \"beyhubx.com\""
+          "change it back to normal"
         ]
       },
       "acceptanceCriteria": [
-        "The built frontend includes canonical/URL metadata referencing https://beyhubx.com (no references to an old domain in head metadata)."
+        "Opening the app on a non-beyhubx.com host does not trigger a redirect to beyhubx.com.",
+        "The app loads successfully on the platform’s default/working deployment URL."
+      ]
+    },
+    {
+      "id": "REQ-24",
+      "text": "Update frontend HTML head metadata to stop hard-coding https://beyhubx.com as the canonical/preview URL (canonical link, og:url, twitter:url) so metadata does not point to an unreachable domain while DNS is not configured.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4"
+        ],
+        "quotes": [
+          "change it back to normal"
+        ]
+      },
+      "acceptanceCriteria": [
+        "frontend/index.html no longer contains canonical/OG/Twitter URL values that are hard-coded to https://beyhubx.com/.",
+        "The app’s HTML head remains valid and includes title/description metadata without breaking the build."
       ]
     }
   ],
   "constraints": [
-    "Do not modify any files under frontend/src/components/ui or any other paths listed in frontend.immutablePaths."
+    "Frontend paths listed as immutable must not be edited (compose UI components instead).",
+    "Do not introduce new backend services; keep to the existing single-actor Motoko backend architecture."
   ],
   "nonGoals": [
-    "Do not rename the product/app name (it remains \"Bey Hub X\").",
-    "Do not change backend APIs or data models solely for the domain change."
+    "Do not configure DNS records or provide registrar-specific DNS setup steps as part of this build.",
+    "Do not remove or rename the in-app branding text 'Bey Hub X' unless explicitly requested."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
   }
 }

@@ -1,34 +1,35 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Set custom site domain to beyhubx.com (frontend wiring)",
+  "title": "Remove forced beyhubx.com redirect and hard-coded canonical metadata",
   "requirements": [
     {
-      "id": "REQ-21",
-      "summary": "Add client-side redirect to ensure visits from any non-canonical host redirect to https://beyhubx.com while preserving path/query/hash.",
+      "id": "REQ-23",
+      "summary": "Remove the hard-coded host redirect so the app does not force navigation to beyhubx.com.",
       "acceptanceCriteria": [
-        "The app is reachable at https://beyhubx.com/ in a browser.",
-        "If the app is also reachable via any previous default/temporary domain, visiting that domain redirects to https://beyhubx.com/ (preserving the path and hash fragment when present)."
+        "Opening the app on a non-beyhubx.com host does not trigger a redirect to beyhubx.com.",
+        "The app loads successfully on the platform’s default/working deployment URL."
       ],
       "file_operations": [
         {
           "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Add an early <script> in <head> that checks window.location.hostname and, when it is not \"beyhubx.com\", performs a replace redirect to \"https://beyhubx.com\" concatenated with the existing pathname, search, and hash to preserve full navigation context."
+          "description": "Remove the inline domain redirect script that forces navigation to the canonicalHost 'beyhubx.com' so the app remains reachable on non-beyhubx.com hosts."
         }
       ]
     },
     {
-      "id": "REQ-22",
-      "summary": "Update HTML head metadata to use https://beyhubx.com as the canonical and share-preview URL.",
+      "id": "REQ-24",
+      "summary": "Stop hard-coding beyhubx.com in canonical and social preview URL metadata.",
       "acceptanceCriteria": [
-        "The built frontend includes canonical/URL metadata referencing https://beyhubx.com (no references to an old domain in head metadata)."
+        "frontend/index.html no longer contains canonical/OG/Twitter URL values that are hard-coded to https://beyhubx.com/.",
+        "The app’s HTML head remains valid and includes title/description metadata without breaking the build."
       ],
       "file_operations": [
         {
           "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Add/adjust head metadata to reference the canonical site URL \"https://beyhubx.com\" (e.g., <link rel=\"canonical\"> and social meta such as Open Graph URL), ensuring no old/default domain remains in head metadata."
+          "description": "Update/replace the canonical link and og:url/twitter:url meta tags so they are not hard-coded to https://beyhubx.com/ (e.g., remove these URL tags entirely or make them relative/non-domain-specific), while keeping existing title/description metadata intact."
         }
       ]
     }

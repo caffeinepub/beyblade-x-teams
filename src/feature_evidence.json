@@ -2,8 +2,8 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-configure-the-deployed-site-to-use-the-custom-domain-beyhubx-com-as-the-primary-website-url",
-      "featureTitle": "Configure the deployed site to use the custom domain \"beyhubx.com\" as the primary website URL.",
+      "featureId": "feature-remove-the-hard-coded-redirect-to-domain-behavior-so-the-app-no-longer-forces-navigation-to-https-beyhubx-com-and-remains-reachable-on-the-platform-s-default-working-url",
+      "featureTitle": "Remove the hard-coded redirect-to-domain behavior so the app no longer forces navigation to https://beyhubx.com and remains reachable on the platform’s default/working URL.",
       "files": [
         "frontend/index.html"
       ],
@@ -17,13 +17,13 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-21"
+        "REQ-23"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-frontend-html-head-metadata-to-reflect-the-canonical-site-url-https-beyhubx-com-e-g-canonical-link-and-or-open-graph-url-so-shared-links-and-previews-resolve-to-the-new-domain",
-      "featureTitle": "Update the frontend HTML head metadata to reflect the canonical site URL \"https://beyhubx.com\" (e.g., canonical link and/or Open Graph URL) so shared links and previews resolve to the new domain.",
+      "featureId": "feature-update-frontend-html-head-metadata-to-stop-hard-coding-https-beyhubx-com-as-the-canonical-preview-url-canonical-link-og-url-twitter-url-so-metadata-does-not-point-to-an-unreachable-domain-while-dns-is-not-configured",
+      "featureTitle": "Update frontend HTML head metadata to stop hard-coding https://beyhubx.com as the canonical/preview URL (canonical link, og:url, twitter:url) so metadata does not point to an unreachable domain while DNS is not configured.",
       "files": [
         "frontend/index.html"
       ],
@@ -37,7 +37,7 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-22"
+        "REQ-24"
       ],
       "confidence": "high"
     }

@@ -1,15 +1,17 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 11,
+  "projectStateVersion": 13,
   "summary": "Website for the Bey Hub X tournament/community that lets users create teams of 1–3 with a team icon upload, request to join teams with leader approval, and includes an in-app inbox (“mail”) plus team footage video uploads.",
   "architectural_notes": [
     "User selected option B: implement a built-in in-app inbox (“mail”) within the website; do not rely on external email sending.",
-    "Add a business rule: each authenticated user (Principal) may belong to at most one team at a time; block create-team and join-request actions if already on a team."
+    "Add a business rule: each authenticated user (Principal) may belong to at most one team at a time; block create-team and join-request actions if already on a team.",
+    "Temporarily avoid using the custom domain as primary until DNS is correctly configured; keep the default deployment URL as the working canonical entrypoint."
   ],
   "known_issues": [
-    "The UI labeled “upload PDFs” is currently being used/understood as the team icon upload area; PDF attachment workflow may be incorrect or out of scope."
+    "The UI labeled “upload PDFs” is currently being used/understood as the team icon upload area; PDF attachment workflow may be incorrect or out of scope.",
+    "beyhubx.com currently returns \"server IP address cannot be found\" (DNS/custom-domain not resolving); site should be reverted to default URL until DNS is fixed."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
       "id": "feature-implement-internet-identity-authentication-so-users-can-sign-in-and-the-app-can-associate-actions-team-creation-join-requests-approvals-with-the-signed-in-principal",
@@ -154,6 +156,22 @@
         "REQ-22"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-remove-the-hard-coded-redirect-to-domain-behavior-so-the-app-no-longer-forces-navigation-to-https-beyhubx-com-and-remains-reachable-on-the-platform-s-default-working-url",
+      "title": "Remove the hard-coded redirect-to-domain behavior so the app no longer forces navigation to https://beyhubx.com and remains reachable on the platform’s default/working URL.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-html-head-metadata-to-stop-hard-coding-https-beyhubx-com-as-the-canonical-preview-url-canonical-link-og-url-twitter-url-so-metadata-does-not-point-to-an-unreachable-domain-while-dns-is-not-configured",
+      "title": "Update frontend HTML head metadata to stop hard-coding https://beyhubx.com as the canonical/preview URL (canonical link, og:url, twitter:url) so metadata does not point to an unreachable domain while DNS is not configured.",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -238,10 +256,10 @@
       "status": "pending"
     },
     {
-      "id": "AR-16",
-      "summary": "Set the website URL/domain to \"beyhubx.com\" (configure custom domain for the deployed site).",
+      "id": "AR-17",
+      "summary": "Revert the deployed site configuration from the custom domain (beyhubx.com) back to the previous default/working URL so the site is reachable again.",
       "reqIds": [],
-      "status": "pending"
+      "status": "in_progress"
     }
   ],
   "gameProjectType": "none",

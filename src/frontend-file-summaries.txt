@@ -18,7 +18,7 @@
   "frontend/tailwind.config.js": "Tailwind configuration with extended color palette, Inter font family, and custom border radius for tournament-themed design.",
   "frontend/src/components/teams/TeamIconUploader.tsx": "Image-only uploader component for team icons that accepts PNG/JPG/WebP files, validates file type and size, shows preview, and supports both new uploads and replacing existing icons with proper Uint8Array type conversion.",
   "frontend/src/utils/imageDataUrl.ts": "Utility functions to convert image bytes and content type to data URLs (blob URL or base64) for rendering images in the UI with proper Uint8Array type conversion for blob creation.",
-  "frontend/index.html": "HTML entry point with domain redirect script to beyhubx.com, canonical URL, and Open Graph/Twitter Card metadata for proper social sharing and SEO.",
+  "frontend/index.html": "HTML entry point with basic metadata for title, Open Graph, and Twitter Card tags without domain-specific redirects or canonical URLs.",
   "frontend/src/pages/InboxPage.tsx": "Inbox page displaying in-app mail with sign-in guard, mail list with read/unread states, detailed mail view with proper type narrowing for MailContent, and join request approval/denial actions with proper Principal handling.",
   "frontend/src/components/teams/TeamFootageUploader.tsx": "Video uploader component for team members with file validation, progress tracking using ExternalBlob.withUploadProgress, and clear UI feedback.",
   "frontend/src/components/teams/TeamFootageGallery.tsx": "Footage gallery component displaying team videos using ExternalBlob.getDirectURL() for HTML5 video playback with empty/loading states."
