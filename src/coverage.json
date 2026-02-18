@@ -1,45 +1,122 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-18T04:48:12.354Z",
+  "generatedAt": "2026-02-18T19:32:28.707Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 6,
+    "implemented": 6,
     "items": [
       {
-        "id": "REQ-23",
-        "summary": "Remove the hard-coded redirect-to-domain behavior so the app no longer forces navigation to https://beyhubx.com and remains reachable on the platform’s default/working URL.",
+        "id": "REQ-1",
+        "summary": "Implement responsive layout for the home page hero section and feature cards to adapt to mobile screen sizes (320px-768px)",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/index.html"
+          "frontend/src/pages/HomePage.tsx"
         ],
         "matchedFiles": [
-          "frontend/index.html"
+          "frontend/src/pages/HomePage.tsx"
         ]
       },
       {
-        "id": "REQ-24",
-        "summary": "Update frontend HTML head metadata to stop hard-coding https://beyhubx.com as the canonical/preview URL (canonical link, og:url, twitter:url) so metadata does not point to an unreachable domain while DNS is not configured.",
+        "id": "REQ-2",
+        "summary": "Make the application header (AppHeader) responsive with collapsible navigation for mobile devices",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/index.html"
+          "frontend/src/components/layout/AppHeader.tsx"
         ],
         "matchedFiles": [
-          "frontend/index.html"
+          "frontend/src/components/layout/AppHeader.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Optimize team list and team detail pages for mobile viewing with responsive grids and touch-optimized controls",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/TeamListPage.tsx",
+          "frontend/src/pages/TeamDetailPage.tsx",
+          "frontend/src/components/teams/TeamFootageGallery.tsx",
+          "frontend/src/components/teams/JoinRequestButton.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/TeamListPage.tsx",
+          "frontend/src/pages/TeamDetailPage.tsx",
+          "frontend/src/components/teams/TeamFootageGallery.tsx",
+          "frontend/src/components/teams/JoinRequestButton.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Make forms and modals (profile setup, team creation, file uploaders) mobile-friendly with proper touch interactions",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/auth/ProfileSetupModal.tsx",
+          "frontend/src/pages/CreateTeamPage.tsx",
+          "frontend/src/components/teams/TeamIconUploader.tsx",
+          "frontend/src/components/teams/TeamFootageUploader.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/auth/ProfileSetupModal.tsx",
+          "frontend/src/pages/CreateTeamPage.tsx",
+          "frontend/src/components/teams/TeamIconUploader.tsx",
+          "frontend/src/components/teams/TeamFootageUploader.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Ensure inbox and dashboard pages are fully responsive with readable mail content and accessible action buttons on mobile",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/InboxPage.tsx",
+          "frontend/src/pages/LeaderDashboardPage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/InboxPage.tsx",
+          "frontend/src/pages/LeaderDashboardPage.tsx"
+        ]
+      },
+      {
+        "id": "REQ-6",
+        "summary": "Add viewport meta tag and ensure proper touch event handling across all interactive elements",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/index.html",
+          "frontend/src/index.css",
+          "frontend/tailwind.config.js"
+        ],
+        "matchedFiles": [
+          "frontend/index.html",
+          "frontend/src/index.css"
         ]
       }
     ]
   },
   "changedFiles": [
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/index.html",
+    "frontend/src/App.tsx",
+    "frontend/src/components/auth/ProfileSetupModal.tsx",
+    "frontend/src/components/layout/AppHeader.tsx",
+    "frontend/src/components/teams/JoinRequestButton.tsx",
+    "frontend/src/components/teams/TeamFootageGallery.tsx",
+    "frontend/src/components/teams/TeamFootageUploader.tsx",
+    "frontend/src/components/teams/TeamIconUploader.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/index.css",
+    "frontend/src/pages/CreateTeamPage.tsx",
+    "frontend/src/pages/HomePage.tsx",
+    "frontend/src/pages/InboxPage.tsx",
+    "frontend/src/pages/LeaderDashboardPage.tsx",
+    "frontend/src/pages/TeamDetailPage.tsx",
+    "frontend/src/pages/TeamListPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

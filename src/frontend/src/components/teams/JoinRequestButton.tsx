@@ -1,7 +1,8 @@
-import { Button } from '@/components/ui/button';
-import { UserPlus, AlertCircle } from 'lucide-react';
+import { useState } from 'react';
 import { useRequestJoinTeam, useGetTeamMembershipStatus } from '../../hooks/useQueries';
-import { useInternetIdentity } from '../../hooks/useInternetIdentity';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, UserPlus, CheckCircle, AlertCircle } from 'lucide-react';
 import type { TeamDTO } from '../../backend';
 
 interface JoinRequestButtonProps {
@@ -9,68 +10,44 @@ interface JoinRequestButtonProps {
 }
 
 export default function JoinRequestButton({ team }: JoinRequestButtonProps) {
-  const { identity } = useInternetIdentity();
   const requestJoinMutation = useRequestJoinTeam();
   const { data: currentTeamId, isLoading: membershipLoading } = useGetTeamMembershipStatus();
+  const [requestSent, setRequestSent] = useState(false);
 
-  const isAuthenticated = !!identity;
-  const userPrincipal = identity?.getPrincipal().toString();
-  
-  const isLeader = userPrincipal === team.leader.toString();
-  const isMember = team.members.some(m => m.toString() === userPrincipal);
-  const hasPendingRequest = team.joinRequests.some(r => r.toString() === userPrincipal);
-  const isTeamFull = team.members.length >= 3;
-  const isOnDifferentTeam = currentTeamId !== null && currentTeamId !== undefined && currentTeamId.toString() !== team.id.toString();
+  const isAlreadyOnTeam = currentTeamId !== null && currentTeamId !== undefined;
+  const isOnDifferentTeam = isAlreadyOnTeam && currentTeamId.toString() !== team.id.toString();
 
-  const navigate = (path: string) => {
-    window.location.hash = path;
+  const handleRequestJoin = async () => {
+    try {
+      await requestJoinMutation.mutateAsync(team.id);
+      setRequestSent(true);
+    } catch (error) {
+      console.error('Failed to send join request:', error);
+    }
   };
-
-  const handleRequest = () => {
-    requestJoinMutation.mutate(team.id);
-  };
-
-  if (!isAuthenticated) {
-    return (
-      <Button disabled variant="outline" className="gap-2">
-        <UserPlus className="h-4 w-4" />
-        Login to Join
-      </Button>
-    );
-  }
 
   if (membershipLoading) {
     return (
-      <Button disabled variant="outline" className="gap-2">
+      <Button disabled className="gap-2 min-h-11 w-full sm:w-auto">
+        <Loader2 className="h-4 w-4 animate-spin" />
         Loading...
-      </Button>
-    );
-  }
-
-  if (isLeader) {
-    return null;
-  }
-
-  if (isMember) {
-    return (
-      <Button disabled variant="outline" className="gap-2">
-        Already a Member
       </Button>
     );
   }
 
   if (isOnDifferentTeam) {
     return (
-      <div className="flex flex-col gap-2">
-        <Button disabled variant="outline" className="gap-2">
-          <AlertCircle className="h-4 w-4" />
-          Already on a Team
-        </Button>
-        <Button 
-          onClick={() => navigate(`/team/${currentTeamId!.toString()}`)} 
-          variant="ghost" 
-          size="sm"
-          className="text-xs"
+      <div className="space-y-2 w-full">
+        <Alert className="border-amber-500/50 bg-amber-500/10">
+          <AlertCircle className="h-4 w-4 text-amber-600 flex-shrink-0" />
+          <AlertDescription className="text-amber-900 dark:text-amber-100 text-xs sm:text-sm">
+            You're already on a team. You can only be a member of one team at a time.
+          </AlertDescription>
+        </Alert>
+        <Button
+          onClick={() => window.location.hash = `/team/${currentTeamId.toString()}`}
+          variant="outline"
+          className="w-full gap-2 min-h-11"
         >
           Go to My Team
         </Button>
@@ -78,30 +55,34 @@ export default function JoinRequestButton({ team }: JoinRequestButtonProps) {
     );
   }
 
-  if (hasPendingRequest) {
+  if (requestSent) {
     return (
-      <Button disabled variant="outline" className="gap-2">
-        Request Pending
-      </Button>
-    );
-  }
-
-  if (isTeamFull) {
-    return (
-      <Button disabled variant="outline" className="gap-2">
-        Team Full
-      </Button>
+      <Alert className="border-green-500/50 bg-green-500/10">
+        <CheckCircle className="h-4 w-4 text-green-600" />
+        <AlertDescription className="text-green-900 dark:text-green-100 text-xs sm:text-sm">
+          Join request sent! The team leader will review your request.
+        </AlertDescription>
+      </Alert>
     );
   }
 
   return (
     <Button
-      onClick={handleRequest}
-      disabled={requestJoinMutation.isPending}
-      className="gap-2"
+      onClick={handleRequestJoin}
+      disabled={requestJoinMutation.isPending || team.members.length >= 3}
+      className="gap-2 min-h-11 w-full sm:w-auto px-6"
     >
-      <UserPlus className="h-4 w-4" />
-      {requestJoinMutation.isPending ? 'Sending...' : 'Request to Join'}
+      {requestJoinMutation.isPending ? (
+        <>
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Sending...
+        </>
+      ) : (
+        <>
+          <UserPlus className="h-4 w-4" />
+          {team.members.length >= 3 ? 'Team Full' : 'Request to Join'}
+        </>
+      )}
     </Button>
   );
 }

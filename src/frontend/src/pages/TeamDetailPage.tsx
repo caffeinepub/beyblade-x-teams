@@ -80,7 +80,7 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
     return (
       <PageShell maxWidth="2xl">
         <Skeleton className="h-8 w-48 mb-6" />
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           <Card>
             <CardHeader>
               <Skeleton className="h-6 w-32" />
@@ -106,9 +106,9 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
     return (
       <PageShell maxWidth="2xl">
         <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground mb-4">Team not found</p>
-            <Button onClick={() => navigate('/teams')} variant="outline">
+          <CardContent className="py-12 text-center px-4">
+            <p className="text-sm sm:text-base text-muted-foreground mb-4">Team not found</p>
+            <Button onClick={() => navigate('/teams')} variant="outline" className="min-h-11">
               Back to Teams
             </Button>
           </CardContent>
@@ -119,40 +119,44 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
 
   return (
     <PageShell maxWidth="2xl">
-      <Button onClick={() => navigate('/teams')} variant="ghost" className="mb-6 gap-2">
+      <Button onClick={() => navigate('/teams')} variant="ghost" className="mb-4 sm:mb-6 gap-2 min-h-11">
         <ArrowLeft className="h-4 w-4" />
         Back to Teams
       </Button>
 
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Team Header */}
         <Card>
-          <CardHeader>
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-start gap-4 flex-1">
+          <CardHeader className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+              <div className="flex items-start gap-3 sm:gap-4 flex-1 w-full">
                 {team.icon && (
                   <img 
                     src={imageToDataUrl(team.icon.bytes, team.icon.contentType)}
                     alt={`${team.name} icon`}
-                    className="h-16 w-16 object-cover rounded-lg border-2 border-border"
+                    className="h-14 w-14 sm:h-16 sm:w-16 object-cover rounded-lg border-2 border-border flex-shrink-0"
                   />
                 )}
-                <div className="space-y-2">
-                  <CardTitle className="text-3xl">{team.name}</CardTitle>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={team.members.length >= 3 ? 'secondary' : 'default'}>
+                <div className="space-y-2 flex-1 min-w-0">
+                  <CardTitle className="text-2xl sm:text-3xl break-words">{team.name}</CardTitle>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant={team.members.length >= 3 ? 'secondary' : 'default'} className="text-xs">
                       {team.members.length}/3 Members
                     </Badge>
-                    {isLeader && <Badge variant="outline">You are the leader</Badge>}
-                    {isMember && !isLeader && <Badge variant="outline">You are a member</Badge>}
+                    {isLeader && <Badge variant="outline" className="text-xs">You are the leader</Badge>}
+                    {isMember && !isLeader && <Badge variant="outline" className="text-xs">You are a member</Badge>}
                   </div>
                 </div>
               </div>
-              {!isLeader && !isMember && <JoinRequestButton team={team} />}
+              {!isLeader && !isMember && (
+                <div className="w-full sm:w-auto">
+                  <JoinRequestButton team={team} />
+                </div>
+              )}
             </div>
           </CardHeader>
           {isLeader && (
-            <CardContent>
+            <CardContent className="p-4 sm:p-6">
               <Separator className="mb-4" />
               <div className="space-y-4">
                 <div>
@@ -175,23 +179,23 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
                   <h4 className="text-sm font-medium mb-3 text-destructive">Danger Zone</h4>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="destructive" size="sm" className="gap-2">
+                      <Button variant="destructive" size="sm" className="gap-2 min-h-11 w-full sm:w-auto">
                         <Trash2 className="h-4 w-4" />
                         Disband Team
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent>
+                    <AlertDialogContent className="max-w-xs sm:max-w-md mx-4">
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
+                        <AlertDialogTitle className="text-base sm:text-lg">Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-sm">
                           This action cannot be undone. This will permanently delete the team "{team.name}" and remove all members.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                        <AlertDialogCancel className="min-h-11 w-full sm:w-auto">Cancel</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={handleDisbandTeam}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 min-h-11 w-full sm:w-auto"
                         >
                           Disband Team
                         </AlertDialogAction>
@@ -204,22 +208,22 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
           )}
         </Card>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {/* Members */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                 <Users className="h-5 w-5" />
                 Members
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
+            <CardContent className="space-y-3 p-4 sm:p-6 pt-0">
               {team.members.map((member, index) => {
                 const isTeamLeader = member.toString() === team.leader.toString();
                 return (
-                  <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg min-h-11">
                     <div className="flex items-center gap-2">
-                      {isTeamLeader && <Crown className="h-4 w-4 text-primary" />}
+                      {isTeamLeader && <Crown className="h-4 w-4 text-primary flex-shrink-0" />}
                       <span className="text-sm font-medium">
                         {isTeamLeader ? 'Leader' : `Member ${index + 1}`}
                       </span>
@@ -241,14 +245,14 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
           {/* Pending Requests (Leader Only) */}
           {isLeader && team.joinRequests.length > 0 && (
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                   <Users className="h-5 w-5" />
                   Pending Requests
-                  <Badge>{team.joinRequests.length}</Badge>
+                  <Badge className="text-xs">{team.joinRequests.length}</Badge>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 sm:p-6 pt-0">
                 <p className="text-sm text-muted-foreground">
                   View and manage join requests in your{' '}
                   <button
@@ -265,10 +269,10 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
 
         {/* Team Footage Section */}
         <Card>
-          <CardHeader>
-            <CardTitle>Team Footage</CardTitle>
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-base sm:text-lg">Team Footage</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6 pt-0">
             {isMember && (
               <>
                 <TeamFootageUploader teamId={team.id} />

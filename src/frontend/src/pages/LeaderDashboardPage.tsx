@@ -33,7 +33,7 @@ export default function LeaderDashboardPage() {
   if (isLoading) {
     return (
       <PageShell title="Leader Dashboard" description="Manage your teams and join requests" maxWidth="2xl">
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {[1, 2].map((i) => (
             <Card key={i}>
               <CardHeader>
@@ -53,13 +53,13 @@ export default function LeaderDashboardPage() {
     return (
       <PageShell title="Leader Dashboard" description="Manage your teams and join requests" maxWidth="2xl">
         <Card>
-          <CardContent className="py-12 text-center">
-            <Shield className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-            <h3 className="text-xl font-semibold mb-2">No Teams Yet</h3>
-            <p className="text-muted-foreground mb-6">
+          <CardContent className="py-12 text-center px-4">
+            <Shield className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">No Teams Yet</h3>
+            <p className="text-sm sm:text-base text-muted-foreground mb-6">
               You haven't created any teams. Create one to get started!
             </p>
-            <Button onClick={() => window.location.hash = '/create-team'}>
+            <Button onClick={() => window.location.hash = '/create-team'} className="min-h-11 w-full sm:w-auto">
               Create Team
             </Button>
           </CardContent>
@@ -70,26 +70,26 @@ export default function LeaderDashboardPage() {
 
   return (
     <PageShell title="Leader Dashboard" description="Manage your teams and join requests" maxWidth="2xl">
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* My Teams Overview */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
               <Crown className="h-5 w-5 text-primary" />
               Your Teams
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <CardContent className="p-4 sm:p-6 pt-0">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {myTeams.map(team => (
                 <button
                   key={team.id.toString()}
                   onClick={() => window.location.hash = `/team/${team.id.toString()}`}
-                  className="p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors text-left"
+                  className="p-3 sm:p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors text-left min-h-11"
                 >
                   <div className="flex items-start justify-between gap-2 mb-2">
-                    <h4 className="font-semibold">{team.name}</h4>
-                    <Badge variant={team.members.length >= 3 ? 'secondary' : 'default'}>
+                    <h4 className="font-semibold text-sm sm:text-base break-words flex-1">{team.name}</h4>
+                    <Badge variant={team.members.length >= 3 ? 'secondary' : 'default'} className="text-xs flex-shrink-0">
                       {team.members.length}/3
                     </Badge>
                   </div>
@@ -107,18 +107,18 @@ export default function LeaderDashboardPage() {
         {/* Join Requests Notice */}
         {teamsWithRequests.length > 0 ? (
           <Card className="border-primary/50 bg-primary/5">
-            <CardContent className="py-6">
-              <div className="flex items-start gap-4">
-                <div className="p-3 bg-primary/10 rounded-full">
-                  <Mail className="h-6 w-6 text-primary" />
+            <CardContent className="py-4 sm:py-6 px-4 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-start gap-4">
+                <div className="p-3 bg-primary/10 rounded-full flex-shrink-0">
+                  <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-semibold mb-2">Pending Join Requests</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base sm:text-lg font-semibold mb-2">Pending Join Requests</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-4">
                     You have {teamsWithRequests.reduce((sum, team) => sum + team.joinRequests.length, 0)} pending join request(s) across your teams.
                     Review and approve them in your Inbox.
                   </p>
-                  <Button onClick={() => window.location.hash = '/inbox'} className="gap-2">
+                  <Button onClick={() => window.location.hash = '/inbox'} className="gap-2 min-h-11 w-full sm:w-auto">
                     <Mail className="h-4 w-4" />
                     Go to Inbox
                   </Button>
@@ -128,10 +128,10 @@ export default function LeaderDashboardPage() {
           </Card>
         ) : (
           <Card>
-            <CardContent className="py-12 text-center">
-              <Mail className="h-12 w-12 mx-auto mb-3 text-muted-foreground opacity-50" />
-              <h3 className="text-lg font-semibold mb-2">No Pending Requests</h3>
-              <p className="text-muted-foreground">
+            <CardContent className="py-12 text-center px-4">
+              <Mail className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 text-muted-foreground opacity-50" />
+              <h3 className="text-base sm:text-lg font-semibold mb-2">No Pending Requests</h3>
+              <p className="text-sm text-muted-foreground">
                 You don't have any join requests at the moment.
               </p>
             </CardContent>

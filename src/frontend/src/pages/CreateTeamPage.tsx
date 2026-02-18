@@ -98,20 +98,20 @@ export default function CreateTeamPage() {
   if (isAlreadyOnTeam) {
     return (
       <PageShell title="Create Team" maxWidth="2xl">
-        <Button onClick={() => navigate('/')} variant="ghost" className="mb-6 gap-2">
+        <Button onClick={() => navigate('/')} variant="ghost" className="mb-4 sm:mb-6 gap-2 min-h-11">
           <ArrowLeft className="h-4 w-4" />
           Back
         </Button>
 
         <Alert className="border-amber-500/50 bg-amber-500/10">
           <AlertCircle className="h-4 w-4 text-amber-600" />
-          <AlertDescription className="text-amber-900 dark:text-amber-100">
+          <AlertDescription className="text-amber-900 dark:text-amber-100 text-sm">
             You are already on a team. You can only be a member of one team at a time.
           </AlertDescription>
         </Alert>
 
         <div className="mt-6">
-          <Button onClick={() => navigate(`/team/${currentTeamId.toString()}`)} className="gap-2">
+          <Button onClick={() => navigate(`/team/${currentTeamId.toString()}`)} className="gap-2 min-h-11 w-full sm:w-auto">
             Go to My Team
           </Button>
         </div>
@@ -121,48 +121,53 @@ export default function CreateTeamPage() {
 
   return (
     <PageShell title="Create Team" description="Start your Bey Hub X journey" maxWidth="2xl">
-      <Button onClick={() => navigate('/')} variant="ghost" className="mb-6 gap-2">
+      <Button onClick={() => navigate('/')} variant="ghost" className="mb-4 sm:mb-6 gap-2 min-h-11">
         <ArrowLeft className="h-4 w-4" />
         Back
       </Button>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Team Details</CardTitle>
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-xl sm:text-2xl">Team Details</CardTitle>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <CardContent className="p-4 sm:p-6 pt-0">
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="teamName">Team Name *</Label>
+              <Label htmlFor="teamName" className="text-sm sm:text-base">Team Name</Label>
               <Input
                 id="teamName"
+                type="text"
+                placeholder="Enter your team name"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
-                placeholder="Enter your team name"
                 disabled={isCreating}
+                className="min-h-11 text-sm sm:text-base"
                 maxLength={50}
               />
-              <p className="text-xs text-muted-foreground">
-                Choose a unique name for your team (max 50 characters)
-              </p>
             </div>
 
             <div className="space-y-2">
-              <Label>Team Icon (Optional)</Label>
+              <Label className="text-sm sm:text-base">Team Icon (Optional)</Label>
               <TeamIconUploader 
-                onFileSelect={handleFileSelect} 
+                onFileSelect={handleFileSelect}
                 disabled={isCreating}
                 currentIcon={null}
-                compact={false}
               />
-              <p className="text-xs text-muted-foreground">
-                Upload a team icon (PNG, JPG, or WebP, max 10 MB)
-              </p>
             </div>
 
-            <Button type="submit" disabled={isCreating || !teamName.trim()} className="w-full gap-2">
-              {isCreating && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isCreating ? 'Creating Team...' : 'Create Team'}
+            <Button 
+              type="submit" 
+              disabled={isCreating || !teamName.trim()}
+              className="w-full sm:w-auto gap-2 min-h-11 px-6 sm:px-8"
+            >
+              {isCreating ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                'Create Team'
+              )}
             </Button>
           </form>
         </CardContent>

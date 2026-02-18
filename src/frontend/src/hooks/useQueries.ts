@@ -5,6 +5,26 @@ import type { TeamDTO, UserProfile, Mail, ExternalBlob } from '../backend';
 import { Principal } from '@dfinity/principal';
 import { toast } from 'sonner';
 
+// User Profile
+export function useSaveCallerUserProfile() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (profile: UserProfile) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.saveCallerUserProfile(profile);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+      toast.success('Profile saved successfully!');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to save profile');
+    },
+  });
+}
+
 // Team Membership Status
 export function useGetTeamMembershipStatus() {
   const { actor, isFetching: actorFetching } = useActor();

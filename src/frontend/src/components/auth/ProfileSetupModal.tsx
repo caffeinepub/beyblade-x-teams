@@ -1,66 +1,74 @@
 import { useState } from 'react';
-import { useActor } from '../../hooks/useActor';
-import { useQueryClient } from '@tanstack/react-query';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { useSaveCallerUserProfile } from '../../hooks/useQueries';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
-export default function ProfileSetupModal() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
+interface ProfileSetupModalProps {
+  open: boolean;
+}
+
+export default function ProfileSetupModal({ open }: ProfileSetupModalProps) {
   const [name, setName] = useState('');
-  const [saving, setSaving] = useState(false);
+  const saveProfileMutation = useSaveCallerUserProfile();
 
-  const handleSave = async () => {
-    if (!name.trim()) {
-      toast.error('Please enter your name');
-      return;
-    }
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
 
-    if (!actor) {
-      toast.error('Not connected');
-      return;
-    }
-
-    setSaving(true);
     try {
-      await actor.saveCallerUserProfile({ name: name.trim() });
-      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
-      toast.success('Profile created!');
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to save profile');
-    } finally {
-      setSaving(false);
+      await saveProfileMutation.mutateAsync({ name: name.trim() });
+    } catch (error) {
+      console.error('Failed to save profile:', error);
     }
   };
 
   return (
-    <Dialog open={true}>
-      <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
+    <Dialog open={open} modal>
+      <DialogContent className="max-w-xs sm:max-w-md mx-4" onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
-          <DialogTitle>Welcome to Beyblade X Teams!</DialogTitle>
-          <DialogDescription>
-            Please enter your name to get started with the tournament.
+          <DialogTitle className="text-lg sm:text-xl">Welcome to Bey Hub X!</DialogTitle>
+          <DialogDescription className="text-sm">
+            Please enter your name to get started.
           </DialogDescription>
         </DialogHeader>
-        <div className="space-y-4 py-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Your Name</Label>
+            <Label htmlFor="name" className="text-sm sm:text-base">Your Name</Label>
             <Input
               id="name"
+              type="text"
               placeholder="Enter your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+              disabled={saveProfileMutation.isPending}
+              className="min-h-11 text-sm sm:text-base"
               autoFocus
             />
           </div>
-          <Button onClick={handleSave} disabled={saving} className="w-full">
-            {saving ? 'Saving...' : 'Continue'}
+          <Button
+            type="submit"
+            disabled={!name.trim() || saveProfileMutation.isPending}
+            className="w-full gap-2 min-h-11"
+          >
+            {saveProfileMutation.isPending ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              'Continue'
+            )}
           </Button>
-        </div>
+        </form>
       </DialogContent>
     </Dialog>
   );

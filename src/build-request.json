@@ -1,64 +1,137 @@
 {
   "kind": "build_request",
-  "title": "Revert forced beyhubx.com redirect and canonical metadata",
-  "projectName": "Bey Hub X",
-  "priority": "high",
+  "title": "Add mobile-responsive design",
+  "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-23",
-      "text": "Remove the hard-coded redirect-to-domain behavior so the app no longer forces navigation to https://beyhubx.com and remains reachable on the platform’s default/working URL.",
+      "id": "REQ-1",
+      "text": "Implement responsive layout for the home page hero section and feature cards to adapt to mobile screen sizes (320px-768px)",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-latest"
         ],
         "quotes": [
-          "change it back to normal"
+          "can you make this mobile-accessible as well"
         ]
       },
       "acceptanceCriteria": [
-        "Opening the app on a non-beyhubx.com host does not trigger a redirect to beyhubx.com.",
-        "The app loads successfully on the platform’s default/working deployment URL."
+        "Hero section stacks vertically on mobile devices",
+        "Feature cards reflow to single column on screens below 768px",
+        "Text remains readable without horizontal scrolling",
+        "Touch targets meet minimum 44x44px size"
       ]
     },
     {
-      "id": "REQ-24",
-      "text": "Update frontend HTML head metadata to stop hard-coding https://beyhubx.com as the canonical/preview URL (canonical link, og:url, twitter:url) so metadata does not point to an unreachable domain while DNS is not configured.",
+      "id": "REQ-2",
+      "text": "Make the application header (AppHeader) responsive with collapsible navigation for mobile devices",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-latest"
         ],
         "quotes": [
-          "change it back to normal"
+          "can you make this mobile-accessible as well"
         ]
       },
       "acceptanceCriteria": [
-        "frontend/index.html no longer contains canonical/OG/Twitter URL values that are hard-coded to https://beyhubx.com/.",
-        "The app’s HTML head remains valid and includes title/description metadata without breaking the build."
+        "Navigation menu collapses into a hamburger icon on mobile",
+        "All header actions remain accessible on small screens",
+        "Logo and branding scale appropriately",
+        "Login button and profile controls are touch-friendly"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Optimize team list and team detail pages for mobile viewing with responsive grids and touch-optimized controls",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "can you make this mobile-accessible as well"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Team grid adapts to 1-2 columns on mobile",
+        "Team icons and cards scale appropriately for small screens",
+        "Join request button and team actions are touch-accessible",
+        "Video gallery displays properly on mobile with appropriate sizing"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Make forms and modals (profile setup, team creation, file uploaders) mobile-friendly with proper touch interactions",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "can you make this mobile-accessible as well"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Input fields are appropriately sized for mobile keyboards",
+        "Modals fit within mobile viewport without overflow",
+        "File upload controls work with mobile file pickers",
+        "Form buttons are touch-optimized and properly spaced"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Ensure inbox and dashboard pages are fully responsive with readable mail content and accessible action buttons on mobile",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "can you make this mobile-accessible as well"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Mail list and content adapt to mobile layout",
+        "Action buttons (approve/deny, read/delete) are touch-friendly",
+        "Dashboard cards stack vertically on small screens",
+        "All text content remains readable without zooming"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Add viewport meta tag and ensure proper touch event handling across all interactive elements",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "can you make this mobile-accessible as well"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Viewport meta tag is configured in index.html",
+        "Touch events work smoothly without delays",
+        "Prevent accidental double-tap zoom on buttons",
+        "Scrolling is smooth on mobile devices"
       ]
     }
   ],
   "constraints": [
-    "Frontend paths listed as immutable must not be edited (compose UI components instead).",
-    "Do not introduce new backend services; keep to the existing single-actor Motoko backend architecture."
+    "Maintain existing desktop layout and functionality",
+    "Do not modify immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui",
+    "Use only Tailwind CSS responsive utilities for breakpoints",
+    "Preserve all existing component logic and backend integration"
   ],
   "nonGoals": [
-    "Do not configure DNS records or provide registrar-specific DNS setup steps as part of this build.",
-    "Do not remove or rename the in-app branding text 'Bey Hub X' unless explicitly requested."
+    "Native mobile app development",
+    "Progressive Web App (PWA) features",
+    "Mobile-specific gestures beyond standard touch",
+    "Separate mobile-only routes or components"
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

@@ -1,10 +1,14 @@
 # Specification
 
 ## Summary
-**Goal:** Stop forcing navigation and metadata to point to https://beyhubx.com so the app works correctly on the platform’s default/working deployment URL.
+**Goal:** Make the Beyblade X Teams application fully accessible and functional on mobile devices.
 
 **Planned changes:**
-- Remove the hard-coded redirect-to-domain behavior that forces users to https://beyhubx.com.
-- Update HTML head metadata to no longer hard-code https://beyhubx.com in canonical link, og:url, and twitter:url values.
+- Implement responsive layout for home page hero section and feature cards (320px-768px)
+- Make AppHeader responsive with collapsible hamburger navigation for mobile
+- Optimize team list and team detail pages with responsive grids and touch-optimized controls
+- Make all forms and modals mobile-friendly with proper touch interactions
+- Ensure inbox and dashboard pages are fully responsive with readable content
+- Add viewport meta tag and ensure proper touch event handling across all interactive elements
 
-**User-visible outcome:** Users can open and use the app from the platform’s default/working URL without being redirected, and shared/preview metadata no longer points to an unreachable domain.
+**User-visible outcome:** Users can access and interact with the full Beyblade X Teams application on mobile devices with optimized layouts, touch-friendly controls, and readable content without horizontal scrolling.

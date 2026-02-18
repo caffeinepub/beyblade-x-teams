@@ -106,7 +106,7 @@ export default function InboxPage() {
   if (isLoading) {
     return (
       <PageShell title="Inbox" description="View and manage your messages" maxWidth="2xl">
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="flex flex-col md:grid md:grid-cols-3 gap-4 sm:gap-6">
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
               <Card key={i}>
@@ -132,10 +132,10 @@ export default function InboxPage() {
     return (
       <PageShell title="Inbox" description="View and manage your messages" maxWidth="2xl">
         <Card>
-          <CardContent className="py-12 text-center">
-            <Mail className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-            <h3 className="text-xl font-semibold mb-2">No Messages</h3>
-            <p className="text-muted-foreground">
+          <CardContent className="py-12 text-center px-4">
+            <Mail className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">No Messages</h3>
+            <p className="text-sm sm:text-base text-muted-foreground">
               Your inbox is empty. You'll receive messages here when someone requests to join your team.
             </p>
           </CardContent>
@@ -146,7 +146,7 @@ export default function InboxPage() {
 
   return (
     <PageShell title="Inbox" description="View and manage your messages" maxWidth="2xl">
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="flex flex-col md:grid md:grid-cols-3 gap-4 sm:gap-6">
         {/* Mail List */}
         <div className="space-y-3">
           {inbox.map((mail) => {
@@ -161,15 +161,15 @@ export default function InboxPage() {
                 } ${!mail.isRead ? 'border-l-4 border-l-primary' : ''}`}
                 onClick={() => handleSelectMail(mail)}
               >
-                <CardContent className="p-4">
+                <CardContent className="p-3 sm:p-4">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="flex items-center gap-2">
                       {mail.isRead ? (
-                        <MailOpen className="h-4 w-4 text-muted-foreground" />
+                        <MailOpen className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                       ) : (
-                        <Mail className="h-4 w-4 text-primary" />
+                        <Mail className="h-4 w-4 text-primary flex-shrink-0" />
                       )}
-                      <span className="text-sm font-medium">
+                      <span className="text-xs sm:text-sm font-medium">
                         {mail.mailType === 'joinRequest' ? 'Join Request' : 'Notification'}
                       </span>
                     </div>
@@ -192,23 +192,23 @@ export default function InboxPage() {
         <div className="md:col-span-2">
           {selectedMail ? (
             <Card>
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
+              <CardHeader className="p-4 sm:p-6">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                       {selectedMail.mailType === 'joinRequest' ? (
                         <>
-                          <Users className="h-5 w-5" />
-                          Join Request
+                          <Users className="h-5 w-5 flex-shrink-0" />
+                          <span className="truncate">Join Request</span>
                         </>
                       ) : (
                         <>
-                          <Mail className="h-5 w-5" />
-                          Notification
+                          <Mail className="h-5 w-5 flex-shrink-0" />
+                          <span className="truncate">Notification</span>
                         </>
                       )}
                     </CardTitle>
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1 truncate">
                       From: {selectedMail.sender.toString().slice(0, 12)}...
                     </p>
                   </div>
@@ -217,16 +217,17 @@ export default function InboxPage() {
                     size="sm"
                     onClick={() => handleDelete(selectedMail.id)}
                     disabled={processingMail.has(Number(selectedMail.id))}
+                    className="min-h-10 min-w-10 flex-shrink-0"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-4 p-4 sm:p-6 pt-0">
                 {selectedMail.content.__kind__ === 'joinRequest' ? (
                   <>
-                    <div className="p-4 bg-muted/50 rounded-lg space-y-2">
-                      <p className="text-sm">
+                    <div className="p-3 sm:p-4 bg-muted/50 rounded-lg space-y-2">
+                      <p className="text-xs sm:text-sm break-words">
                         <span className="font-medium">Team ID:</span>{' '}
                         <button
                           onClick={() => window.location.hash = `/team/${selectedMail.content.__kind__ === 'joinRequest' ? selectedMail.content.joinRequest.teamId.toString() : ''}`}
@@ -235,20 +236,20 @@ export default function InboxPage() {
                           {selectedMail.content.joinRequest.teamId.toString()}
                         </button>
                       </p>
-                      <p className="text-sm">
+                      <p className="text-xs sm:text-sm break-all">
                         <span className="font-medium">Requester:</span>{' '}
                         {selectedMail.content.joinRequest.requester.toString().slice(0, 16)}...
                       </p>
-                      <p className="text-sm">
+                      <p className="text-xs sm:text-sm break-words">
                         <span className="font-medium">Message:</span>{' '}
                         {selectedMail.content.joinRequest.message}
                       </p>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                       <Button
                         onClick={() => handleApproveJoinRequest(selectedMail)}
                         disabled={processingMail.has(Number(selectedMail.id))}
-                        className="gap-2 flex-1"
+                        className="gap-2 flex-1 min-h-11"
                       >
                         <CheckCircle className="h-4 w-4" />
                         {processingMail.has(Number(selectedMail.id)) ? 'Approving...' : 'Approve'}
@@ -257,7 +258,7 @@ export default function InboxPage() {
                         variant="outline"
                         onClick={() => handleDenyJoinRequest(selectedMail)}
                         disabled={processingMail.has(Number(selectedMail.id))}
-                        className="gap-2 flex-1"
+                        className="gap-2 flex-1 min-h-11"
                       >
                         <XCircle className="h-4 w-4" />
                         {processingMail.has(Number(selectedMail.id)) ? 'Denying...' : 'Deny'}
@@ -265,17 +266,17 @@ export default function InboxPage() {
                     </div>
                   </>
                 ) : (
-                  <div className="p-4 bg-muted/50 rounded-lg">
-                    <p className="text-sm">{selectedMail.content.notification}</p>
+                  <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
+                    <p className="text-xs sm:text-sm break-words">{selectedMail.content.notification}</p>
                   </div>
                 )}
               </CardContent>
             </Card>
           ) : (
             <Card>
-              <CardContent className="py-12 text-center">
-                <Mail className="h-12 w-12 mx-auto mb-3 text-muted-foreground opacity-50" />
-                <p className="text-muted-foreground">
+              <CardContent className="py-12 text-center px-4">
+                <Mail className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 text-muted-foreground opacity-50" />
+                <p className="text-sm text-muted-foreground">
                   Select a message to view details
                 </p>
               </CardContent>

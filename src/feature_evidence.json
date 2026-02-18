@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-remove-the-hard-coded-redirect-to-domain-behavior-so-the-app-no-longer-forces-navigation-to-https-beyhubx-com-and-remains-reachable-on-the-platform-s-default-working-url",
-      "featureTitle": "Remove the hard-coded redirect-to-domain behavior so the app no longer forces navigation to https://beyhubx.com and remains reachable on the platform’s default/working URL.",
+      "featureId": "feature-implement-responsive-layout-for-the-home-page-hero-section-and-feature-cards-to-adapt-to-mobile-screen-sizes-320px-768px",
+      "featureTitle": "Implement responsive layout for the home page hero section and feature cards to adapt to mobile screen sizes (320px-768px)",
       "files": [
-        "frontend/index.html"
+        "frontend/src/pages/HomePage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -17,15 +17,15 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-23"
+        "REQ-1"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-frontend-html-head-metadata-to-stop-hard-coding-https-beyhubx-com-as-the-canonical-preview-url-canonical-link-og-url-twitter-url-so-metadata-does-not-point-to-an-unreachable-domain-while-dns-is-not-configured",
-      "featureTitle": "Update frontend HTML head metadata to stop hard-coding https://beyhubx.com as the canonical/preview URL (canonical link, og:url, twitter:url) so metadata does not point to an unreachable domain while DNS is not configured.",
+      "featureId": "feature-make-the-application-header-appheader-responsive-with-collapsible-navigation-for-mobile-devices",
+      "featureTitle": "Make the application header (AppHeader) responsive with collapsible navigation for mobile devices",
       "files": [
-        "frontend/index.html"
+        "frontend/src/components/layout/AppHeader.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -37,7 +37,95 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-24"
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-optimize-team-list-and-team-detail-pages-for-mobile-viewing-with-responsive-grids-and-touch-optimized-controls",
+      "featureTitle": "Optimize team list and team detail pages for mobile viewing with responsive grids and touch-optimized controls",
+      "files": [
+        "frontend/src/components/teams/JoinRequestButton.tsx",
+        "frontend/src/components/teams/TeamFootageGallery.tsx",
+        "frontend/src/pages/TeamDetailPage.tsx",
+        "frontend/src/pages/TeamListPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-make-forms-and-modals-profile-setup-team-creation-file-uploaders-mobile-friendly-with-proper-touch-interactions",
+      "featureTitle": "Make forms and modals (profile setup, team creation, file uploaders) mobile-friendly with proper touch interactions",
+      "files": [
+        "frontend/src/components/auth/ProfileSetupModal.tsx",
+        "frontend/src/components/teams/TeamFootageUploader.tsx",
+        "frontend/src/components/teams/TeamIconUploader.tsx",
+        "frontend/src/pages/CreateTeamPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-inbox-and-dashboard-pages-are-fully-responsive-with-readable-mail-content-and-accessible-action-buttons-on-mobile",
+      "featureTitle": "Ensure inbox and dashboard pages are fully responsive with readable mail content and accessible action buttons on mobile",
+      "files": [
+        "frontend/src/pages/InboxPage.tsx",
+        "frontend/src/pages/LeaderDashboardPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-viewport-meta-tag-and-ensure-proper-touch-event-handling-across-all-interactive-elements",
+      "featureTitle": "Add viewport meta tag and ensure proper touch event handling across all interactive elements",
+      "files": [
+        "frontend/index.html",
+        "frontend/src/index.css"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-6"
       ],
       "confidence": "high"
     }

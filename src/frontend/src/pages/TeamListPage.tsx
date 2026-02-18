@@ -17,7 +17,7 @@ export default function TeamListPage() {
   if (isLoading) {
     return (
       <PageShell title="Teams" description="Browse all teams in Bey Hub X" maxWidth="2xl">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <Card key={i}>
               <CardHeader>
@@ -37,13 +37,13 @@ export default function TeamListPage() {
     return (
       <PageShell title="Teams" description="Browse all teams in Bey Hub X" maxWidth="2xl">
         <Card>
-          <CardContent className="py-12 text-center">
-            <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-            <h3 className="text-xl font-semibold mb-2">No Teams Yet</h3>
-            <p className="text-muted-foreground mb-6">
+          <CardContent className="py-12 text-center px-4">
+            <Users className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
+            <h3 className="text-lg sm:text-xl font-semibold mb-2">No Teams Yet</h3>
+            <p className="text-sm sm:text-base text-muted-foreground mb-6">
               Be the first to create a team and start your Beyblade X journey!
             </p>
-            <Button onClick={() => navigate('/create-team')}>
+            <Button onClick={() => navigate('/create-team')} className="min-h-11">
               Create Team
             </Button>
           </CardContent>
@@ -54,31 +54,31 @@ export default function TeamListPage() {
 
   return (
     <PageShell title="Teams" description="Browse all teams in Bey Hub X" maxWidth="2xl">
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {teams.map((team) => (
           <Card key={team.id.toString()} className="hover:border-primary/50 transition-colors">
-            <CardHeader>
+            <CardHeader className="p-4 sm:p-6">
               <div className="flex items-start gap-3">
                 {team.icon && (
                   <img 
                     src={imageToDataUrl(team.icon.bytes, team.icon.contentType)}
                     alt={`${team.name} icon`}
-                    className="h-12 w-12 object-cover rounded-lg border-2 border-border"
+                    className="h-12 w-12 sm:h-14 sm:w-14 object-cover rounded-lg border-2 border-border flex-shrink-0"
                   />
                 )}
                 <div className="flex-1 min-w-0">
-                  <CardTitle className="text-lg truncate">{team.name}</CardTitle>
-                  <Badge variant={team.members.length >= 3 ? 'secondary' : 'default'} className="mt-2">
+                  <CardTitle className="text-base sm:text-lg truncate">{team.name}</CardTitle>
+                  <Badge variant={team.members.length >= 3 ? 'secondary' : 'default'} className="mt-2 text-xs">
                     {team.members.length}/3 Members
                   </Badge>
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6 pt-0">
               <Button
                 onClick={() => navigate(`/team/${team.id.toString()}`)}
                 variant="outline"
-                className="w-full gap-2"
+                className="w-full gap-2 min-h-11"
               >
                 <Eye className="h-4 w-4" />
                 View Details

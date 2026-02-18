@@ -82,7 +82,7 @@ function App() {
         <main className="container mx-auto px-4 py-8">
           {renderPage()}
         </main>
-        {showProfileSetup && <ProfileSetupModal />}
+        {showProfileSetup && <ProfileSetupModal open={showProfileSetup} />}
         <Toaster />
       </div>
     </ThemeProvider>
