@@ -1,0 +1,229 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 9,
+  "summary": "Website for the Bey Hub X tournament/community that lets users create teams of 1–3 with a team icon upload, request to join teams with leader approval, and includes an in-app inbox (“mail”) plus team footage video uploads.",
+  "architectural_notes": [
+    "User selected option B: implement a built-in in-app inbox (“mail”) within the website; do not rely on external email sending.",
+    "Add a business rule: each authenticated user (Principal) may belong to at most one team at a time; block create-team and join-request actions if already on a team."
+  ],
+  "known_issues": [
+    "The UI labeled “upload PDFs” is currently being used/understood as the team icon upload area; PDF attachment workflow may be incorrect or out of scope."
+  ],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-internet-identity-authentication-so-users-can-sign-in-and-the-app-can-associate-actions-team-creation-join-requests-approvals-with-the-signed-in-principal",
+      "title": "Implement Internet Identity authentication so users can sign in and the app can associate actions (team creation, join requests, approvals) with the signed-in Principal.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-support-attaching-pdfs-to-a-team-by-allowing-users-to-upload-or-paste-import-pdf-files-on-the-frontend-and-store-them-in-the-backend-associated-with-the-team-including-filename-and-binary-content-with-explicit-per-file-size-limits-and-clear-error-handling-when-limits-are-exceeded",
+      "title": "Support attaching PDFs to a team by allowing users to upload (or paste/import) PDF files on the frontend and store them in the backend associated with the team (including filename and binary content), with explicit per-file size limits and clear error handling when limits are exceeded.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-join-request-workflow-users-can-request-to-join-an-existing-team-the-team-leader-can-approve-or-deny-requests-only-approved-users-become-team-members-and-approvals-must-not-exceed-the-3-member-team-limit",
+      "title": "Implement join-request workflow: users can request to join an existing team; the team leader can approve or deny requests; only approved users become team members, and approvals must not exceed the 3-member team limit.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-core-ui-screens-for-tournament-team-management-landing-home-create-team-browse-list-teams-team-detail-members-pdfs-and-leader-dashboard-for-join-request-approvals",
+      "title": "Build the core UI screens for tournament team management: landing/home, create team, browse/list teams, team detail (members + PDFs), and leader dashboard for join-request approvals.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-coherent-tournament-themed-visual-design-across-the-app-colors-typography-spacing-component-styling-using-tailwind-shadcn-with-a-distinct-arena-feel-suitable-for-beyblade-x-avoid-default-unstyled-screens",
+      "title": "Apply a coherent, tournament-themed visual design across the app (colors, typography, spacing, component styling) using Tailwind/Shadcn, with a distinct “arena” feel suitable for Beyblade X (avoid default/unstyled screens).",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-and-include-static-visual-assets-for-the-app-theme-logo-wordmark-and-a-hero-background-graphic-and-render-them-in-the-ui-from-frontend-public-assets-generated",
+      "title": "Generate and include static visual assets for the app theme (logo/wordmark and a hero/background graphic) and render them in the UI from frontend/public/assets/generated.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-the-current-pdf-uploader-ui-on-the-create-team-page-with-a-team-icon-uploader-that-accepts-common-image-formats-png-jpg-webp-and-clearly-labels-the-field-as-a-team-icon-not-pdfs",
+      "title": "Replace the current PDF uploader UI on the Create Team page with a Team Icon uploader that accepts common image formats (PNG/JPG/WebP) and clearly labels the field as a team icon (not PDFs).",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-team-detail-page-to-remove-the-tournament-pdfs-section-pdf-list-pdf-uploader-and-instead-display-the-team-icon-if-present-and-allow-the-team-leader-to-upload-replace-the-team-icon",
+      "title": "Update the Team Detail page to remove the \"Tournament PDFs\" section (PDF list + PDF uploader) and instead display the team icon (if present) and allow the team leader to upload/replace the team icon.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-react-query-hooks-and-types-to-use-the-new-team-icon-api-instead-of-the-existing-uploadfile-pdf-flow-for-the-icon-uploader",
+      "title": "Update frontend React Query hooks and types to use the new team icon API instead of the existing `uploadFile`/PDF flow for the icon uploader.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-rename-all-user-facing-app-site-text-from-beyblade-x-tournament-beyblade-x-teams-to-bey-hub-x-across-the-ui-header-branding-home-hero-title-footer-and-any-page-titles-descriptions",
+      "title": "Rename all user-facing app/site text from \"Beyblade X Tournament\" / \"Beyblade X Teams\" to \"Bey Hub X\" across the UI (header branding, home hero title, footer, and any page titles/descriptions).",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-an-in-app-mail-inbox-system-no-real-email-that-allows-authenticated-users-to-receive-and-view-messages-inside-the-website",
+      "title": "Implement an in-app mail/inbox system (no real email) that allows authenticated users to receive and view messages inside the website.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-team-join-flow-so-that-requesting-to-join-a-team-requires-leader-consent-via-the-in-app-mail-system-when-a-user-requests-to-join-a-join-request-mail-item-must-be-delivered-to-the-team-leader-and-the-leader-must-be-able-to-approve-or-deny-from-the-mail-system",
+      "title": "Update the team join flow so that requesting to join a team requires leader consent via the in-app mail system: when a user requests to join, a join-request mail item must be delivered to the team leader, and the leader must be able to approve or deny from the mail system.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-the-ability-for-a-team-leader-to-disband-delete-their-team-from-the-ui-with-backend-enforcement-that-only-the-team-leader-can-perform-the-action",
+      "title": "Add the ability for a team leader to disband/delete their team from the UI, with backend enforcement that only the team leader can perform the action.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-repurpose-the-remaining-upload-pdfs-messaging-sections-in-the-ui-to-instead-present-upload-team-footage-and-implement-team-footage-video-uploads-members-only-with-browsing-playback-on-the-team-page",
+      "title": "Replace/repurpose the remaining \"Upload PDFs\" messaging/sections in the UI to instead present \"Upload Team Footage\" and implement team footage video uploads (members-only) with browsing/playback on the team page.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-create-team-ui-to-block-team-creation-when-the-signed-in-user-is-already-on-a-team-and-guide-the-user-to-their-current-team-instead",
+      "title": "Update the Create Team UI to block team creation when the signed-in user is already on a team, and guide the user to their current team instead.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-team-joining-ui-to-prevent-sending-join-requests-when-the-signed-in-user-is-already-on-a-different-team-including-clear-messaging",
+      "title": "Update team joining UI to prevent sending join requests when the signed-in user is already on a different team, including clear messaging.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-2",
+      "summary": "Allow users to request to join an existing team, requiring consent/approval from the team leader/creator.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Create backend data models and API methods to support Beyblade X teams with a maximum size of 3, including: create team (with initial members), list teams, get team details, and enforce membership limits.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Replace/repurpose the current “upload PDFs” UI to support uploading a team icon (image) for the team instead of PDFs.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Add backend support for storing a single team icon per team (image bytes + filename and/or content type) and expose methods to upload/replace and to fetch it as part of team data needed by the UI.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Rename the app/site from “Beyblade X tournament” to “Bey Hub X” across UI and branding.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Add an in-app “mail”/inbox system (internal to the website; no real email) to deliver notifications/requests between users (e.g., join requests to leaders).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Add the ability for a team leader to disband/delete their team.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Change team join flow so a user must send a join request that is delivered via the in-app mail system and requires leader consent/approval.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Replace the middle “upload PDFs” section with “Upload Team Footage” allowing teams to upload videos (training, battles, reveals, etc.), including storage and browsing/viewing in the UI.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Enforce single-team membership per user: once a user creates or joins a team, they cannot create another team or request/join a different team unless they leave/disband their current team.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Enforce single-team membership on the backend: if a user is already a member of any existing team, prevent them from creating a new team, requesting to join another team, or being approved into another team.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Add a backend query API that allows the frontend to determine whether the authenticated caller is currently on a team, and if so, which team.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Beyblade X Teams",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

@@ -1,0 +1,337 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useActor } from './useActor';
+import { useInternetIdentity } from './useInternetIdentity';
+import type { TeamDTO, UserProfile, Mail, ExternalBlob } from '../backend';
+import { Principal } from '@dfinity/principal';
+import { toast } from 'sonner';
+
+// Team Membership Status
+export function useGetTeamMembershipStatus() {
+  const { actor, isFetching: actorFetching } = useActor();
+  const { identity } = useInternetIdentity();
+
+  return useQuery<bigint | null>({
+    queryKey: ['teamMembershipStatus'],
+    queryFn: async () => {
+      if (!actor) return null;
+      return actor.getTeamMembershipStatus();
+    },
+    enabled: !!actor && !actorFetching && !!identity,
+  });
+}
+
+// Teams
+export function useListTeams() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<TeamDTO[]>({
+    queryKey: ['teams'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listTeams();
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
+
+export function useGetTeam(teamId: string) {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<TeamDTO>({
+    queryKey: ['team', teamId],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getTeam(BigInt(teamId));
+    },
+    enabled: !!actor && !actorFetching && !!teamId,
+  });
+}
+
+export function useCreateTeam() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ name, initialMembers }: { name: string; initialMembers: Principal[] }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.createTeam(name, initialMembers);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      queryClient.invalidateQueries({ queryKey: ['teamMembershipStatus'] });
+      toast.success('Team created successfully!');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to create team';
+      if (message.includes('already a member of a team')) {
+        toast.error('You are already on a team');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}
+
+export function useRequestJoinTeam() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (teamId: bigint) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.requestJoinTeam(teamId);
+    },
+    onSuccess: (_, teamId) => {
+      queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      toast.success('Join request sent to team leader!');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to send join request';
+      if (message.includes('already a member of this team')) {
+        toast.error('You are already a member of this team');
+      } else if (message.includes('already requested')) {
+        toast.error('You have already requested to join this team');
+      } else if (message.includes('already a member of a team')) {
+        toast.error('You are already on a team');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}
+
+export function useApproveJoinRequests() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ teamId, approvals }: { teamId: bigint; approvals: Principal[] }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.approveJoinRequests(teamId, approvals);
+    },
+    onSuccess: (_, { teamId }) => {
+      queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      queryClient.invalidateQueries({ queryKey: ['inbox'] });
+      toast.success('Join request approved!');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to approve join request';
+      if (message.includes('exceed team size limit')) {
+        toast.error('Cannot approve: Team is full (max 3 members)');
+      } else if (message.includes('Only team leader')) {
+        toast.error('Only the team leader can approve requests');
+      } else if (message.includes('already a member of a team')) {
+        toast.error('Cannot approve: User is already on another team');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}
+
+export function useDenyJoinRequests() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ teamId, denials }: { teamId: bigint; denials: Principal[] }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.denyJoinRequests(teamId, denials);
+    },
+    onSuccess: (_, { teamId }) => {
+      queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      queryClient.invalidateQueries({ queryKey: ['inbox'] });
+      toast.success('Join request denied');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to deny join request');
+    },
+  });
+}
+
+// Team Icon Upload
+export function useUploadTeamIcon() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ 
+      teamId, 
+      filename, 
+      contentType, 
+      bytes 
+    }: { 
+      teamId: bigint; 
+      filename: string; 
+      contentType: string; 
+      bytes: Uint8Array;
+    }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.uploadTeamIcon(teamId, filename, contentType, bytes);
+    },
+    onSuccess: (_, { teamId }) => {
+      queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      toast.success('Team icon uploaded successfully!');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to upload team icon';
+      if (message.includes('Only team members')) {
+        toast.error('Only team members can upload the team icon');
+      } else if (message.includes('exceeds')) {
+        toast.error('Image size exceeds 10 MB limit');
+      } else if (message.includes('Unauthorized')) {
+        toast.error('You must be logged in to upload an icon');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}
+
+// Team Disband
+export function useDisbandTeam() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (teamId: bigint) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.disbandTeam(teamId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      queryClient.invalidateQueries({ queryKey: ['teamMembershipStatus'] });
+      toast.success('Team disbanded successfully');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to disband team';
+      if (message.includes('Only team leader')) {
+        toast.error('Only the team leader can disband the team');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}
+
+// Inbox / Mail
+export function useGetInbox() {
+  const { actor, isFetching: actorFetching } = useActor();
+  const { identity } = useInternetIdentity();
+
+  return useQuery<Mail[]>({
+    queryKey: ['inbox'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getInbox();
+    },
+    enabled: !!actor && !actorFetching && !!identity,
+  });
+}
+
+export function useMarkMailAsRead() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (mailId: bigint) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.markMailItemAsRead(mailId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['inbox'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to mark mail as read');
+    },
+  });
+}
+
+export function useDeleteMailItem() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (mailId: bigint) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.deleteMailItem(mailId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['inbox'] });
+      toast.success('Message deleted');
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to delete message');
+    },
+  });
+}
+
+// Team Footage
+export function useGetTeamFootage(teamId: string) {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<ExternalBlob[]>({
+    queryKey: ['teamFootage', teamId],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getTeamFootage(BigInt(teamId));
+    },
+    enabled: !!actor && !actorFetching && !!teamId,
+  });
+}
+
+export function useUploadTeamFootage() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ teamId, video }: { teamId: bigint; video: ExternalBlob }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.uploadTeamFootage(teamId, video);
+    },
+    onSuccess: (_, { teamId }) => {
+      queryClient.invalidateQueries({ queryKey: ['teamFootage', teamId.toString()] });
+      toast.success('Team footage uploaded successfully!');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to upload team footage';
+      if (message.includes('Only team members')) {
+        toast.error('Only team members can upload footage');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}
+
+// File Upload (kept for backward compatibility if needed elsewhere)
+export function useUploadFile() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ teamId, filename, content }: { teamId: bigint; filename: string; content: Uint8Array }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.uploadFile(teamId, filename, content);
+    },
+    onSuccess: (_, { teamId }) => {
+      queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      toast.success('File uploaded successfully!');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to upload file';
+      if (message.includes('Only team members')) {
+        toast.error('Only team members can upload files');
+      } else if (message.includes('exceeds')) {
+        toast.error('File size exceeds 10 MB limit');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}

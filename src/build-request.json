@@ -1,0 +1,106 @@
+{
+  "kind": "build_request",
+  "title": "Enforce single-team membership per user (block creating/joining additional teams)",
+  "projectName": "Bey Hub X",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-17",
+      "text": "Enforce single-team membership on the backend: if a user is already a member of any existing team, prevent them from creating a new team, requesting to join another team, or being approved into another team.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "almost perfect. now make it so that once you create/join a team, you can't join/create another"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Calling createTeam as an authenticated Principal who is already in any team traps with a clear error message indicating the user is already on a team.",
+        "Calling requestJoinTeam as an authenticated Principal who is already in any team traps with a clear error message indicating the user is already on a team.",
+        "Calling approveJoinRequests traps if any Principal in the approvals list is already a member of a different team, and no partial approvals occur in that call (all-or-nothing behavior for that request).",
+        "A user who disbands their team (as leader) is no longer considered on a team and can create or request to join a team afterwards.",
+        "Error messages are stable, human-readable English strings (so the frontend can map them to friendly toasts)."
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "text": "Add a backend query API that allows the frontend to determine whether the authenticated caller is currently on a team, and if so, which team.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "once you create/join a team, you can't join/create another"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend exposes a new query method that returns the caller’s current team id (or null/none if not on a team).",
+        "The method requires authentication (same permission model as other user-only APIs) and traps as unauthorized for anonymous callers.",
+        "The method returns consistent results with existing team membership data (if caller appears in Team.members for some team, it returns that team’s id)."
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "text": "Update the Create Team UI to block team creation when the signed-in user is already on a team, and guide the user to their current team instead.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "once you create/join a team, you can't join/create another"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When an authenticated user who is already on a team navigates to /create-team, the page clearly indicates they cannot create another team and provides a button/link to navigate to their current team detail page.",
+        "The Create Team submit action is disabled or prevented in this state (no backend call is attempted).",
+        "User-facing text is in English and consistent with existing app tone."
+      ]
+    },
+    {
+      "id": "REQ-20",
+      "text": "Update team joining UI to prevent sending join requests when the signed-in user is already on a different team, including clear messaging.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "once you create/join a team, you can't join/create another"
+        ]
+      },
+      "acceptanceCriteria": [
+        "On TeamDetailPage, if the viewer is authenticated and is already a member of some other team, the join/request-to-join control is not actionable (disabled or replaced) and indicates they are already on a team.",
+        "On any attempt to join (e.g., via JoinRequestButton mutation), if the backend returns the new single-team error, the UI shows a clear English toast/message (e.g., 'You are already on a team').",
+        "No regressions to existing states: leader sees no join button; members still see 'Already a Member'; pending requests still show 'Request Pending'; full teams still show 'Team Full'."
+      ]
+    }
+  ],
+  "constraints": [
+    "Backend must remain a single Motoko actor in backend/main.mo; do not introduce additional backend services.",
+    "Do not edit frontend immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, and anything under frontend/src/components/ui (compose instead).",
+    "Use English for all user-facing UI messages and toast strings added or changed."
+  ],
+  "nonGoals": [
+    "Implementing a 'leave team' workflow or allowing users to switch teams (not requested).",
+    "Changing team size limits (still max 3).",
+    "Adding new authentication providers beyond Internet Identity."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}
