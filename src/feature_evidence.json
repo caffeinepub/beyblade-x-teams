@@ -2,76 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-responsive-layout-for-the-home-page-hero-section-and-feature-cards-to-adapt-to-mobile-screen-sizes-320px-768px",
-      "featureTitle": "Implement responsive layout for the home page hero section and feature cards to adapt to mobile screen sizes (320px-768px)",
+      "featureId": "feature-create-a-profile-page-displaying-user-information-including-profile-picture-username-and-about-me-bio",
+      "featureTitle": "Create a profile page displaying user information including profile picture, username, and about me bio",
       "files": [
-        "frontend/src/pages/HomePage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-make-the-application-header-appheader-responsive-with-collapsible-navigation-for-mobile-devices",
-      "featureTitle": "Make the application header (AppHeader) responsive with collapsible navigation for mobile devices",
-      "files": [
-        "frontend/src/components/layout/AppHeader.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-optimize-team-list-and-team-detail-pages-for-mobile-viewing-with-responsive-grids-and-touch-optimized-controls",
-      "featureTitle": "Optimize team list and team detail pages for mobile viewing with responsive grids and touch-optimized controls",
-      "files": [
-        "frontend/src/components/teams/JoinRequestButton.tsx",
-        "frontend/src/components/teams/TeamFootageGallery.tsx",
-        "frontend/src/pages/TeamDetailPage.tsx",
-        "frontend/src/pages/TeamListPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-make-forms-and-modals-profile-setup-team-creation-file-uploaders-mobile-friendly-with-proper-touch-interactions",
-      "featureTitle": "Make forms and modals (profile setup, team creation, file uploaders) mobile-friendly with proper touch interactions",
-      "files": [
-        "frontend/src/components/auth/ProfileSetupModal.tsx",
-        "frontend/src/components/teams/TeamFootageUploader.tsx",
-        "frontend/src/components/teams/TeamIconUploader.tsx",
-        "frontend/src/pages/CreateTeamPage.tsx"
+        "frontend/src/App.tsx",
+        "frontend/src/pages/ProfilePage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -88,11 +23,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-ensure-inbox-and-dashboard-pages-are-fully-responsive-with-readable-mail-content-and-accessible-action-buttons-on-mobile",
-      "featureTitle": "Ensure inbox and dashboard pages are fully responsive with readable mail content and accessible action buttons on mobile",
+      "featureId": "feature-add-profile-picture-upload-component-that-allows-users-to-select-and-upload-images-for-their-profile-similar-to-teamiconuploader",
+      "featureTitle": "Add profile picture upload component that allows users to select and upload images for their profile, similar to TeamIconUploader",
       "files": [
-        "frontend/src/pages/InboxPage.tsx",
-        "frontend/src/pages/LeaderDashboardPage.tsx"
+        "frontend/src/components/profile/ProfilePictureUploader.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -109,11 +43,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-viewport-meta-tag-and-ensure-proper-touch-event-handling-across-all-interactive-elements",
-      "featureTitle": "Add viewport meta tag and ensure proper touch event handling across all interactive elements",
+      "featureId": "feature-display-team-footage-videos-in-twitter-style-card-format-with-poster-s-profile-picture-and-team-icon-to-the-left-of-the-video",
+      "featureTitle": "Display team footage videos in Twitter-style card format with poster's profile picture and team icon to the left of the video",
       "files": [
-        "frontend/index.html",
-        "frontend/src/index.css"
+        "frontend/src/components/teams/TeamFootageGallery.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -126,6 +59,47 @@
       ],
       "testIds": [
         "REQ-6"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-delete-button-to-video-cards-that-allows-the-video-uploader-or-team-leader-to-remove-videos",
+      "featureTitle": "Add delete button to video cards that allows the video uploader or team leader to remove videos",
+      "files": [
+        "frontend/src/components/teams/TeamFootageGallery.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-7"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-appheader-navigation-to-include-a-link-to-the-user-s-profile-page",
+      "featureTitle": "Update AppHeader navigation to include a link to the user's profile page",
+      "files": [
+        "frontend/src/components/layout/AppHeader.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-8"
       ],
       "confidence": "high"
     }

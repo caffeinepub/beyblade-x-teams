@@ -25,7 +25,11 @@ export default function ProfileSetupModal({ open }: ProfileSetupModalProps) {
     if (!name.trim()) return;
 
     try {
-      await saveProfileMutation.mutateAsync({ name: name.trim() });
+      await saveProfileMutation.mutateAsync({ 
+        name: name.trim(),
+        aboutMe: '',
+        profilePicture: undefined,
+      });
     } catch (error) {
       console.error('Failed to save profile:', error);
     }
@@ -37,7 +41,7 @@ export default function ProfileSetupModal({ open }: ProfileSetupModalProps) {
         <DialogHeader>
           <DialogTitle className="text-lg sm:text-xl">Welcome to Bey Hub X!</DialogTitle>
           <DialogDescription className="text-sm">
-            Please enter your name to get started.
+            Please enter your name to get started. You can add more details to your profile later.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">

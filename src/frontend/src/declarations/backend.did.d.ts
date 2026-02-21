@@ -45,7 +45,11 @@ export interface TeamDTO {
   'leader' : Principal,
   'videos' : Array<ExternalBlob>,
 }
-export interface UserProfile { 'name' : string }
+export interface UserProfile {
+  'aboutMe' : string,
+  'name' : string,
+  'profilePicture' : [] | [ExternalBlob],
+}
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
@@ -81,6 +85,7 @@ export interface _SERVICE {
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'createTeam' : ActorMethod<[string, Array<Principal>], bigint>,
   'deleteMailItem' : ActorMethod<[bigint], undefined>,
+  'deleteTeamFootage' : ActorMethod<[bigint, string], undefined>,
   'denyJoinRequests' : ActorMethod<[bigint, Array<Principal>], undefined>,
   'disbandTeam' : ActorMethod<[bigint], undefined>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
@@ -91,12 +96,14 @@ export interface _SERVICE {
   'getTeamMembershipStatus' : ActorMethod<[], [] | [bigint]>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'leaveTeam' : ActorMethod<[], undefined>,
   'listTeams' : ActorMethod<[], Array<TeamDTO>>,
   'markMailItemAsRead' : ActorMethod<[bigint], undefined>,
+  'removeMemberFromTeam' : ActorMethod<[bigint, Principal], undefined>,
   'requestJoinTeam' : ActorMethod<[bigint], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'uploadFile' : ActorMethod<[bigint, string, Uint8Array], undefined>,
-  'uploadTeamFootage' : ActorMethod<[bigint, ExternalBlob], undefined>,
+  'uploadTeamFootage' : ActorMethod<[bigint, string, ExternalBlob], undefined>,
   'uploadTeamIcon' : ActorMethod<
     [bigint, string, string, Uint8Array],
     undefined

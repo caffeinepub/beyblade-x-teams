@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { useUploadTeamFootage } from '../../hooks/useQueries';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Progress } from '@/components/ui/progress';
-import { Upload, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, AlertCircle, Loader2 } from 'lucide-react';
+import { useUploadTeamFootage } from '../../hooks/useQueries';
 import { ExternalBlob } from '../../backend';
 
 interface TeamFootageUploaderProps {
@@ -13,125 +12,104 @@ interface TeamFootageUploaderProps {
 }
 
 export default function TeamFootageUploader({ teamId }: TeamFootageUploaderProps) {
-  const uploadMutation = useUploadTeamFootage();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadStatus, setUploadStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const uploadMutation = useUploadTeamFootage();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('video/')) {
-        setUploadStatus('error');
-        return;
-      }
-      setSelectedFile(file);
-      setUploadStatus('idle');
-      setUploadProgress(0);
-    }
-  };
+    if (!file) return;
 
-  const handleUpload = async () => {
-    if (!selectedFile) return;
-
-    setIsUploading(true);
-    setUploadStatus('idle');
+    setError(null);
     setUploadProgress(0);
 
+    // Validate file type
+    if (!file.type.startsWith('video/')) {
+      setError('Please select a video file');
+      return;
+    }
+
+    // Validate file size (max 100MB for videos)
+    const maxSize = 100 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setError('Video must be smaller than 100MB');
+      return;
+    }
+
     try {
-      const arrayBuffer = await selectedFile.arrayBuffer();
+      const arrayBuffer = await file.arrayBuffer();
       const bytes = new Uint8Array(arrayBuffer);
       
-      const blob = ExternalBlob.fromBytes(bytes).withUploadProgress((percentage) => {
+      // Create ExternalBlob with progress tracking
+      const videoBlob = ExternalBlob.fromBytes(bytes).withUploadProgress((percentage) => {
         setUploadProgress(percentage);
       });
 
+      // Generate a unique video ID
+      const videoId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
       await uploadMutation.mutateAsync({
         teamId,
-        video: blob,
+        videoId,
+        video: videoBlob,
       });
 
-      setUploadStatus('success');
-      setSelectedFile(null);
+      // Reset form
+      e.target.value = '';
       setUploadProgress(0);
-      
-      // Reset file input
-      const fileInput = document.getElementById('footage-upload') as HTMLInputElement;
-      if (fileInput) fileInput.value = '';
-    } catch (error) {
-      console.error('Upload failed:', error);
-      setUploadStatus('error');
-    } finally {
-      setIsUploading(false);
+    } catch (err: any) {
+      setError(err.message || 'Failed to upload video');
+      console.error(err);
+      setUploadProgress(0);
     }
   };
 
   return (
     <div className="space-y-3 sm:space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="footage-upload" className="text-sm sm:text-base">Upload Team Footage</Label>
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-          <Input
-            id="footage-upload"
-            type="file"
-            accept="video/*"
-            onChange={handleFileChange}
-            disabled={isUploading}
-            className="flex-1 min-h-11 text-sm"
-          />
-          <Button
-            onClick={handleUpload}
-            disabled={!selectedFile || isUploading}
-            className="gap-2 min-h-11 w-full sm:w-auto px-6"
-          >
-            {isUploading ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Uploading...
-              </>
-            ) : (
-              <>
-                <Upload className="h-4 w-4" />
-                Upload
-              </>
-            )}
-          </Button>
-        </div>
+      <Label htmlFor="footage-upload" className="text-sm sm:text-base">Upload Team Footage</Label>
+      
+      <div className="flex flex-col gap-3">
+        <Input
+          id="footage-upload"
+          type="file"
+          accept="video/*"
+          onChange={handleFileChange}
+          disabled={uploadMutation.isPending}
+          className="min-h-11 text-sm"
+        />
+        
+        {uploadProgress > 0 && uploadProgress < 100 && (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs sm:text-sm">
+              <span className="text-muted-foreground">Uploading...</span>
+              <span className="font-medium">{uploadProgress}%</span>
+            </div>
+            <div className="h-2 bg-muted rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-primary transition-all duration-300"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {uploadMutation.isPending && uploadProgress === 100 && (
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span>Processing video...</span>
+          </div>
+        )}
+
+        <p className="text-xs text-muted-foreground">
+          Supported formats: MP4, WebM, MOV. Max 100MB.
+        </p>
       </div>
 
-      {selectedFile && !isUploading && uploadStatus === 'idle' && (
-        <Alert>
-          <AlertDescription className="text-xs sm:text-sm">
-            Ready to upload: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {isUploading && (
-        <div className="space-y-2">
-          <Progress value={uploadProgress} className="h-2" />
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Uploading... {uploadProgress}%
-          </p>
-        </div>
-      )}
-
-      {uploadStatus === 'success' && (
-        <Alert className="border-green-500/50 bg-green-500/10">
-          <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-900 dark:text-green-100 text-xs sm:text-sm">
-            Video uploaded successfully!
-          </AlertDescription>
-        </Alert>
-      )}
-
-      {uploadStatus === 'error' && (
+      {error && (
         <Alert className="border-destructive/50 bg-destructive/10">
           <AlertCircle className="h-4 w-4 text-destructive" />
           <AlertDescription className="text-destructive text-xs sm:text-sm">
-            Upload failed. Please ensure you selected a valid video file and try again.
+            {error}
           </AlertDescription>
         </Alert>
       )}

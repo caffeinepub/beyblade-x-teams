@@ -7,13 +7,14 @@ import Array "mo:core/Array";
 import Iter "mo:core/Iter";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
+import Migration "migration";
 import MixinStorage "blob-storage/Mixin";
 import Storage "blob-storage/Storage";
-
-
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
+// [MIGRATION] Use migration module
+(with migration = Migration.run)
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
@@ -23,6 +24,8 @@ actor {
   // User Profile Management
   public type UserProfile = {
     name : Text;
+    profilePicture : ?Storage.ExternalBlob;
+    aboutMe : Text;
   };
 
   let userProfiles = Map.empty<Principal, UserProfile>();
@@ -48,7 +51,6 @@ actor {
     userProfiles.add(caller, profile);
   };
 
-  // Team Icon Management
   public type Image = {
     filename : Text;
     contentType : Text;
@@ -60,6 +62,13 @@ actor {
     content : [Nat8];
   };
 
+  // Enhanced video type to track uploader for authorization
+  public type TeamVideo = {
+    videoId : Text;
+    video : Storage.ExternalBlob;
+    uploader : Principal;
+  };
+
   public type Team = {
     id : Nat;
     leader : Principal;
@@ -68,7 +77,7 @@ actor {
     joinRequests : List.List<Principal>;
     files : List.List<PDFDocument>;
     icon : ?Image;
-    videos : List.List<Storage.ExternalBlob>;
+    videos : List.List<TeamVideo>;
   };
 
   public type TeamDTO = {
@@ -124,7 +133,7 @@ actor {
       joinRequests = team.joinRequests.toArray();
       files = team.files.toArray();
       icon = team.icon;
-      videos = team.videos.toArray();
+      videos = team.videos.toArray().map(func(tv : TeamVideo) : Storage.ExternalBlob { tv.video });
     };
   };
 
@@ -148,8 +157,7 @@ actor {
       Runtime.trap("Unauthorized: Only users can create teams");
     };
     if (initialMembers.size() > maxTeamSize) { Runtime.trap("Team must have at most " # maxTeamSize.toText() # " members") };
-    
-    // AUTHORIZATION FIX: Check if caller is already in a team before creating
+
     checkTeamMemberExists(caller);
 
     // Check if any member is already in a team. If so, abort.
@@ -169,12 +177,11 @@ actor {
       joinRequests = List.empty<Principal>();
       files = List.empty<PDFDocument>();
       icon = null;
-      videos = List.empty<Storage.ExternalBlob>();
+      videos = List.empty<TeamVideo>();
     };
     teams.add(teamId, newTeam);
     nextTeamId += 1;
 
-    // AUTHORIZATION FIX: Add leader to team members tracking
     teamMembers.add(caller, teamId);
 
     // Add all new members to the set of team members
@@ -197,10 +204,9 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can request to join teams");
     };
-    
-    // AUTHORIZATION FIX: Check if caller is already in a team before requesting to join
+
     checkTeamMemberExists(caller);
-    
+
     let team = checkTeamExists(teamId);
 
     if (team.members.contains(caller)) { Runtime.trap("User is already a member of this team") };
@@ -261,7 +267,6 @@ actor {
 
       if (not wasRequested) { Runtime.trap("User not found in pending join requests") };
 
-      // AUTHORIZATION FIX: Check if the user is already in any team before approving
       checkTeamMemberExists(approved);
 
       // Remove from join requests
@@ -336,6 +341,56 @@ actor {
     teamMembers.remove(team.leader);
 
     teams.remove(teamId);
+  };
+
+  public shared ({ caller }) func leaveTeam() : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can leave teams");
+    };
+    let teamId = switch (teamMembers.get(caller)) {
+      case (null) { Runtime.trap("User is not a member of any team") };
+      case (?id) { id };
+    };
+
+    // Explicit check if the user is actually in the team before updating
+    let team = checkTeamExists(teamId);
+    let updatedMembers = team.members.filter(
+      func(member) {
+        member != caller;
+      }
+    );
+
+    let updatedTeam = {
+      team with
+      members = updatedMembers;
+    };
+
+    teams.add(teamId, updatedTeam);
+
+    teamMembers.remove(caller);
+  };
+
+  public shared ({ caller }) func removeMemberFromTeam(teamId : Nat, member : Principal) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can manage teams");
+    };
+    let team = checkTeamExists(teamId);
+    if (caller != team.leader) { Runtime.trap("Only team leader can remove members") };
+
+    // Explicit check if the user is actually in the team before updating
+    let updatedMembers = team.members.filter(
+      func(m) {
+        m != member;
+      }
+    );
+    let updatedTeam = {
+      team with
+      members = updatedMembers;
+    };
+
+    teams.add(teamId, updatedTeam);
+
+    teamMembers.remove(member);
   };
 
   public query ({ caller }) func getTeamMembershipStatus() : async ?Nat {
@@ -435,18 +490,64 @@ actor {
     mailboxes.add(caller, filteredMailbox);
   };
 
-  public shared ({ caller }) func uploadTeamFootage(teamId : Nat, video : Storage.ExternalBlob) : async () {
+  public shared ({ caller }) func uploadTeamFootage(teamId : Nat, videoId : Text, video : Storage.ExternalBlob) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can upload team footage");
     };
     let team = checkTeamExists(teamId);
     if (not team.members.contains(caller)) { Runtime.trap("Only team members can upload footage") };
-    team.videos.add(video);
+
+    let teamVideo : TeamVideo = {
+      videoId;
+      video;
+      uploader = caller;
+    };
+    team.videos.add(teamVideo);
+  };
+
+  // AUTHORIZATION FIX: Restrict deletion to video uploader or team leader
+  public shared ({ caller }) func deleteTeamFootage(teamId : Nat, videoId : Text) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can delete team footage");
+    };
+
+    let team = checkTeamExists(teamId);
+    if (not team.members.contains(caller)) { Runtime.trap("Only team members can access footage") };
+
+    // Find the video and check authorization
+    var videoFound = false;
+    var isAuthorized = false;
+
+    for (teamVideo in team.videos.values()) {
+      if (teamVideo.videoId == videoId) {
+        videoFound := true;
+        // Authorization: caller must be either the uploader OR the team leader
+        if (teamVideo.uploader == caller or team.leader == caller) {
+          isAuthorized := true;
+        };
+      };
+    };
+
+    if (not videoFound) { Runtime.trap("Video not found") };
+    if (not isAuthorized) { Runtime.trap("Unauthorized: Only the video uploader or team leader can delete this footage") };
+
+    let filteredVideos = team.videos.filter(
+      func(teamVideo) {
+        teamVideo.videoId != videoId;
+      }
+    );
+
+    let updatedTeam = {
+      team with
+      videos = filteredVideos;
+    };
+
+    teams.add(teamId, updatedTeam);
   };
 
   public query ({ caller }) func getTeamFootage(teamId : Nat) : async [Storage.ExternalBlob] {
     let team = checkTeamExists(teamId);
-    team.videos.toArray();
+    team.videos.toArray().map(func(tv : TeamVideo) : Storage.ExternalBlob { tv.video });
   };
 };
 

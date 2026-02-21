@@ -53,7 +53,9 @@ export interface Image {
     bytes: Uint8Array;
 }
 export interface UserProfile {
+    aboutMe: string;
     name: string;
+    profilePicture?: ExternalBlob;
 }
 export enum MailType {
     notification = "notification",
@@ -69,6 +71,7 @@ export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createTeam(name: string, initialMembers: Array<Principal>): Promise<bigint>;
     deleteMailItem(mailId: bigint): Promise<void>;
+    deleteTeamFootage(teamId: bigint, videoId: string): Promise<void>;
     denyJoinRequests(teamId: bigint, denials: Array<Principal>): Promise<void>;
     disbandTeam(teamId: bigint): Promise<void>;
     getCallerUserProfile(): Promise<UserProfile | null>;
@@ -79,11 +82,13 @@ export interface backendInterface {
     getTeamMembershipStatus(): Promise<bigint | null>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    leaveTeam(): Promise<void>;
     listTeams(): Promise<Array<TeamDTO>>;
     markMailItemAsRead(mailId: bigint): Promise<void>;
+    removeMemberFromTeam(teamId: bigint, member: Principal): Promise<void>;
     requestJoinTeam(teamId: bigint): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     uploadFile(teamId: bigint, filename: string, content: Uint8Array): Promise<void>;
-    uploadTeamFootage(teamId: bigint, video: ExternalBlob): Promise<void>;
+    uploadTeamFootage(teamId: bigint, videoId: string, video: ExternalBlob): Promise<void>;
     uploadTeamIcon(teamId: bigint, filename: string, contentType: string, bytes: Uint8Array): Promise<void>;
 }

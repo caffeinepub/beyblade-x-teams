@@ -1,6 +1,6 @@
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
 import LoginButton from '../auth/LoginButton';
-import { Users, Home, PlusCircle, Shield, Mail, Menu, X } from 'lucide-react';
+import { Users, Home, PlusCircle, Shield, Mail, Menu, X, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useGetInbox } from '../../hooks/useQueries';
@@ -78,6 +78,13 @@ export default function AppHeader() {
                       </Badge>
                     )}
                   </button>
+                  <button
+                    onClick={() => navigate('/profile')}
+                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors min-h-11 px-2"
+                  >
+                    <User className="h-4 w-4" />
+                    Profile
+                  </button>
                 </>
               )}
             </nav>
@@ -144,6 +151,13 @@ export default function AppHeader() {
                       {unreadCount}
                     </Badge>
                   )}
+                </button>
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-lg transition-colors min-h-11"
+                >
+                  <User className="h-5 w-5" />
+                  Profile
                 </button>
               </>
             )}

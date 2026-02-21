@@ -1,56 +1,51 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
-  "architectural_notes": [],
+  "summary": "Social video sharing app with team features, profile management, and Twitter-style video posts",
+  "architectural_notes": [
+    "Video posts displayed in social feed format with user avatars and team branding",
+    "User profile system with customizable profile pictures and about pages"
+  ],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-implement-responsive-layout-for-the-home-page-hero-section-and-feature-cards-to-adapt-to-mobile-screen-sizes-320px-768px",
-      "title": "Implement responsive layout for the home page hero section and feature cards to adapt to mobile screen sizes (320px-768px)",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-make-the-application-header-appheader-responsive-with-collapsible-navigation-for-mobile-devices",
-      "title": "Make the application header (AppHeader) responsive with collapsible navigation for mobile devices",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-optimize-team-list-and-team-detail-pages-for-mobile-viewing-with-responsive-grids-and-touch-optimized-controls",
-      "title": "Optimize team list and team detail pages for mobile viewing with responsive grids and touch-optimized controls",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-make-forms-and-modals-profile-setup-team-creation-file-uploaders-mobile-friendly-with-proper-touch-interactions",
-      "title": "Make forms and modals (profile setup, team creation, file uploaders) mobile-friendly with proper touch interactions",
+      "id": "feature-create-a-profile-page-displaying-user-information-including-profile-picture-username-and-about-me-bio",
+      "title": "Create a profile page displaying user information including profile picture, username, and about me bio",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-ensure-inbox-and-dashboard-pages-are-fully-responsive-with-readable-mail-content-and-accessible-action-buttons-on-mobile",
-      "title": "Ensure inbox and dashboard pages are fully responsive with readable mail content and accessible action buttons on mobile",
+      "id": "feature-add-profile-picture-upload-component-that-allows-users-to-select-and-upload-images-for-their-profile-similar-to-teamiconuploader",
+      "title": "Add profile picture upload component that allows users to select and upload images for their profile, similar to TeamIconUploader",
       "reqIds": [
         "REQ-5"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-viewport-meta-tag-and-ensure-proper-touch-event-handling-across-all-interactive-elements",
-      "title": "Add viewport meta tag and ensure proper touch event handling across all interactive elements",
+      "id": "feature-display-team-footage-videos-in-twitter-style-card-format-with-poster-s-profile-picture-and-team-icon-to-the-left-of-the-video",
+      "title": "Display team footage videos in Twitter-style card format with poster's profile picture and team icon to the left of the video",
       "reqIds": [
         "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-delete-button-to-video-cards-that-allows-the-video-uploader-or-team-leader-to-remove-videos",
+      "title": "Add delete button to video cards that allows the video uploader or team leader to remove videos",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-appheader-navigation-to-include-a-link-to-the-user-s-profile-page",
+      "title": "Update AppHeader navigation to include a link to the user's profile page",
+      "reqIds": [
+        "REQ-8"
       ],
       "version": 1
     }
@@ -58,12 +53,54 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Make app mobile-accessible",
+      "summary": "Add profile pictures for users",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Create an about me page for user profiles",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Add ability to delete videos",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Display videos in Twitter-style format with poster's pfp and team icon",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Add a profile picture field to user profiles that stores image data as a Blob",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Add an 'about me' text field to user profiles for bio/description content",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Implement backend method to delete team footage videos by video ID, restricted to the video uploader or team leader",
+      "reqIds": [
+        "REQ-3"
+      ],
       "status": "pending"
     }
   ],
-  "projectName": "Add mobile-responsive design",
+  "projectName": "Add user profile pictures, about me page, video deletion, and Twitter-style video display",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

@@ -24,7 +24,12 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const UserProfile = IDL.Record({ 'name' : IDL.Text });
+export const ExternalBlob = IDL.Vec(IDL.Nat8);
+export const UserProfile = IDL.Record({
+  'aboutMe' : IDL.Text,
+  'name' : IDL.Text,
+  'profilePicture' : IDL.Opt(ExternalBlob),
+});
 export const MailContent = IDL.Variant({
   'notification' : IDL.Text,
   'joinRequest' : IDL.Record({
@@ -54,7 +59,6 @@ export const Image = IDL.Record({
   'filename' : IDL.Text,
   'bytes' : IDL.Vec(IDL.Nat8),
 });
-export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const TeamDTO = IDL.Record({
   'id' : IDL.Nat,
   'files' : IDL.Vec(PDFDocument),
@@ -98,6 +102,7 @@ export const idlService = IDL.Service({
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'createTeam' : IDL.Func([IDL.Text, IDL.Vec(IDL.Principal)], [IDL.Nat], []),
   'deleteMailItem' : IDL.Func([IDL.Nat], [], []),
+  'deleteTeamFootage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'denyJoinRequests' : IDL.Func([IDL.Nat, IDL.Vec(IDL.Principal)], [], []),
   'disbandTeam' : IDL.Func([IDL.Nat], [], []),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
@@ -112,12 +117,14 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'leaveTeam' : IDL.Func([], [], []),
   'listTeams' : IDL.Func([], [IDL.Vec(TeamDTO)], ['query']),
   'markMailItemAsRead' : IDL.Func([IDL.Nat], [], []),
+  'removeMemberFromTeam' : IDL.Func([IDL.Nat, IDL.Principal], [], []),
   'requestJoinTeam' : IDL.Func([IDL.Nat], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'uploadFile' : IDL.Func([IDL.Nat, IDL.Text, IDL.Vec(IDL.Nat8)], [], []),
-  'uploadTeamFootage' : IDL.Func([IDL.Nat, ExternalBlob], [], []),
+  'uploadTeamFootage' : IDL.Func([IDL.Nat, IDL.Text, ExternalBlob], [], []),
   'uploadTeamIcon' : IDL.Func(
       [IDL.Nat, IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
       [],
@@ -144,7 +151,12 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const UserProfile = IDL.Record({ 'name' : IDL.Text });
+  const ExternalBlob = IDL.Vec(IDL.Nat8);
+  const UserProfile = IDL.Record({
+    'aboutMe' : IDL.Text,
+    'name' : IDL.Text,
+    'profilePicture' : IDL.Opt(ExternalBlob),
+  });
   const MailContent = IDL.Variant({
     'notification' : IDL.Text,
     'joinRequest' : IDL.Record({
@@ -174,7 +186,6 @@ export const idlFactory = ({ IDL }) => {
     'filename' : IDL.Text,
     'bytes' : IDL.Vec(IDL.Nat8),
   });
-  const ExternalBlob = IDL.Vec(IDL.Nat8);
   const TeamDTO = IDL.Record({
     'id' : IDL.Nat,
     'files' : IDL.Vec(PDFDocument),
@@ -218,6 +229,7 @@ export const idlFactory = ({ IDL }) => {
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'createTeam' : IDL.Func([IDL.Text, IDL.Vec(IDL.Principal)], [IDL.Nat], []),
     'deleteMailItem' : IDL.Func([IDL.Nat], [], []),
+    'deleteTeamFootage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'denyJoinRequests' : IDL.Func([IDL.Nat, IDL.Vec(IDL.Principal)], [], []),
     'disbandTeam' : IDL.Func([IDL.Nat], [], []),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
@@ -232,12 +244,14 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'leaveTeam' : IDL.Func([], [], []),
     'listTeams' : IDL.Func([], [IDL.Vec(TeamDTO)], ['query']),
     'markMailItemAsRead' : IDL.Func([IDL.Nat], [], []),
+    'removeMemberFromTeam' : IDL.Func([IDL.Nat, IDL.Principal], [], []),
     'requestJoinTeam' : IDL.Func([IDL.Nat], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'uploadFile' : IDL.Func([IDL.Nat, IDL.Text, IDL.Vec(IDL.Nat8)], [], []),
-    'uploadTeamFootage' : IDL.Func([IDL.Nat, ExternalBlob], [], []),
+    'uploadTeamFootage' : IDL.Func([IDL.Nat, IDL.Text, ExternalBlob], [], []),
     'uploadTeamIcon' : IDL.Func(
         [IDL.Nat, IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
         [],

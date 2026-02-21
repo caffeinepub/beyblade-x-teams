@@ -238,6 +238,58 @@ export function useDisbandTeam() {
   });
 }
 
+// Leave Team
+export function useLeaveTeam() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.leaveTeam();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      queryClient.invalidateQueries({ queryKey: ['teamMembershipStatus'] });
+      toast.success('You have left the team');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to leave team';
+      if (message.includes('not a member of any team')) {
+        toast.error('You are not a member of any team');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}
+
+// Remove Member from Team
+export function useRemoveMemberFromTeam() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ teamId, member }: { teamId: bigint; member: Principal }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.removeMemberFromTeam(teamId, member);
+    },
+    onSuccess: (_, { teamId }) => {
+      queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      toast.success('Member removed from team');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to remove member';
+      if (message.includes('Only team leader')) {
+        toast.error('Only the team leader can remove members');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}
+
 // Inbox / Mail
 export function useGetInbox() {
   const { actor, isFetching: actorFetching } = useActor();
@@ -309,9 +361,9 @@ export function useUploadTeamFootage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ teamId, video }: { teamId: bigint; video: ExternalBlob }) => {
+    mutationFn: async ({ teamId, videoId, video }: { teamId: bigint; videoId: string; video: ExternalBlob }) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.uploadTeamFootage(teamId, video);
+      return actor.uploadTeamFootage(teamId, videoId, video);
     },
     onSuccess: (_, { teamId }) => {
       queryClient.invalidateQueries({ queryKey: ['teamFootage', teamId.toString()] });
@@ -321,6 +373,30 @@ export function useUploadTeamFootage() {
       const message = error.message || 'Failed to upload team footage';
       if (message.includes('Only team members')) {
         toast.error('Only team members can upload footage');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}
+
+export function useDeleteTeamFootage() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ teamId, videoId }: { teamId: bigint; videoId: string }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.deleteTeamFootage(teamId, videoId);
+    },
+    onSuccess: (_, { teamId }) => {
+      queryClient.invalidateQueries({ queryKey: ['teamFootage', teamId.toString()] });
+      toast.success('Video deleted successfully');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to delete video';
+      if (message.includes('Unauthorized')) {
+        toast.error('Only the video uploader or team leader can delete this video');
       } else {
         toast.error(message);
       }

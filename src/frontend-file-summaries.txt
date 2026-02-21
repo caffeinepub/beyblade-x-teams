@@ -1,10 +1,10 @@
 {
-  "frontend/src/App.tsx": "Main application component with hash-based routing, authentication state management, profile setup modal with proper open prop, and page rendering logic for all routes including mobile-responsive layout.",
-  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations including new useSaveCallerUserProfile mutation hook for saving user profiles, with proper invalidation, error handling, and toast notifications for all CRUD operations.",
+  "frontend/src/App.tsx": "Main application component with hash-based routing including new profile route, authentication state management, profile setup modal, and page rendering logic for all routes including mobile-responsive layout.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations including team management, user profiles, inbox/mail, team footage with new delete video mutation, and file uploads with proper invalidation, error handling, and toast notifications.",
   "frontend/src/hooks/useCurrentUser.ts": "Custom hooks for fetching current user profile and role with proper actor dependency handling to prevent modal flash.",
   "frontend/src/components/auth/LoginButton.tsx": "Reusable login/logout button component with Internet Identity integration and query cache clearing on logout.",
-  "frontend/src/components/auth/ProfileSetupModal.tsx": "Modal dialog for first-time user profile setup with responsive sizing (max-w-xs on mobile, max-w-md on larger screens), touch-friendly input fields, and mobile-optimized button sizing.",
-  "frontend/src/components/layout/AppHeader.tsx": "Application header with hamburger menu for mobile navigation, collapsible menu drawer, responsive logo sizing, and touch-friendly navigation items with proper spacing and sizing across all breakpoints.",
+  "frontend/src/components/auth/ProfileSetupModal.tsx": "Modal dialog for first-time user profile setup with name input, responsive sizing, and initialization of aboutMe field as empty string for new UserProfile structure.",
+  "frontend/src/components/layout/AppHeader.tsx": "Application header with hamburger menu for mobile navigation, collapsible menu drawer, responsive logo sizing, profile navigation link, and touch-friendly navigation items with proper spacing across all breakpoints.",
   "frontend/src/components/layout/PageShell.tsx": "Reusable page container component with configurable max-width and optional title/description sections.",
   "frontend/src/components/files/PdfUploader.tsx": "Empty placeholder file as PDF upload functionality has been replaced with team footage uploads.",
   "frontend/src/components/files/PdfList.tsx": "Empty placeholder file as PDF list functionality has been replaced with team footage gallery.",
@@ -12,7 +12,7 @@
   "frontend/src/pages/HomePage.tsx": "Landing page with fully responsive hero section, feature cards that adapt from single column on mobile to multi-column on larger screens, and mobile-optimized spacing and typography throughout.",
   "frontend/src/pages/CreateTeamPage.tsx": "Team creation form with responsive layout, mobile-optimized input fields with min-height for touch interaction, full-width buttons on mobile that adapt to auto-width on larger screens, and proper form spacing.",
   "frontend/src/pages/TeamListPage.tsx": "Grid view of all teams with responsive columns (1 on mobile, 2-4 on larger screens), mobile-optimized card padding, and touch-friendly view details buttons.",
-  "frontend/src/pages/TeamDetailPage.tsx": "Detailed team view with responsive layout that stacks vertically on mobile, touch-optimized action buttons, mobile-friendly modals, and adaptive spacing throughout all sections including footage gallery.",
+  "frontend/src/pages/TeamDetailPage.tsx": "Detailed team view with responsive layout showing team info, members list with kick functionality for leaders, leave team option for non-leader members, team icon management, footage gallery with delete support, and mobile-optimized action buttons with proper team prop passed to JoinRequestButton.",
   "frontend/src/pages/LeaderDashboardPage.tsx": "Dashboard for team leaders with responsive card grid (1 column on mobile, 2-3 on larger screens), mobile-optimized padding and spacing, and touch-friendly navigation buttons throughout.",
   "frontend/src/index.css": "Global styles with OKLCH-based color system featuring purple/blue tournament theme, touch-action manipulation for buttons/links, smooth scrolling, and reduced motion support for accessibility.",
   "frontend/tailwind.config.js": "Tailwind configuration with extended color palette, Inter font family, and custom border radius for tournament-themed design.",
@@ -20,6 +20,8 @@
   "frontend/src/utils/imageDataUrl.ts": "Utility functions to convert image bytes and content type to data URLs (blob URL or base64) for rendering images in the UI with proper Uint8Array type conversion for blob creation.",
   "frontend/index.html": "HTML entry point with viewport meta tag configured for mobile responsiveness (max-scale=5.0, user-scalable=yes) and basic metadata for title, Open Graph, and Twitter Card tags.",
   "frontend/src/pages/InboxPage.tsx": "Inbox page with responsive layout that stacks mail list and detail view vertically on mobile and side-by-side on desktop, touch-friendly action buttons, and mobile-optimized text sizing and spacing.",
-  "frontend/src/components/teams/TeamFootageUploader.tsx": "Video uploader component with responsive layout that stacks controls vertically on mobile, touch-friendly buttons with min-height, and mobile-optimized progress indicators and status messages.",
-  "frontend/src/components/teams/TeamFootageGallery.tsx": "Footage gallery component with responsive grid (1 column on mobile, 2-3 on larger screens), mobile-optimized gap spacing, and properly scaled video elements with max-width for mobile viewports."
+  "frontend/src/components/teams/TeamFootageUploader.tsx": "Video uploader component with responsive layout, file validation (video types, max 100MB), progress tracking with visual indicator, and unique video ID generation for each upload.",
+  "frontend/src/components/teams/TeamFootageGallery.tsx": "Twitter-style footage gallery component with left column showing uploader avatar and team icon, right column with video player, and delete button for authorized users (team leader or uploader) with confirmation dialog.",
+  "frontend/src/pages/ProfilePage.tsx": "Profile page component displaying user's profile picture, name, about me bio, and principal ID with edit mode for updating profile information including profile picture upload with progress tracking.",
+  "frontend/src/components/profile/ProfilePictureUploader.tsx": "Profile picture uploader component that accepts image files (PNG, JPG, WebP), validates file size (max 2MB), shows circular avatar preview, and converts to ExternalBlob for upload."
 }

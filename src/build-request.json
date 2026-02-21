@@ -1,134 +1,169 @@
 {
   "kind": "build_request",
-  "title": "Add mobile-responsive design",
+  "title": "Add user profile pictures, about me page, video deletion, and Twitter-style video display",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Implement responsive layout for the home page hero section and feature cards to adapt to mobile screen sizes (320px-768px)",
-      "target": "frontend",
+      "text": "Add a profile picture field to user profiles that stores image data as a Blob",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-latest"
         ],
         "quotes": [
-          "can you make this mobile-accessible as well"
+          "Add the ability to have profile pictures"
         ]
       },
       "acceptanceCriteria": [
-        "Hero section stacks vertically on mobile devices",
-        "Feature cards reflow to single column on screens below 768px",
-        "Text remains readable without horizontal scrolling",
-        "Touch targets meet minimum 44x44px size"
+        "User profile type includes a profilePicture field that can store image bytes",
+        "Backend provides a method to upload/update user profile pictures",
+        "Backend provides a method to retrieve user profile pictures"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Make the application header (AppHeader) responsive with collapsible navigation for mobile devices",
-      "target": "frontend",
+      "text": "Add an 'about me' text field to user profiles for bio/description content",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-latest"
         ],
         "quotes": [
-          "can you make this mobile-accessible as well"
+          "an about me page"
         ]
       },
       "acceptanceCriteria": [
-        "Navigation menu collapses into a hamburger icon on mobile",
-        "All header actions remain accessible on small screens",
-        "Logo and branding scale appropriately",
-        "Login button and profile controls are touch-friendly"
+        "User profile type includes an aboutMe text field",
+        "Backend provides a method to update the about me content",
+        "About me field supports multi-line text"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Optimize team list and team detail pages for mobile viewing with responsive grids and touch-optimized controls",
-      "target": "frontend",
+      "text": "Implement backend method to delete team footage videos by video ID, restricted to the video uploader or team leader",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-latest"
         ],
         "quotes": [
-          "can you make this mobile-accessible as well"
+          "make it so that you can delete videos"
         ]
       },
       "acceptanceCriteria": [
-        "Team grid adapts to 1-2 columns on mobile",
-        "Team icons and cards scale appropriately for small screens",
-        "Join request button and team actions are touch-accessible",
-        "Video gallery displays properly on mobile with appropriate sizing"
+        "Delete video method requires authentication",
+        "Only the user who uploaded the video or the team leader can delete it",
+        "Deleted videos are removed from storage and no longer appear in the gallery"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Make forms and modals (profile setup, team creation, file uploaders) mobile-friendly with proper touch interactions",
+      "text": "Create a profile page displaying user information including profile picture, username, and about me bio",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-latest"
         ],
         "quotes": [
-          "can you make this mobile-accessible as well"
+          "an about me page"
         ]
       },
       "acceptanceCriteria": [
-        "Input fields are appropriately sized for mobile keyboards",
-        "Modals fit within mobile viewport without overflow",
-        "File upload controls work with mobile file pickers",
-        "Form buttons are touch-optimized and properly spaced"
+        "Profile page is accessible via a route (e.g., /profile or /profile/:userId)",
+        "Page displays the user's profile picture if available",
+        "Page displays the user's about me text",
+        "Current user can edit their own profile picture and about me content"
       ]
     },
     {
       "id": "REQ-5",
-      "text": "Ensure inbox and dashboard pages are fully responsive with readable mail content and accessible action buttons on mobile",
+      "text": "Add profile picture upload component that allows users to select and upload images for their profile, similar to TeamIconUploader",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-latest"
         ],
         "quotes": [
-          "can you make this mobile-accessible as well"
+          "Add the ability to have profile pictures"
         ]
       },
       "acceptanceCriteria": [
-        "Mail list and content adapt to mobile layout",
-        "Action buttons (approve/deny, read/delete) are touch-friendly",
-        "Dashboard cards stack vertically on small screens",
-        "All text content remains readable without zooming"
+        "Component accepts standard image formats (PNG, JPG, WebP)",
+        "Shows preview of selected image before upload",
+        "Validates file size (max 2MB)",
+        "Converts image to Uint8Array and uploads via backend"
       ]
     },
     {
       "id": "REQ-6",
-      "text": "Add viewport meta tag and ensure proper touch event handling across all interactive elements",
+      "text": "Display team footage videos in Twitter-style card format with poster's profile picture and team icon to the left of the video",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-latest"
         ],
         "quotes": [
-          "can you make this mobile-accessible as well"
+          "when a video IS posted, its like a tweet, where it has the posters pfp, and team icon to the left of it"
         ]
       },
       "acceptanceCriteria": [
-        "Viewport meta tag is configured in index.html",
-        "Touch events work smoothly without delays",
-        "Prevent accidental double-tap zoom on buttons",
-        "Scrolling is smooth on mobile devices"
+        "Video cards show the uploader's profile picture on the left side",
+        "Video cards show the team icon on the left side",
+        "Layout resembles Twitter's tweet card design with media on the right",
+        "Video cards display the uploader's username",
+        "Cards are styled consistently with the rest of the app's theme"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Add delete button to video cards that allows the video uploader or team leader to remove videos",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-latest"
+        ],
+        "quotes": [
+          "make it so that you can delete videos"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Delete button appears only for authorized users (uploader or team leader)",
+        "Clicking delete shows a confirmation dialog",
+        "Successful deletion removes the video from the display",
+        "Error messages are shown if deletion fails"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Update AppHeader navigation to include a link to the user's profile page",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-latest"
+        ],
+        "quotes": [
+          "an about me page"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Profile link appears in the navigation menu when user is authenticated",
+        "Link routes to the current user's profile page",
+        "Mobile menu includes the profile link"
       ]
     }
   ],
   "constraints": [
-    "Maintain existing desktop layout and functionality",
-    "Do not modify immutable paths: frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, frontend/src/components/ui",
-    "Use only Tailwind CSS responsive utilities for breakpoints",
-    "Preserve all existing component logic and backend integration"
+    "Maintain single-actor backend architecture with all logic in backend/main.mo",
+    "Do not modify immutable frontend paths: useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, main.tsx, components/ui",
+    "Follow existing pattern for image uploads using Uint8Array and ExternalBlob as seen in TeamIconUploader",
+    "Maintain consistency with existing authorization patterns for team leaders and members"
   ],
   "nonGoals": [
-    "Native mobile app development",
-    "Progressive Web App (PWA) features",
-    "Mobile-specific gestures beyond standard touch",
-    "Separate mobile-only routes or components"
+    "Public profile pages for other users (focus on own profile only)",
+    "Social features like following, liking, or commenting on videos",
+    "Video editing or processing capabilities",
+    "Profile picture cropping or advanced image editing"
   ],
   "imageRequirements": {
     "required": [],

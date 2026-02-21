@@ -1,29 +1,33 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-18T19:32:28.704Z",
-  "summary": "The diff implements all 6 mobile-responsive requirements comprehensively. The implementation includes responsive layouts, collapsible navigation, mobile-friendly forms/modals, touch-optimized controls, and proper viewport configuration. All requirements are addressed with Tailwind CSS responsive utilities as specified.",
-  "missing_requirements": [],
+  "generatedAt": "2026-02-21T01:43:56.011Z",
+  "summary": "The diff shows comprehensive implementation of user profiles, video deletion, and Twitter-style video display. Backend changes include UserProfile type with profilePicture and aboutMe fields, TeamVideo type tracking uploader, delete video method, and migration logic. Frontend adds ProfilePage, ProfilePictureUploader, profile navigation, and video gallery with delete buttons. However, the diff is truncated for several key files (ProfilePage, TeamFootageGallery, AppHeader, useQueries) making complete verification difficult. Based on visible evidence, most requirements appear implemented, though uploader profile pictures in video cards show placeholder instead of actual data.",
+  "missing_requirements": [
+    {
+      "id": "REQ-6",
+      "requirement": "Video cards show the uploader's profile picture on the left side",
+      "reason": "TeamFootageGallery.tsx shows placeholder Avatar with Video icon fallback instead of actual uploader profile picture data. No evidence of fetching or displaying real uploader profile pictures.",
+      "evidence": [
+        "frontend/src/components/teams/TeamFootageGallery.tsx"
+      ]
+    }
+  ],
   "hallucinated_features": [],
-  "confidence": 0.95,
+  "confidence": 0.75,
   "changed_files": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/index.html",
     "frontend/src/App.tsx",
     "frontend/src/components/auth/ProfileSetupModal.tsx",
     "frontend/src/components/layout/AppHeader.tsx",
-    "frontend/src/components/teams/JoinRequestButton.tsx",
+    "frontend/src/components/profile/ProfilePictureUploader.tsx",
     "frontend/src/components/teams/TeamFootageGallery.tsx",
     "frontend/src/components/teams/TeamFootageUploader.tsx",
-    "frontend/src/components/teams/TeamIconUploader.tsx",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/index.css",
-    "frontend/src/pages/CreateTeamPage.tsx",
-    "frontend/src/pages/HomePage.tsx",
-    "frontend/src/pages/InboxPage.tsx",
-    "frontend/src/pages/LeaderDashboardPage.tsx",
+    "frontend/src/pages/ProfilePage.tsx",
     "frontend/src/pages/TeamDetailPage.tsx",
-    "frontend/src/pages/TeamListPage.tsx",
     "project_state.json"
   ]
 }

@@ -1,152 +1,100 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add mobile-responsive design",
+  "title": "Add user profile pictures, about me page, video deletion, and Twitter-style video display",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Implement responsive layout for the home page hero section and feature cards to adapt to mobile screen sizes (320px-768px)",
-      "acceptanceCriteria": [
-        "Hero section stacks vertically on mobile devices",
-        "Feature cards reflow to single column on screens below 768px",
-        "Text remains readable without horizontal scrolling",
-        "Touch targets meet minimum 44x44px size"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/HomePage.tsx",
-          "operation": "modify",
-          "description": "Add Tailwind responsive utilities to hero section and feature cards. Use flexbox with flex-col on mobile (default) and flex-row on md: breakpoint for hero. Convert feature card grid to single column on mobile (grid-cols-1) and multi-column on larger screens (sm:grid-cols-2 lg:grid-cols-3). Ensure all interactive elements have min-h-11 min-w-11 (44px) for touch targets. Add responsive text sizing (text-2xl sm:text-4xl for headings). Reference the generated hero background image at frontend/public/assets/generated/beyblade-x-arena-hero-bg.dim_1600x900.png and ensure it scales properly with bg-cover and bg-center."
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Make the application header (AppHeader) responsive with collapsible navigation for mobile devices",
-      "acceptanceCriteria": [
-        "Navigation menu collapses into a hamburger icon on mobile",
-        "All header actions remain accessible on small screens",
-        "Logo and branding scale appropriately",
-        "Login button and profile controls are touch-friendly"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/layout/AppHeader.tsx",
-          "operation": "modify",
-          "description": "Add mobile hamburger menu using state toggle. Hide desktop navigation links on mobile with hidden md:flex. Create mobile menu drawer/dropdown that appears when hamburger is clicked. Use Tailwind responsive utilities for logo sizing (w-8 h-8 sm:w-10 sm:h-10). Ensure LoginButton and all navigation items have touch-friendly sizing (min-h-11 px-4). Add proper spacing between mobile menu items (space-y-4). Reference the logo at frontend/public/assets/generated/beyblade-x-teams-logo.dim_512x512.png and ensure it renders at appropriate sizes across breakpoints."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Optimize team list and team detail pages for mobile viewing with responsive grids and touch-optimized controls",
-      "acceptanceCriteria": [
-        "Team grid adapts to 1-2 columns on mobile",
-        "Team icons and cards scale appropriately for small screens",
-        "Join request button and team actions are touch-accessible",
-        "Video gallery displays properly on mobile with appropriate sizing"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/TeamListPage.tsx",
-          "operation": "modify",
-          "description": "Update team grid to use responsive columns: grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4. Ensure team cards have proper padding (p-4 sm:p-6) and team icons scale appropriately (w-16 h-16 sm:w-20 sm:h-20). Add responsive gap spacing (gap-4 sm:gap-6). Ensure all clickable card areas and navigation buttons meet 44x44px touch target minimum."
-        },
-        {
-          "path": "frontend/src/pages/TeamDetailPage.tsx",
-          "operation": "modify",
-          "description": "Make team detail layout stack vertically on mobile with flex-col md:flex-row for side-by-side sections on desktop. Ensure team icon, action buttons, and member lists use responsive sizing. Apply min-h-11 to all action buttons (join, disband, etc). Add responsive padding and margins (p-4 sm:p-6 md:p-8). Ensure the footage uploader and gallery sections adapt to mobile viewport."
-        },
-        {
-          "path": "frontend/src/components/teams/TeamFootageGallery.tsx",
-          "operation": "modify",
-          "description": "Update video gallery grid to use responsive columns: grid-cols-1 sm:grid-cols-2 lg:grid-cols-3. Ensure video elements have max-w-full and h-auto for proper scaling. Add responsive gap spacing (gap-3 sm:gap-4). Ensure video controls remain accessible on touch devices."
-        },
-        {
-          "path": "frontend/src/components/teams/JoinRequestButton.tsx",
-          "operation": "modify",
-          "description": "Ensure button has touch-friendly sizing with min-h-11 and adequate horizontal padding (px-6 sm:px-8). Use responsive text sizing (text-sm sm:text-base). Ensure disabled and loading states are clearly visible on mobile."
-        }
-      ]
-    },
-    {
       "id": "REQ-4",
-      "summary": "Make forms and modals (profile setup, team creation, file uploaders) mobile-friendly with proper touch interactions",
+      "summary": "Create a profile page displaying user information including profile picture, username, and about me bio",
       "acceptanceCriteria": [
-        "Input fields are appropriately sized for mobile keyboards",
-        "Modals fit within mobile viewport without overflow",
-        "File upload controls work with mobile file pickers",
-        "Form buttons are touch-optimized and properly spaced"
+        "Profile page is accessible via a route (e.g., /profile or /profile/:userId)",
+        "Page displays the user's profile picture if available",
+        "Page displays the user's about me text",
+        "Current user can edit their own profile picture and about me content"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/auth/ProfileSetupModal.tsx",
-          "operation": "modify",
-          "description": "Add responsive modal sizing with max-w-xs sm:max-w-md. Ensure modal content has proper mobile padding (p-4 sm:p-6). Make input fields have min-h-11 for touch usability. Add responsive text sizing (text-base sm:text-lg for labels). Ensure submit button has adequate touch target size and spacing (min-h-11 mt-4)."
+          "path": "frontend/src/pages/ProfilePage.tsx",
+          "operation": "create",
+          "description": "Create a profile page component that displays the current user's profile picture (using ExternalBlob.getDirectURL() if available), username from UserProfile.name, and about me bio from UserProfile.aboutMe. Include an edit mode that allows the user to update their about me text and upload a new profile picture using a ProfilePictureUploader component. Use the useCurrentUser hook to fetch profile data and useQueries hooks for saving profile updates. Wrap content in PageShell component for consistent layout."
         },
         {
-          "path": "frontend/src/pages/CreateTeamPage.tsx",
+          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Add responsive form layout with proper mobile padding (p-4 sm:p-6). Ensure all input fields have min-h-11 for touch interaction. Make form max-width responsive (max-w-xs sm:max-w-md lg:max-w-lg). Add responsive spacing between form elements (space-y-4 sm:space-y-6). Ensure submit button is touch-friendly (min-h-11 w-full sm:w-auto)."
-        },
-        {
-          "path": "frontend/src/components/teams/TeamIconUploader.tsx",
-          "operation": "modify",
-          "description": "Ensure file input trigger button has touch-friendly sizing (min-h-11 px-4). Add responsive preview image sizing. Ensure clear button is adequately sized for touch (min-h-10 min-w-10). Add proper spacing between upload controls (space-y-3 sm:space-y-4)."
-        },
-        {
-          "path": "frontend/src/components/teams/TeamFootageUploader.tsx",
-          "operation": "modify",
-          "description": "Ensure file input trigger and upload buttons have touch-friendly sizing (min-h-11). Add responsive layout for upload controls with proper spacing. Ensure progress indicators and status messages are clearly visible on mobile. Use responsive text sizing for file information and validation messages."
+          "description": "Add a new route for '/profile' that renders the ProfilePage component. Import ProfilePage and add it to the existing HashRouter route configuration alongside other pages like HomePage, TeamListPage, etc."
         }
       ]
     },
     {
       "id": "REQ-5",
-      "summary": "Ensure inbox and dashboard pages are fully responsive with readable mail content and accessible action buttons on mobile",
+      "summary": "Add profile picture upload component that allows users to select and upload images for their profile, similar to TeamIconUploader",
       "acceptanceCriteria": [
-        "Mail list and content adapt to mobile layout",
-        "Action buttons (approve/deny, read/delete) are touch-friendly",
-        "Dashboard cards stack vertically on small screens",
-        "All text content remains readable without zooming"
+        "Component accepts standard image formats (PNG, JPG, WebP)",
+        "Shows preview of selected image before upload",
+        "Validates file size (max 2MB)",
+        "Converts image to Uint8Array and uploads via backend"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/InboxPage.tsx",
-          "operation": "modify",
-          "description": "Convert inbox layout to stack vertically on mobile (flex-col md:flex-row for side-by-side on desktop). Make mail list take full width on mobile. Ensure all action buttons (mark read, delete, approve, deny) have min-h-11 and adequate spacing. Add responsive text sizing for mail content (text-sm sm:text-base). Ensure mail items are touch-friendly with proper padding (p-3 sm:p-4). Add responsive spacing between action buttons (space-x-2 sm:space-x-3)."
-        },
-        {
-          "path": "frontend/src/pages/LeaderDashboardPage.tsx",
-          "operation": "modify",
-          "description": "Make dashboard cards stack vertically on mobile with grid-cols-1 sm:grid-cols-2 lg:grid-cols-3. Ensure cards have proper mobile padding (p-4 sm:p-6). Add responsive gap spacing (gap-4 sm:gap-6). Ensure navigation buttons and action items have touch-friendly sizing (min-h-11). Use responsive text sizing for card content and headings."
+          "path": "frontend/src/components/profile/ProfilePictureUploader.tsx",
+          "operation": "create",
+          "description": "Create a profile picture uploader component following the same pattern as TeamIconUploader. Accept image files (PNG, JPG, WebP), validate file size (max 2MB), show preview of selected image, and provide a callback with the ExternalBlob created from the selected file bytes. Include file input, preview display with circular avatar styling, clear button, and validation error messages. Use ExternalBlob.fromBytes() to convert the selected image data."
         }
       ]
     },
     {
       "id": "REQ-6",
-      "summary": "Add viewport meta tag and ensure proper touch event handling across all interactive elements",
+      "summary": "Display team footage videos in Twitter-style card format with poster's profile picture and team icon to the left of the video",
       "acceptanceCriteria": [
-        "Viewport meta tag is configured in index.html",
-        "Touch events work smoothly without delays",
-        "Prevent accidental double-tap zoom on buttons",
-        "Scrolling is smooth on mobile devices"
+        "Video cards show the uploader's profile picture on the left side",
+        "Video cards show the team icon on the left side",
+        "Layout resembles Twitter's tweet card design with media on the right",
+        "Video cards display the uploader's username",
+        "Cards are styled consistently with the rest of the app's theme"
       ],
       "file_operations": [
         {
-          "path": "frontend/index.html",
+          "path": "frontend/src/components/teams/TeamFootageGallery.tsx",
           "operation": "modify",
-          "description": "Add viewport meta tag in head: <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes\">. This ensures proper mobile rendering while allowing accessibility zoom up to 5x."
+          "description": "Replace the current grid layout with a Twitter-style card layout. For each video, create a card with a left column containing the uploader's profile picture (circular avatar) and team icon stacked vertically, and a right column containing the video player and uploader's username above it. Fetch uploader profile information for each video (backend would need to track video uploader, but frontend should handle gracefully if unavailable). Use flex layout with gap spacing. Style cards with borders, padding, and hover effects consistent with the app theme."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Add delete button to video cards that allows the video uploader or team leader to remove videos",
+      "acceptanceCriteria": [
+        "Delete button appears only for authorized users (uploader or team leader)",
+        "Clicking delete shows a confirmation dialog",
+        "Successful deletion removes the video from the display",
+        "Error messages are shown if deletion fails"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add a new mutation hook useDeleteTeamFootage that calls actor.deleteTeamFootage(teamId, videoId). Include success toast notification, error handling with toast, and automatic refetch of team footage query on success. Follow the same pattern as other mutation hooks in the file."
         },
         {
-          "path": "frontend/src/index.css",
+          "path": "frontend/src/components/teams/TeamFootageGallery.tsx",
           "operation": "modify",
-          "description": "Add touch-action utilities and smooth scrolling to base layer. Add CSS rules: html { -webkit-tap-highlight-color: transparent; scroll-behavior: smooth; } and button, a { touch-action: manipulation; } to prevent double-tap zoom on interactive elements while maintaining smooth scrolling. Add @media (prefers-reduced-motion: reduce) to respect user motion preferences."
-        },
+          "description": "Add a delete button to each video card that appears only when the current user is the video uploader or team leader (compare using identity.getPrincipal().toString() similar to TeamDetailPage member checks). When clicked, show a confirmation dialog using window.confirm or a custom modal. On confirmation, call the useDeleteTeamFootage mutation with the video ID. Display loading state during deletion and show error/success feedback. Note: Backend needs to track video uploader principal and return it with video data for proper authorization checks."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Update AppHeader navigation to include a link to the user's profile page",
+      "acceptanceCriteria": [
+        "Profile link appears in the navigation menu when user is authenticated",
+        "Link routes to the current user's profile page",
+        "Mobile menu includes the profile link"
+      ],
+      "file_operations": [
         {
-          "path": "frontend/tailwind.config.js",
+          "path": "frontend/src/components/layout/AppHeader.tsx",
           "operation": "modify",
-          "description": "Verify responsive breakpoint configuration aligns with requirements (sm: 640px, md: 768px, lg: 1024px). Ensure touch-friendly spacing utilities are available. Add any custom mobile-specific utilities if needed for consistent touch target sizing across the app."
+          "description": "Add a 'Profile' navigation link that routes to '/profile' in both the desktop navigation menu (between existing links) and the mobile menu. Show the link only when the user is authenticated (when identity exists). Use the same styling pattern as existing navigation links with hover effects and active state indicators."
         }
       ]
     }

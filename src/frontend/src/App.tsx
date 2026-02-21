@@ -10,10 +10,11 @@ import TeamListPage from './pages/TeamListPage';
 import TeamDetailPage from './pages/TeamDetailPage';
 import LeaderDashboardPage from './pages/LeaderDashboardPage';
 import InboxPage from './pages/InboxPage';
+import ProfilePage from './pages/ProfilePage';
 import { Toaster } from '@/components/ui/sonner';
 import { ThemeProvider } from 'next-themes';
 
-type Route = 'home' | 'create-team' | 'teams' | 'team-detail' | 'leader-dashboard' | 'inbox';
+type Route = 'home' | 'create-team' | 'teams' | 'team-detail' | 'leader-dashboard' | 'inbox' | 'profile';
 
 function App() {
   const { identity } = useInternetIdentity();
@@ -46,6 +47,8 @@ function App() {
         setCurrentRoute('leader-dashboard');
       } else if (path === '/inbox') {
         setCurrentRoute('inbox');
+      } else if (path === '/profile') {
+        setCurrentRoute('profile');
       } else {
         setCurrentRoute('home');
       }
@@ -70,6 +73,8 @@ function App() {
         return <LeaderDashboardPage />;
       case 'inbox':
         return <InboxPage />;
+      case 'profile':
+        return <ProfilePage />;
       default:
         return <HomePage />;
     }
