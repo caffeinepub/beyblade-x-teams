@@ -28,7 +28,7 @@ export default function HomePage() {
               </div>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-foreground via-primary to-chart-1 bg-clip-text text-transparent">
-              The X
+              Bey Hub X
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
               Form your ultimate team of 1-3 bladers, share your team footage, and connect with the Beyblade X community!
@@ -88,7 +88,7 @@ export default function HomePage() {
             </div>
             <h3 className="text-lg sm:text-xl font-semibold">Connect & Compete</h3>
             <p className="text-sm sm:text-base text-muted-foreground">
-              Join The X community and showcase your team's skills and achievements.
+              Join Bey Hub X community and showcase your team's skills and achievements.
             </p>
           </CardContent>
         </Card>
@@ -111,7 +111,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="text-center py-6 sm:py-8 border-t border-border">
         <p className="text-xs sm:text-sm text-muted-foreground px-4">
-          © {new Date().getFullYear()} The X. Built with{' '}
+          © {new Date().getFullYear()} Bey Hub X. Built with{' '}
           <SiCaffeine className="inline h-3 w-3 sm:h-4 sm:w-4 text-primary" /> using{' '}
           <a
             href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}

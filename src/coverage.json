@@ -1,35 +1,55 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-22T22:16:22.057Z",
+  "generatedAt": "2026-02-22T22:29:57.810Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 3,
+    "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the website title in frontend/index.html from \"Beyblade X Teams\" to \"The X\"",
+        "summary": "Update the website title and all user-facing references from 'The X' to 'Bey Hub X' across all frontend files including index.html, AppHeader.tsx, HomePage.tsx, and any other components displaying the site name",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/index.html"
+          "frontend/index.html",
+          "frontend/src/components/layout/AppHeader.tsx",
+          "frontend/src/pages/HomePage.tsx"
         ],
         "matchedFiles": [
-          "frontend/index.html"
+          "frontend/index.html",
+          "frontend/src/components/layout/AppHeader.tsx",
+          "frontend/src/pages/HomePage.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Update all user-facing text references from \"Beyblade X Teams\" to \"The X\" throughout the application",
+        "summary": "Implement a customizable color scheme system with support for dark mode, light mode, and user preference persistence. Use the existing OKLCH-based color system in index.css as the foundation and add a theme switcher UI component that allows users to toggle between modes",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/HomePage.tsx"
+          "frontend/src/hooks/useTheme.ts",
+          "frontend/src/components/theme/ThemeToggle.tsx",
+          "frontend/src/components/layout/AppHeader.tsx",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/pages/HomePage.tsx"
+          "frontend/src/hooks/useTheme.ts",
+          "frontend/src/components/theme/ThemeToggle.tsx",
+          "frontend/src/components/layout/AppHeader.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Replace the current site logo with the uploaded Beyblade X image (featuring a blue and silver beyblade with lime green X background). Display this logo in the application header (AppHeader.tsx) and any other locations where branding appears",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/layout/AppHeader.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/layout/AppHeader.tsx"
         ]
       }
     ]
@@ -40,6 +60,11 @@
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
     "frontend/index.html",
+    "frontend/public/assets/generated/bey-hub-x-logo.dim_200x200.png",
+    "frontend/src/App.tsx",
+    "frontend/src/components/layout/AppHeader.tsx",
+    "frontend/src/components/theme/ThemeToggle.tsx",
+    "frontend/src/hooks/useTheme.ts",
     "frontend/src/pages/HomePage.tsx",
     "project_state.json",
     "scratch/component-selection.json",

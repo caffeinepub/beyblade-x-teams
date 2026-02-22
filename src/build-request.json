@@ -1,57 +1,84 @@
 {
   "kind": "build_request",
-  "title": "Change website name to \"The X\"",
-  "projectName": "The X",
+  "title": "Rebrand to Bey Hub X, add customizable color scheme with dark/light mode, and set new logo",
+  "projectName": "Bey Hub X",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the website title in frontend/index.html from \"Beyblade X Teams\" to \"The X\"",
+      "text": "Update the website title and all user-facing references from 'The X' to 'Bey Hub X' across all frontend files including index.html, AppHeader.tsx, HomePage.tsx, and any other components displaying the site name",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-latest"
         ],
         "quotes": [
-          "change the website name to \"The X\" instead of \"Beyblade X Teams\""
+          "change the name to \"Bey Hub X\""
         ]
       },
       "acceptanceCriteria": [
-        "The <title> tag in frontend/index.html displays \"The X\"",
-        "All Open Graph meta tags reference \"The X\" instead of \"Beyblade X Teams\"",
-        "The browser tab title shows \"The X\""
+        "The browser tab title displays 'Bey Hub X'",
+        "The header navigation shows 'Bey Hub X' as the site name",
+        "The homepage hero section references 'Bey Hub X'",
+        "All meta tags and SEO references use 'Bey Hub X'"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Update all user-facing text references from \"Beyblade X Teams\" to \"The X\" throughout the application",
+      "text": "Implement a customizable color scheme system with support for dark mode, light mode, and user preference persistence. Use the existing OKLCH-based color system in index.css as the foundation and add a theme switcher UI component that allows users to toggle between modes",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-latest"
         ],
         "quotes": [
-          "change the website name to \"The X\" instead of \"Beyblade X Teams\""
+          "make a customizable color scheme with a dark mode, light mode, etc"
         ]
       },
       "acceptanceCriteria": [
-        "The HomePage hero section and feature cards reference \"The X\" where appropriate",
-        "Any footer or about text uses \"The X\" as the website name",
-        "No instances of \"Beyblade X Teams\" remain in user-visible text"
+        "A theme switcher component is accessible in the UI (e.g., in the header or settings)",
+        "Users can select between at least dark mode and light mode",
+        "The selected theme persists across browser sessions using localStorage",
+        "All existing UI components (buttons, cards, inputs, etc.) respond correctly to theme changes",
+        "The theme applies immediately without requiring a page reload"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Replace the current site logo with the uploaded Beyblade X image (featuring a blue and silver beyblade with lime green X background). Display this logo in the application header (AppHeader.tsx) and any other locations where branding appears",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-latest"
+        ],
+        "quotes": [
+          "make the logo the image PNG pasted"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The new logo appears in the application header",
+        "The logo is responsive and scales appropriately on mobile devices",
+        "The logo maintains its aspect ratio and visual quality",
+        "The logo file is stored as a static asset in frontend/public/assets/generated/"
       ]
     }
   ],
   "constraints": [
-    "Do not modify authentication logic or backend functionality",
-    "Preserve all existing features and routing behavior"
+    "Do not modify Internet Identity authentication components",
+    "Do not modify files in frontend/src/components/ui as they are read-only",
+    "Maintain the existing OKLCH-based color system structure",
+    "Preserve all existing functionality while adding theme switching capabilities"
   ],
   "nonGoals": [
-    "Changing the domain name or deployment URL",
-    "Modifying the team management or battle request functionality",
-    "Altering the visual design or layout beyond text changes"
+    "Adding additional theme options beyond dark and light mode in this iteration",
+    "Customizing individual color values per user",
+    "Adding animation effects to theme transitions",
+    "Changing the backend data models or API"
   ],
   "imageRequirements": {
-    "required": [],
+    "required": [
+      "Beyblade X logo with blue and silver beyblade on lime green X background (bey-hub-x-logo.dim_200x200.png)"
+    ],
     "edits": []
   }
 }

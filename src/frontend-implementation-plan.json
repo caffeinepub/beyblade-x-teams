@@ -1,37 +1,82 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Change website name to \"The X\"",
+  "title": "Rebrand to Bey Hub X with theme system and new logo",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Update the website title in frontend/index.html from \"Beyblade X Teams\" to \"The X\"",
+      "summary": "Update all frontend references from 'The X' to 'Bey Hub X'",
       "acceptanceCriteria": [
-        "The <title> tag in frontend/index.html displays \"The X\"",
-        "All Open Graph meta tags reference \"The X\" instead of \"Beyblade X Teams\"",
-        "The browser tab title shows \"The X\""
+        "The browser tab title displays 'Bey Hub X'",
+        "The header navigation shows 'Bey Hub X' as the site name",
+        "The homepage hero section references 'Bey Hub X'",
+        "All meta tags and SEO references use 'Bey Hub X'"
       ],
       "file_operations": [
         {
           "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Update the <title> tag content from \"Beyblade X Teams\" to \"The X\". Update all Open Graph meta tags (og:title, og:site_name) to reference \"The X\" instead of \"Beyblade X Teams\". Update the meta description to reference \"The X\" as the application name."
+          "description": "Update the <title> tag to 'Bey Hub X' and update all meta tags (og:title, og:site_name, twitter:title, description) to reference 'Bey Hub X' instead of 'The X'. Update the meta description to describe the Bey Hub X platform."
+        },
+        {
+          "path": "frontend/src/components/layout/AppHeader.tsx",
+          "operation": "modify",
+          "description": "Replace the site name text 'The X' with 'Bey Hub X' in the header navigation. Update both the desktop and mobile menu site name displays to show 'Bey Hub X'."
+        },
+        {
+          "path": "frontend/src/pages/HomePage.tsx",
+          "operation": "modify",
+          "description": "Update the hero section heading and all text references from 'The X' to 'Bey Hub X'. Update the welcome message and feature descriptions to reference 'Bey Hub X' as the platform name."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Update all user-facing text references from \"Beyblade X Teams\" to \"The X\" throughout the application",
+      "summary": "Implement theme system with dark/light mode toggle and persistence",
       "acceptanceCriteria": [
-        "The HomePage hero section and feature cards reference \"The X\" where appropriate",
-        "Any footer or about text uses \"The X\" as the website name",
-        "No instances of \"Beyblade X Teams\" remain in user-visible text"
+        "A theme switcher component is accessible in the UI (e.g., in the header or settings)",
+        "Users can select between at least dark mode and light mode",
+        "The selected theme persists across browser sessions using localStorage",
+        "All existing UI components (buttons, cards, inputs, etc.) respond correctly to theme changes",
+        "The theme applies immediately without requiring a page reload"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/HomePage.tsx",
+          "path": "frontend/src/hooks/useTheme.ts",
+          "operation": "create",
+          "description": "Create a custom React hook that manages theme state (dark/light), reads from and writes to localStorage for persistence, and applies theme changes by toggling the 'dark' class on the document root element. Export useTheme hook with theme state and toggle function."
+        },
+        {
+          "path": "frontend/src/components/theme/ThemeToggle.tsx",
+          "operation": "create",
+          "description": "Create a theme toggle component that uses the useTheme hook to display the current theme and toggle between dark and light modes. Use shadcn/ui Button component with appropriate icons (sun/moon) to indicate the current theme. The component should be compact enough to fit in the header."
+        },
+        {
+          "path": "frontend/src/components/layout/AppHeader.tsx",
           "operation": "modify",
-          "description": "Update the hero section heading and description to replace \"Beyblade X Teams\" with \"The X\". Update the feature card descriptions to reference \"The X\" as the application name where \"Beyblade X Teams\" was previously mentioned."
+          "description": "Import and integrate the ThemeToggle component into the AppHeader. Place it in the navigation area alongside the login button and inbox icon, ensuring it works in both desktop and mobile layouts."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Verify and enhance the existing OKLCH-based color system to ensure all color variables work correctly in both light and dark modes. Ensure the .dark class properly overrides all necessary CSS variables for a complete dark theme. No new color system needed; use existing variables."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Replace site logo with new Beyblade X image",
+      "acceptanceCriteria": [
+        "The new logo appears in the application header",
+        "The logo is responsive and scales appropriately on mobile devices",
+        "The logo maintains its aspect ratio and visual quality",
+        "The logo file is stored as a static asset in frontend/public/assets/generated/"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/layout/AppHeader.tsx",
+          "operation": "modify",
+          "description": "Add an <img> element for the new logo using the workspace file path frontend/public/assets/generated/bey-hub-x-logo.dim_200x200.png. Position the logo next to or in place of the site name text 'Bey Hub X'. Ensure the logo is responsive with appropriate sizing (e.g., h-8 or h-10) and maintains aspect ratio. Include alt text 'Bey Hub X logo'."
         }
       ]
     }

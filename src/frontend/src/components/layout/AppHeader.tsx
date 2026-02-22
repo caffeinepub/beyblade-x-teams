@@ -1,5 +1,6 @@
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
 import LoginButton from '../auth/LoginButton';
+import ThemeToggle from '../theme/ThemeToggle';
 import { Users, Home, PlusCircle, Shield, Mail, Menu, X, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,8 +27,8 @@ export default function AppHeader() {
           <div className="flex items-center gap-4 sm:gap-8">
             <button onClick={() => navigate('/')} className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
               <img 
-                src="/assets/generated/beyblade-x-teams-logo.dim_512x512.png" 
-                alt="Bey Hub X" 
+                src="/assets/generated/bey-hub-x-logo.dim_200x200.png" 
+                alt="Bey Hub X logo" 
                 className="h-8 w-8 sm:h-10 sm:w-10"
               />
               <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-primary to-chart-1 bg-clip-text text-transparent">
@@ -91,6 +92,7 @@ export default function AppHeader() {
           </div>
 
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             <div className="hidden md:block">
               <LoginButton />
             </div>

@@ -2,10 +2,12 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-website-title-in-frontend-index-html-from-beyblade-x-teams-to-the-x",
-      "featureTitle": "Update the website title in frontend/index.html from \"Beyblade X Teams\" to \"The X\"",
+      "featureId": "feature-update-the-website-title-and-all-user-facing-references-from-the-x-to-bey-hub-x-across-all-frontend-files-including-index-html-appheader-tsx-homepage-tsx-and-any-other-components-displaying-the-site-name",
+      "featureTitle": "Update the website title and all user-facing references from 'The X' to 'Bey Hub X' across all frontend files including index.html, AppHeader.tsx, HomePage.tsx, and any other components displaying the site name",
       "files": [
-        "frontend/index.html"
+        "frontend/index.html",
+        "frontend/src/components/layout/AppHeader.tsx",
+        "frontend/src/pages/HomePage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -22,10 +24,12 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-all-user-facing-text-references-from-beyblade-x-teams-to-the-x-throughout-the-application",
-      "featureTitle": "Update all user-facing text references from \"Beyblade X Teams\" to \"The X\" throughout the application",
+      "featureId": "feature-implement-a-customizable-color-scheme-system-with-support-for-dark-mode-light-mode-and-user-preference-persistence-use-the-existing-oklch-based-color-system-in-index-css-as-the-foundation-and-add-a-theme-switcher-ui-component-that-allows-users-to-toggle-between-modes",
+      "featureTitle": "Implement a customizable color scheme system with support for dark mode, light mode, and user preference persistence. Use the existing OKLCH-based color system in index.css as the foundation and add a theme switcher UI component that allows users to toggle between modes",
       "files": [
-        "frontend/src/pages/HomePage.tsx"
+        "frontend/src/components/layout/AppHeader.tsx",
+        "frontend/src/components/theme/ThemeToggle.tsx",
+        "frontend/src/hooks/useTheme.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -38,6 +42,26 @@
       ],
       "testIds": [
         "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-replace-the-current-site-logo-with-the-uploaded-beyblade-x-image-featuring-a-blue-and-silver-beyblade-with-lime-green-x-background-display-this-logo-in-the-application-header-appheader-tsx-and-any-other-locations-where-branding-appears",
+      "featureTitle": "Replace the current site logo with the uploaded Beyblade X image (featuring a blue and silver beyblade with lime green X background). Display this logo in the application header (AppHeader.tsx) and any other locations where branding appears",
+      "files": [
+        "frontend/src/components/layout/AppHeader.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
       ],
       "confidence": "high"
     }
