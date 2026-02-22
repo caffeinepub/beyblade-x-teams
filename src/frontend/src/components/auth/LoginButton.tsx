@@ -1,7 +1,7 @@
+import { useCallback } from 'react';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { LogIn, LogOut } from 'lucide-react';
 
 export default function LoginButton() {
   const { login, clear, loginStatus, identity } = useInternetIdentity();
@@ -11,7 +11,7 @@ export default function LoginButton() {
   const disabled = loginStatus === 'logging-in';
   const text = loginStatus === 'logging-in' ? 'Logging in...' : isAuthenticated ? 'Logout' : 'Login';
 
-  const handleAuth = async () => {
+  const handleAuth = useCallback(async () => {
     if (isAuthenticated) {
       await clear();
       queryClient.clear();
@@ -26,16 +26,15 @@ export default function LoginButton() {
         }
       }
     }
-  };
+  }, [isAuthenticated, clear, queryClient, login]);
 
   return (
     <Button
       onClick={handleAuth}
       disabled={disabled}
       variant={isAuthenticated ? 'outline' : 'default'}
-      className="gap-2"
+      className="min-h-[44px]"
     >
-      {isAuthenticated ? <LogOut className="h-4 w-4" /> : <LogIn className="h-4 w-4" />}
       {text}
     </Button>
   );

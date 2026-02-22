@@ -1,12 +1,11 @@
+import { useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Swords, Check, X } from 'lucide-react';
-import { useListBattleRequestsForTeam, useRespondToBattleRequest } from '../../hooks/useQueries';
-import { useListTeams } from '../../hooks/useQueries';
+import { useListBattleRequestsForTeam, useRespondToBattleRequest, useListTeams } from '../../hooks/useQueries';
 import { format } from 'date-fns';
-import type { BattleRequest } from '../../backend';
 import { BattleRequestStatus } from '../../backend';
 
 interface BattleRequestListProps {
@@ -18,23 +17,26 @@ export default function BattleRequestList({ teamId }: BattleRequestListProps) {
   const { data: teams } = useListTeams();
   const respondMutation = useRespondToBattleRequest();
 
-  // Filter for incoming pending requests (where this team is the target)
-  const incomingRequests = battleRequests?.filter(
-    (req) => req.targetTeam.toString() === teamId && req.status === BattleRequestStatus.pending
-  ) || [];
+  const incomingRequests = useMemo(() => {
+    if (!battleRequests) return [];
+    return battleRequests.filter(
+      (req) => req.targetTeam.toString() === teamId && req.status === BattleRequestStatus.pending
+    );
+  }, [battleRequests, teamId]);
 
-  const getTeamName = (teamIdBigInt: bigint): string => {
-    const team = teams?.find((t) => t.id.toString() === teamIdBigInt.toString());
+  const getTeamName = useCallback((teamIdBigInt: bigint): string => {
+    if (!teams) return 'Unknown Team';
+    const team = teams.find((t) => t.id.toString() === teamIdBigInt.toString());
     return team?.name || 'Unknown Team';
-  };
+  }, [teams]);
 
-  const handleRespond = async (requestId: bigint, accept: boolean) => {
+  const handleRespond = useCallback(async (requestId: bigint, accept: boolean) => {
     try {
       await respondMutation.mutateAsync({ requestId, accept });
     } catch (error) {
       console.error('Failed to respond to battle request:', error);
     }
-  };
+  }, [respondMutation]);
 
   if (requestsLoading) {
     return (

@@ -1,56 +1,50 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useInternetIdentity } from './hooks/useInternetIdentity';
-import { useActor } from './hooks/useActor';
 import { useGetCallerUserProfile } from './hooks/useCurrentUser';
+import { Toaster } from '@/components/ui/sonner';
 import AppHeader from './components/layout/AppHeader';
-import ProfileSetupModal from './components/auth/ProfileSetupModal';
 import HomePage from './pages/HomePage';
 import CreateTeamPage from './pages/CreateTeamPage';
 import TeamListPage from './pages/TeamListPage';
 import TeamDetailPage from './pages/TeamDetailPage';
-import LeaderDashboardPage from './pages/LeaderDashboardPage';
-import InboxPage from './pages/InboxPage';
 import ProfilePage from './pages/ProfilePage';
-import { Toaster } from '@/components/ui/sonner';
-import { ThemeProvider } from 'next-themes';
+import InboxPage from './pages/InboxPage';
+import LeaderDashboardPage from './pages/LeaderDashboardPage';
+import ProfileSetupModal from './components/auth/ProfileSetupModal';
 
-type Route = 'home' | 'create-team' | 'teams' | 'team-detail' | 'leader-dashboard' | 'inbox' | 'profile';
+function getTeamIdFromHash(): string | null {
+  const hash = window.location.hash.slice(1);
+  if (hash.startsWith('/team/')) {
+    const teamId = hash.substring(6).split('?')[0];
+    return teamId || null;
+  }
+  return null;
+}
 
-function App() {
-  const { identity } = useInternetIdentity();
-  const { actor } = useActor();
-  const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
-  
-  const [currentRoute, setCurrentRoute] = useState<Route>('home');
+export default function App() {
+  const [currentRoute, setCurrentRoute] = useState<string>('/');
   const [teamId, setTeamId] = useState<string | null>(null);
+  const { identity, isInitializing } = useInternetIdentity();
+  const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
 
-  const isAuthenticated = !!identity;
-  const showProfileSetup = isAuthenticated && !profileLoading && isFetched && userProfile === null;
+  const isAuthenticated = useMemo(() => !!identity, [identity]);
 
-  // Simple hash-based routing
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1) || '/';
-      const [path, query] = hash.split('?');
+      const teamIdFromUrl = getTeamIdFromHash();
       
-      if (path === '/' || path === '') {
-        setCurrentRoute('home');
-      } else if (path === '/create-team') {
-        setCurrentRoute('create-team');
-      } else if (path === '/teams') {
-        setCurrentRoute('teams');
-      } else if (path.startsWith('/team/')) {
-        const id = path.split('/')[2];
-        setTeamId(id);
-        setCurrentRoute('team-detail');
-      } else if (path === '/leader-dashboard') {
-        setCurrentRoute('leader-dashboard');
-      } else if (path === '/inbox') {
-        setCurrentRoute('inbox');
-      } else if (path === '/profile') {
-        setCurrentRoute('profile');
+      if (hash.startsWith('/team/')) {
+        if (teamIdFromUrl && teamIdFromUrl !== 'undefined' && teamIdFromUrl !== 'null') {
+          setCurrentRoute('/team');
+          setTeamId(teamIdFromUrl);
+        } else {
+          console.warn('Invalid team ID in URL, redirecting to teams list');
+          window.location.hash = '/teams';
+        }
       } else {
-        setCurrentRoute('home');
+        setCurrentRoute(hash);
+        setTeamId(null);
       }
     };
 
@@ -59,39 +53,69 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const renderPage = () => {
-    switch (currentRoute) {
-      case 'home':
-        return <HomePage />;
-      case 'create-team':
-        return <CreateTeamPage />;
-      case 'teams':
-        return <TeamListPage />;
-      case 'team-detail':
-        return teamId ? <TeamDetailPage teamId={teamId} /> : <HomePage />;
-      case 'leader-dashboard':
-        return <LeaderDashboardPage />;
-      case 'inbox':
-        return <InboxPage />;
-      case 'profile':
-        return <ProfilePage />;
-      default:
-        return <HomePage />;
-    }
-  };
+  const showProfileSetup = isAuthenticated && !profileLoading && isFetched && userProfile === null;
+
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  let pageContent;
+  switch (currentRoute) {
+    case '/':
+      pageContent = <HomePage />;
+      break;
+    case '/create-team':
+      pageContent = <CreateTeamPage />;
+      break;
+    case '/teams':
+      pageContent = <TeamListPage />;
+      break;
+    case '/team':
+      pageContent = teamId ? <TeamDetailPage teamId={teamId} /> : <TeamListPage />;
+      break;
+    case '/profile':
+      pageContent = <ProfilePage />;
+      break;
+    case '/inbox':
+      pageContent = <InboxPage />;
+      break;
+    case '/leader-dashboard':
+      pageContent = <LeaderDashboardPage />;
+      break;
+    default:
+      pageContent = <HomePage />;
+  }
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      <div className="min-h-screen bg-background">
-        <AppHeader />
-        <main className="container mx-auto px-4 py-8">
-          {renderPage()}
-        </main>
-        {showProfileSetup && <ProfileSetupModal open={showProfileSetup} />}
-        <Toaster />
-      </div>
-    </ThemeProvider>
+    <div className="min-h-screen bg-background">
+      <AppHeader />
+      <main className="container mx-auto px-4 py-8">
+        {pageContent}
+      </main>
+      <footer className="border-t mt-16 py-8">
+        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+          <p>
+            © {new Date().getFullYear()} Beyblade X Teams. Built with ❤️ using{' '}
+            <a
+              href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              caffeine.ai
+            </a>
+          </p>
+        </div>
+      </footer>
+      {showProfileSetup && <ProfileSetupModal />}
+      <Toaster />
+    </div>
   );
 }
-
-export default App;

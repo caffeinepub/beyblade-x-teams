@@ -1,5 +1,5 @@
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { useGetInbox, useMarkMailAsRead, useDeleteMailItem, useApproveJoinRequests, useDenyJoinRequests } from '../hooks/useQueries';
+import { useGetInbox, useMarkMailAsRead, useDeleteMail, useApproveJoinRequests, useDenyJoinRequests } from '../hooks/useQueries';
 import PageShell from '../components/layout/PageShell';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,90 +14,68 @@ export default function InboxPage() {
   const { identity } = useInternetIdentity();
   const { data: inbox, isLoading } = useGetInbox();
   const markAsReadMutation = useMarkMailAsRead();
-  const deleteMailMutation = useDeleteMailItem();
+  const deleteMutation = useDeleteMail();
   const approveMutation = useApproveJoinRequests();
   const denyMutation = useDenyJoinRequests();
-
   const [selectedMail, setSelectedMail] = useState<MailType | null>(null);
-  const [processingMail, setProcessingMail] = useState<Set<number>>(new Set());
 
   const isAuthenticated = !!identity;
 
   const handleSelectMail = async (mail: MailType) => {
     setSelectedMail(mail);
     if (!mail.isRead) {
-      await markAsReadMutation.mutateAsync(mail.id);
+      try {
+        await markAsReadMutation.mutateAsync(mail.id);
+      } catch (error) {
+        console.error('Failed to mark mail as read:', error);
+      }
     }
   };
 
   const handleDelete = async (mailId: bigint) => {
-    const id = Number(mailId);
-    setProcessingMail(prev => new Set(prev).add(id));
     try {
-      await deleteMailMutation.mutateAsync(mailId);
+      await deleteMutation.mutateAsync(mailId);
       if (selectedMail?.id === mailId) {
         setSelectedMail(null);
       }
-    } finally {
-      setProcessingMail(prev => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
+    } catch (error) {
+      console.error('Failed to delete mail:', error);
     }
   };
 
-  const handleApproveJoinRequest = async (mail: MailType) => {
-    if (mail.content.__kind__ !== 'joinRequest') return;
-    
-    const id = Number(mail.id);
-    setProcessingMail(prev => new Set(prev).add(id));
-    
+  const handleApproveJoinRequest = async (teamId: bigint, requester: any) => {
     try {
       await approveMutation.mutateAsync({
-        teamId: mail.content.joinRequest.teamId,
-        approvals: [mail.content.joinRequest.requester],
+        teamId,
+        approvals: [requester],
       });
-      await deleteMailMutation.mutateAsync(mail.id);
-      setSelectedMail(null);
-    } finally {
-      setProcessingMail(prev => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
+      if (selectedMail) {
+        await handleDelete(selectedMail.id);
+      }
+    } catch (error) {
+      console.error('Failed to approve join request:', error);
     }
   };
 
-  const handleDenyJoinRequest = async (mail: MailType) => {
-    if (mail.content.__kind__ !== 'joinRequest') return;
-    
-    const id = Number(mail.id);
-    setProcessingMail(prev => new Set(prev).add(id));
-    
+  const handleDenyJoinRequest = async (teamId: bigint, requester: any) => {
     try {
       await denyMutation.mutateAsync({
-        teamId: mail.content.joinRequest.teamId,
-        denials: [mail.content.joinRequest.requester],
+        teamId,
+        denials: [requester],
       });
-      await deleteMailMutation.mutateAsync(mail.id);
-      setSelectedMail(null);
-    } finally {
-      setProcessingMail(prev => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
+      if (selectedMail) {
+        await handleDelete(selectedMail.id);
+      }
+    } catch (error) {
+      console.error('Failed to deny join request:', error);
     }
   };
 
   if (!isAuthenticated) {
     return (
-      <PageShell title="Inbox" maxWidth="2xl">
+      <PageShell title="Inbox">
         <Alert>
-          <AlertDescription>
-            Please sign in to view your inbox.
-          </AlertDescription>
+          <AlertDescription>Please log in to view your inbox.</AlertDescription>
         </Alert>
       </PageShell>
     );
@@ -105,184 +83,157 @@ export default function InboxPage() {
 
   if (isLoading) {
     return (
-      <PageShell title="Inbox" description="View and manage your messages" maxWidth="2xl">
-        <div className="flex flex-col md:grid md:grid-cols-3 gap-4 sm:gap-6">
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardContent className="p-4">
-                  <Skeleton className="h-16 w-full" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <div className="md:col-span-2">
-            <Card>
-              <CardContent className="p-6">
-                <Skeleton className="h-32 w-full" />
-              </CardContent>
-            </Card>
-          </div>
+      <PageShell title="Inbox">
+        <div className="space-y-4">
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
+          <Skeleton className="h-24 w-full" />
         </div>
       </PageShell>
     );
   }
 
-  if (!inbox || inbox.length === 0) {
-    return (
-      <PageShell title="Inbox" description="View and manage your messages" maxWidth="2xl">
-        <Card>
-          <CardContent className="py-12 text-center px-4">
-            <Mail className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-            <h3 className="text-lg sm:text-xl font-semibold mb-2">No Messages</h3>
-            <p className="text-sm sm:text-base text-muted-foreground">
-              Your inbox is empty. You'll receive messages here when someone requests to join your team.
-            </p>
-          </CardContent>
-        </Card>
-      </PageShell>
-    );
-  }
+  const unreadCount = inbox?.filter(m => !m.isRead).length || 0;
 
   return (
-    <PageShell title="Inbox" description="View and manage your messages" maxWidth="2xl">
-      <div className="flex flex-col md:grid md:grid-cols-3 gap-4 sm:gap-6">
+    <PageShell 
+      title="Inbox" 
+      description={unreadCount > 0 ? `${unreadCount} unread message${unreadCount !== 1 ? 's' : ''}` : 'No unread messages'}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
         {/* Mail List */}
-        <div className="space-y-3">
-          {inbox.map((mail) => {
-            const isSelected = selectedMail?.id === mail.id;
-            const isProcessing = processingMail.has(Number(mail.id));
-            
-            return (
-              <Card
-                key={mail.id.toString()}
-                className={`cursor-pointer transition-colors ${
-                  isSelected ? 'border-primary bg-primary/5' : 'hover:bg-muted/50'
-                } ${!mail.isRead ? 'border-l-4 border-l-primary' : ''}`}
-                onClick={() => handleSelectMail(mail)}
-              >
-                <CardContent className="p-3 sm:p-4">
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div className="flex items-center gap-2">
-                      {mail.isRead ? (
-                        <MailOpen className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                      ) : (
-                        <Mail className="h-4 w-4 text-primary flex-shrink-0" />
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <Mail className="h-4 w-4 sm:h-5 sm:w-5" />
+              Messages
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            {!inbox || inbox.length === 0 ? (
+              <div className="p-6 sm:p-8 text-center text-muted-foreground text-sm sm:text-base">
+                No messages yet
+              </div>
+            ) : (
+              <div className="divide-y">
+                {inbox.map((mail) => (
+                  <button
+                    key={mail.id.toString()}
+                    onClick={() => handleSelectMail(mail)}
+                    className={`w-full text-left p-3 sm:p-4 hover:bg-muted/50 transition-colors ${
+                      selectedMail?.id === mail.id ? 'bg-muted' : ''
+                    } ${!mail.isRead ? 'font-semibold' : ''}`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        {mail.isRead ? (
+                          <MailOpen className="h-4 w-4 text-muted-foreground shrink-0" />
+                        ) : (
+                          <Mail className="h-4 w-4 text-primary shrink-0" />
+                        )}
+                        <span className="text-xs sm:text-sm truncate">
+                          {mail.mailType === 'joinRequest' ? 'Join Request' : 'Notification'}
+                        </span>
+                      </div>
+                      {!mail.isRead && (
+                        <Badge variant="default" className="shrink-0 text-xs">New</Badge>
                       )}
-                      <span className="text-xs sm:text-sm font-medium">
-                        {mail.mailType === 'joinRequest' ? 'Join Request' : 'Notification'}
-                      </span>
                     </div>
-                    {!mail.isRead && (
-                      <Badge variant="default" className="text-xs">New</Badge>
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground truncate">
-                    {mail.content.__kind__ === 'joinRequest'
-                      ? `Team ID: ${mail.content.joinRequest.teamId.toString()}`
-                      : mail.content.notification}
-                  </p>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Mail Detail */}
-        <div className="md:col-span-2">
-          {selectedMail ? (
-            <Card>
-              <CardHeader className="p-4 sm:p-6">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1 min-w-0">
-                    <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-                      {selectedMail.mailType === 'joinRequest' ? (
-                        <>
-                          <Users className="h-5 w-5 flex-shrink-0" />
-                          <span className="truncate">Join Request</span>
-                        </>
-                      ) : (
-                        <>
-                          <Mail className="h-5 w-5 flex-shrink-0" />
-                          <span className="truncate">Notification</span>
-                        </>
-                      )}
-                    </CardTitle>
-                    <p className="text-xs sm:text-sm text-muted-foreground mt-1 truncate">
-                      From: {selectedMail.sender.toString().slice(0, 12)}...
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-base sm:text-lg">Message Details</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {!selectedMail ? (
+              <div className="py-12 text-center text-muted-foreground text-sm sm:text-base">
+                Select a message to view details
+              </div>
+            ) : (
+              <div className="space-y-4 sm:space-y-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-2 min-w-0 flex-1">
+                    <h3 className="text-base sm:text-lg font-semibold">
+                      {selectedMail.mailType === 'joinRequest' ? 'Team Join Request' : 'Notification'}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground break-all">
+                      From: {selectedMail.sender.toString()}
                     </p>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDelete(selectedMail.id)}
-                    disabled={processingMail.has(Number(selectedMail.id))}
-                    className="min-h-10 min-w-10 flex-shrink-0"
+                    disabled={deleteMutation.isPending}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10 shrink-0 min-h-[44px] min-w-[44px]"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-4 p-4 sm:p-6 pt-0">
-                {selectedMail.content.__kind__ === 'joinRequest' ? (
-                  <>
-                    <div className="p-3 sm:p-4 bg-muted/50 rounded-lg space-y-2">
-                      <p className="text-xs sm:text-sm break-words">
-                        <span className="font-medium">Team ID:</span>{' '}
-                        <button
-                          onClick={() => window.location.hash = `/team/${selectedMail.content.__kind__ === 'joinRequest' ? selectedMail.content.joinRequest.teamId.toString() : ''}`}
-                          className="text-primary hover:underline"
-                        >
-                          {selectedMail.content.joinRequest.teamId.toString()}
-                        </button>
-                      </p>
-                      <p className="text-xs sm:text-sm break-all">
-                        <span className="font-medium">Requester:</span>{' '}
-                        {selectedMail.content.joinRequest.requester.toString().slice(0, 16)}...
-                      </p>
-                      <p className="text-xs sm:text-sm break-words">
-                        <span className="font-medium">Message:</span>{' '}
-                        {selectedMail.content.joinRequest.message}
-                      </p>
+
+                {selectedMail.content.__kind__ === 'joinRequest' && (
+                  <div className="space-y-4 p-4 sm:p-6 bg-muted/50 rounded-lg">
+                    <div className="flex items-center gap-2 text-sm sm:text-base">
+                      <Users className="h-4 w-4 sm:h-5 sm:w-5" />
+                      <span className="font-medium">Join Request Details</span>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <div className="space-y-2 text-xs sm:text-sm">
+                      <p><strong>Team ID:</strong> {selectedMail.content.joinRequest.teamId.toString()}</p>
+                      <p><strong>Requester:</strong> <span className="break-all">{selectedMail.content.joinRequest.requester.toString()}</span></p>
+                      <p><strong>Message:</strong> {selectedMail.content.joinRequest.message}</p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-3 pt-4">
                       <Button
-                        onClick={() => handleApproveJoinRequest(selectedMail)}
-                        disabled={processingMail.has(Number(selectedMail.id))}
-                        className="gap-2 flex-1 min-h-11"
+                        onClick={() => {
+                          if (selectedMail.content.__kind__ === 'joinRequest') {
+                            handleApproveJoinRequest(
+                              selectedMail.content.joinRequest.teamId,
+                              selectedMail.content.joinRequest.requester
+                            );
+                          }
+                        }}
+                        disabled={approveMutation.isPending || denyMutation.isPending}
+                        className="flex-1 gap-2 min-h-[44px]"
                       >
                         <CheckCircle className="h-4 w-4" />
-                        {processingMail.has(Number(selectedMail.id)) ? 'Approving...' : 'Approve'}
+                        {approveMutation.isPending ? 'Approving...' : 'Approve'}
                       </Button>
                       <Button
                         variant="outline"
-                        onClick={() => handleDenyJoinRequest(selectedMail)}
-                        disabled={processingMail.has(Number(selectedMail.id))}
-                        className="gap-2 flex-1 min-h-11"
+                        onClick={() => {
+                          if (selectedMail.content.__kind__ === 'joinRequest') {
+                            handleDenyJoinRequest(
+                              selectedMail.content.joinRequest.teamId,
+                              selectedMail.content.joinRequest.requester
+                            );
+                          }
+                        }}
+                        disabled={approveMutation.isPending || denyMutation.isPending}
+                        className="flex-1 gap-2 min-h-[44px]"
                       >
                         <XCircle className="h-4 w-4" />
-                        {processingMail.has(Number(selectedMail.id)) ? 'Denying...' : 'Deny'}
+                        {denyMutation.isPending ? 'Denying...' : 'Deny'}
                       </Button>
                     </div>
-                  </>
-                ) : (
-                  <div className="p-3 sm:p-4 bg-muted/50 rounded-lg">
-                    <p className="text-xs sm:text-sm break-words">{selectedMail.content.notification}</p>
                   </div>
                 )}
-              </CardContent>
-            </Card>
-          ) : (
-            <Card>
-              <CardContent className="py-12 text-center px-4">
-                <Mail className="h-10 w-10 sm:h-12 sm:w-12 mx-auto mb-3 text-muted-foreground opacity-50" />
-                <p className="text-sm text-muted-foreground">
-                  Select a message to view details
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
+
+                {selectedMail.content.__kind__ === 'notification' && (
+                  <div className="p-4 sm:p-6 bg-muted/50 rounded-lg">
+                    <p className="text-sm sm:text-base">{selectedMail.content.notification}</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </PageShell>
   );

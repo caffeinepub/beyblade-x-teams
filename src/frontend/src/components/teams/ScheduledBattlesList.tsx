@@ -1,9 +1,9 @@
+import { useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Swords, Calendar as CalendarIcon } from 'lucide-react';
-import { useListBattleRequestsForTeam } from '../../hooks/useQueries';
-import { useListTeams } from '../../hooks/useQueries';
+import { useListBattleRequestsForTeam, useListTeams } from '../../hooks/useQueries';
 import { format } from 'date-fns';
 import { BattleRequestStatus } from '../../backend';
 
@@ -15,24 +15,24 @@ export default function ScheduledBattlesList({ teamId }: ScheduledBattlesListPro
   const { data: battleRequests, isLoading: requestsLoading } = useListBattleRequestsForTeam(teamId);
   const { data: teams } = useListTeams();
 
-  // Filter for accepted battles
-  const scheduledBattles = battleRequests?.filter(
-    (req) => req.status === BattleRequestStatus.accepted
-  ) || [];
+  const sortedBattles = useMemo(() => {
+    if (!battleRequests) return [];
+    const scheduledBattles = battleRequests.filter(
+      (req) => req.status === BattleRequestStatus.accepted
+    );
+    return [...scheduledBattles].sort((a, b) => {
+      return new Date(a.proposedDate).getTime() - new Date(b.proposedDate).getTime();
+    });
+  }, [battleRequests]);
 
-  // Sort by date (earliest first)
-  const sortedBattles = [...scheduledBattles].sort((a, b) => {
-    return new Date(a.proposedDate).getTime() - new Date(b.proposedDate).getTime();
-  });
-
-  const getOpponentTeamName = (request: typeof scheduledBattles[0]): string => {
+  const getOpponentTeamName = useCallback((request: typeof sortedBattles[0]): string => {
+    if (!teams) return 'Unknown Team';
     const opponentTeamId = request.requestingTeam.toString() === teamId 
       ? request.targetTeam 
       : request.requestingTeam;
-    
-    const team = teams?.find((t) => t.id.toString() === opponentTeamId.toString());
+    const team = teams.find((t) => t.id.toString() === opponentTeamId.toString());
     return team?.name || 'Unknown Team';
-  };
+  }, [teams, teamId]);
 
   if (requestsLoading) {
     return (
@@ -90,7 +90,7 @@ export default function ScheduledBattlesList({ teamId }: ScheduledBattlesListPro
                   {format(new Date(battle.proposedDate), 'PPP')}
                 </div>
               </div>
-              <Badge variant="default" className="flex-shrink-0">
+              <Badge variant="default" className="shrink-0">
                 Confirmed
               </Badge>
             </div>

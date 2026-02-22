@@ -1,153 +1,63 @@
 {
   "kind": "build_request",
-  "title": "Add profile picture display and team battle request system",
-  "projectName": "Beyblade Arena",
-  "priority": "normal",
+  "title": "Fix maximum call stack size exceeded error",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Display the user's profile picture on the profile page if one exists",
-      "target": "frontend",
+      "text": "Identify and fix the infinite recursion or circular dependency causing the maximum call stack size exceeded error in the application",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-final"
-        ],
-        "quotes": [
-          "make the profile picture show on the profile page"
+          "msg-user-final"
         ]
       },
       "acceptanceCriteria": [
-        "Profile picture is visible on the profile page when a user has uploaded one",
-        "Profile picture displays correctly using the existing profile picture data from the backend",
-        "Profile picture is styled consistently with the rest of the profile page"
+        "Application loads without throwing maximum call stack exceeded errors",
+        "All React components render successfully without infinite loops",
+        "React Query hooks do not trigger infinite refetch cycles",
+        "useCallback and useMemo dependencies are correctly specified to prevent unnecessary re-renders"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add backend data model for battle requests between teams, including the requesting team, target team, proposed date, and status (pending/accepted/rejected)",
-      "target": "backend",
+      "text": "Review and fix any circular dependencies in React Query hook invalidation patterns, particularly in team-related mutations that may be triggering cascading invalidations",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-final"
-        ],
-        "quotes": [
-          "the team leader can request to have a beybattle with the other team on a date"
+          "msg-user-final"
         ]
       },
       "acceptanceCriteria": [
-        "Backend stores battle request data including both team IDs, proposed date, and request status",
-        "Only team leaders can create battle requests for their teams",
-        "Battle requests are persisted across canister upgrades"
+        "Query invalidation after mutations does not create circular refetch loops",
+        "Team data queries (useTeamQuery, useCurrentTeam, useMyTeams) do not trigger each other infinitely",
+        "Mutation success handlers properly scope their invalidations to prevent cascading effects"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Implement backend endpoint for team leaders to create a battle request with another team, specifying a proposed date",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-final"
-        ],
-        "quotes": [
-          "the team leader can request to have a beybattle with the other team on a date"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Team leaders can send battle requests to other teams",
-        "Endpoint validates that the caller is a team leader",
-        "Endpoint validates that both teams exist",
-        "Endpoint prevents requesting battles with your own team"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Implement backend endpoints for the receiving team leader to accept or reject battle requests",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-final"
-        ],
-        "quotes": [
-          "a date that the two leaders can agree on"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Team leaders can accept or reject incoming battle requests",
-        "Only the leader of the target team can respond to battle requests",
-        "Accepted battles are marked with an agreed-upon date",
-        "Rejected battles are marked as rejected"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Add frontend UI on team detail page for team leaders to initiate battle requests with other teams, including a date picker for proposing a battle date",
+      "text": "Check TeamDetailPage component for infinite loop issues in useMemo dependencies, particularly around isCurrentUserLeader and isCurrentUserMember calculations",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-final"
-        ],
-        "quotes": [
-          "the team leader can request to have a beybattle with the other team on a date"
+          "msg-user-final"
         ]
       },
       "acceptanceCriteria": [
-        "Team leaders see a button to request a battle when viewing other teams",
-        "Button opens a dialog with date picker for proposing a battle date",
-        "Successful battle request shows confirmation feedback",
-        "Leaders cannot request battles with their own team"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Add frontend UI for team leaders to view and respond to incoming battle requests with accept/reject actions",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-final"
-        ],
-        "quotes": [
-          "a date that the two leaders can agree on"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Team leaders can view incoming battle requests for their team",
-        "Each request shows the requesting team name and proposed date",
-        "Leaders can accept or reject requests with clear action buttons",
-        "Accepting a request confirms the battle date",
-        "UI updates after accepting or rejecting a request"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Display list of scheduled battles (accepted battle requests) on team detail pages showing opponent team and agreed date",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-final"
-        ],
-        "quotes": [
-          "the two leaders can agree on"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Team detail pages show upcoming scheduled battles",
-        "Each battle displays opponent team name and battle date",
-        "Battles are sorted by date",
-        "Both teams involved in a battle can see it on their respective team pages"
+        "TeamDetailPage renders without causing stack overflow",
+        "useMemo hooks have stable dependency arrays that do not change on every render",
+        "Derived state calculations do not trigger re-renders that recalculate themselves"
       ]
     }
   ],
   "constraints": [
-    "Use existing team leader authorization patterns from the codebase",
-    "Battle requests must follow the same access control patterns as team management features",
-    "Profile picture display must use the existing profile picture data structure from ProfilePictureUploader"
+    "Preserve existing functionality while fixing the stack overflow issue",
+    "Do not modify authentication or Internet Identity integration"
   ],
   "nonGoals": [
-    "Battle result tracking or scoring system",
-    "Notifications for battle requests outside of the inbox",
-    "Editing or canceling battle requests after creation",
-    "Calendar integration for battle dates",
-    "Battle reminders or scheduling conflicts"
+    "Adding new features",
+    "Changing the UI design or layout",
+    "Modifying backend data models"
   ],
   "imageRequirements": {
     "required": [],

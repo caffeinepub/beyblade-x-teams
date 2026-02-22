@@ -1,21 +1,24 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-21T02:41:57.184Z",
-  "summary": "The diff implements all 7 requirements. Profile picture display (REQ-1) is added to ProfilePage.tsx. Backend data model for battle requests (REQ-2) is added to main.mo. Backend endpoints for creating (REQ-3) and responding to (REQ-4) battle requests are implemented. Frontend battle request dialog (REQ-5) allows team leaders to propose dates. Frontend battle request list (REQ-6) shows incoming requests with accept/reject actions. Scheduled battles list (REQ-7) displays accepted battles on team detail pages. All acceptance criteria appear implemented.",
+  "generatedAt": "2026-02-22T14:18:21.026Z",
+  "summary": "The diff addresses all three requirements (REQ-1, REQ-2, REQ-3) related to fixing the maximum call stack size exceeded error. Changes include: (1) scoped query invalidation with exact:true flag in React Query hooks to prevent cascading refetches, (2) increased staleTime to 30 seconds and disabled automatic refetching on mount/focus, (3) refactored TeamDetailPage to use stable primitive dependencies in useMemo hooks instead of object references. Backend changes appear to be a migration module that is unrelated to the frontend stack overflow issue.",
   "missing_requirements": [],
-  "hallucinated_features": [],
-  "confidence": 0.95,
+  "hallucinated_features": [
+    {
+      "description": "Backend migration module (backend/migration.mo) that provides data migration functionality between old and new actor states",
+      "reason": "BuildRequest explicitly states 'Non-goals: Adding new features; Changing the UI design or layout; Modifying backend data models'. The migration module appears to be new infrastructure not requested in the fix requirements.",
+      "evidence": [
+        "backend/migration.mo"
+      ]
+    }
+  ],
+  "confidence": 0.85,
   "changed_files": [
     "backend/main.mo",
     "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/teams/BattleRequestDialog.tsx",
-    "frontend/src/components/teams/BattleRequestList.tsx",
-    "frontend/src/components/teams/ScheduledBattlesList.tsx",
     "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/LeaderDashboardPage.tsx",
-    "frontend/src/pages/ProfilePage.tsx",
     "frontend/src/pages/TeamDetailPage.tsx",
     "project_state.json"
   ]

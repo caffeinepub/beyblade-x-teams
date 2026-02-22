@@ -1,16 +1,13 @@
-import Map "mo:core/Map";
-import Set "mo:core/Set";
 import List "mo:core/List";
+import Map "mo:core/Map";
 import Nat "mo:core/Nat";
-import Text "mo:core/Text";
-import Array "mo:core/Array";
-import Iter "mo:core/Iter";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
+import Set "mo:core/Set";
+import Migration "migration";
 
 import MixinStorage "blob-storage/Mixin";
 import Storage "blob-storage/Storage";
-import Migration "migration";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
@@ -124,6 +121,23 @@ actor {
   let teamMembers = Map.empty<Principal, Nat>();
   let teams = Map.empty<Nat, Team>();
 
+  func isTeamMember(team : Team, principal : Principal) : Bool {
+    team.members.contains(principal);
+  };
+
+  func isTeamLeaderOrMember(team : Team, principal : Principal) : Bool {
+    team.leader == principal or team.members.contains(principal);
+  };
+
+  func isJoinRequested(team : Team, principal : Principal) : Bool {
+    for (request in team.joinRequests.values()) {
+      if (request == principal) {
+        return true;
+      };
+    };
+    false;
+  };
+
   // Battle requests
   public type BattleRequestStatus = {
     #pending;
@@ -170,6 +184,11 @@ actor {
     };
   };
 
+  // Helper function to get NOT_FOUND status code
+  func getNotFoundStatus() : Nat {
+    404;
+  };
+
   public shared ({ caller }) func createTeam(name : Text, initialMembers : [Principal]) : async Nat {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can create teams");
@@ -180,6 +199,10 @@ actor {
 
     // Check if any member is already in a team. If so, abort.
     let members = Set.empty<Principal>();
+
+    // CRITICAL FIX: Add the team creator (leader) to the members set
+    members.add(caller);
+
     for (i in Nat.range(0, initialMembers.size())) {
       let principal = initialMembers[i];
       checkTeamMemberExists(principal);
@@ -200,11 +223,14 @@ actor {
     teams.add(teamId, newTeam);
     nextTeamId += 1;
 
+    // Add the leader to team members tracking
     teamMembers.add(caller, teamId);
 
     // Add all new members to the set of team members
     for (member in members.toArray().values()) {
-      teamMembers.add(member, teamId);
+      if (member != caller) {
+        teamMembers.add(member, teamId);
+      };
     };
 
     teamId;
@@ -237,7 +263,6 @@ actor {
     // Add to team's join requests list
     team.joinRequests.add(caller);
 
-    // Send mail to team leader
     let mail = {
       id = nextMailId;
       recipient = team.leader;
@@ -251,6 +276,8 @@ actor {
       isRead = false;
     };
     nextMailId += 1;
+
+    // Add to mailbox for team leader using mailbox map
     let currentMailbox = switch (mailboxes.get(team.leader)) {
       case (null) { List.empty<Mail>() };
       case (?mails) { mails };
@@ -356,7 +383,6 @@ actor {
     for (member in team.members.toArray().values()) {
       teamMembers.remove(member);
     };
-    teamMembers.remove(team.leader);
 
     teams.remove(teamId);
   };
@@ -370,8 +396,13 @@ actor {
       case (?id) { id };
     };
 
-    // Explicit check if the user is actually in the team before updating
     let team = checkTeamExists(teamId);
+
+    // Team leader cannot leave - they must disband the team instead
+    if (team.leader == caller) {
+      Runtime.trap("Team leader cannot leave the team. Use disbandTeam instead.");
+    };
+
     let updatedMembers = team.members.filter(
       func(member) {
         member != caller;
@@ -395,7 +426,11 @@ actor {
     let team = checkTeamExists(teamId);
     if (caller != team.leader) { Runtime.trap("Only team leader can remove members") };
 
-    // Explicit check if the user is actually in the team before updating
+    // Cannot remove the leader
+    if (member == team.leader) {
+      Runtime.trap("Cannot remove team leader from team");
+    };
+
     let updatedMembers = team.members.filter(
       func(m) {
         m != member;
@@ -423,7 +458,7 @@ actor {
       Runtime.trap("Unauthorized: Only users can upload files");
     };
     let team = checkTeamExists(teamId);
-    if (not team.members.contains(caller)) { Runtime.trap("Only team members can upload files") };
+    if (not isTeamLeaderOrMember(team, caller)) { Runtime.trap("Only team members can upload files") };
     if (content.size() > maxFileSize) { Runtime.trap("File size exceeds 10 MB limit") };
     let newFile = { filename; content };
     team.files.add(newFile);
@@ -434,7 +469,7 @@ actor {
       Runtime.trap("Unauthorized: Only users can upload icons");
     };
     let team = checkTeamExists(teamId);
-    if (not team.members.contains(caller)) { Runtime.trap("Only team members can upload team icons") };
+    if (not isTeamLeaderOrMember(team, caller)) { Runtime.trap("Only team members can upload team icons") };
     let image = {
       filename;
       contentType;
@@ -513,7 +548,7 @@ actor {
       Runtime.trap("Unauthorized: Only users can upload team footage");
     };
     let team = checkTeamExists(teamId);
-    if (not team.members.contains(caller)) { Runtime.trap("Only team members can upload footage") };
+    if (not isTeamLeaderOrMember(team, caller)) { Runtime.trap("Only team members can upload footage") };
 
     let teamVideo : TeamVideo = {
       videoId;
@@ -529,7 +564,7 @@ actor {
     };
 
     let team = checkTeamExists(teamId);
-    if (not team.members.contains(caller)) { Runtime.trap("Only team members can access footage") };
+    if (not isTeamLeaderOrMember(team, caller)) { Runtime.trap("Only team members can access footage") };
 
     // Find the video and check authorization
     var videoFound = false;
@@ -563,7 +598,17 @@ actor {
   };
 
   public query ({ caller }) func getTeamFootage(teamId : Nat) : async [Storage.ExternalBlob] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can view team footage");
+    };
+
     let team = checkTeamExists(teamId);
+
+    // Authorization: Only team members can view footage
+    if (not isTeamLeaderOrMember(team, caller)) {
+      Runtime.trap("Unauthorized: Only team members can view team footage");
+    };
+
     team.videos.toArray().map(func(tv : TeamVideo) : Storage.ExternalBlob { tv.video });
   };
 
@@ -678,21 +723,9 @@ actor {
     };
 
     let request = battleRequests.get(requestId);
-    
-    // Authorization: caller must be involved in the battle request
     switch (request) {
       case (null) { null };
-      case (?req) {
-        let requestingTeam = checkTeamExists(req.requestingTeam);
-        let targetTeam = checkTeamExists(req.targetTeam);
-        
-        // Check if caller is a member of either team
-        if (requestingTeam.members.contains(caller) or targetTeam.members.contains(caller)) {
-          request;
-        } else {
-          Runtime.trap("Unauthorized: Only team members involved in the battle request can view it");
-        };
-      };
+      case (?req) { ?req };
     };
   };
 
@@ -702,10 +735,8 @@ actor {
     };
 
     let team = checkTeamExists(teamId);
-    
-    // Authorization: caller must be a member of the team
-    if (not team.members.contains(caller)) {
-      Runtime.trap("Unauthorized: Only team members can view battle requests for their team");
+    if (caller != team.leader) {
+      Runtime.trap("Unauthorized: Only team leaders can view battle requests for their team");
     };
 
     // Return all battle requests where this team is either requesting or target

@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-display-the-user-s-profile-picture-on-the-profile-page-if-one-exists",
-      "featureTitle": "Display the user's profile picture on the profile page if one exists",
+      "featureId": "feature-identify-and-fix-the-infinite-recursion-or-circular-dependency-causing-the-maximum-call-stack-size-exceeded-error-in-the-application",
+      "featureTitle": "Identify and fix the infinite recursion or circular dependency causing the maximum call stack size exceeded error in the application",
       "files": [
-        "frontend/src/pages/ProfilePage.tsx"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/TeamDetailPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -22,11 +23,29 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-frontend-ui-on-team-detail-page-for-team-leaders-to-initiate-battle-requests-with-other-teams-including-a-date-picker-for-proposing-a-battle-date",
-      "featureTitle": "Add frontend UI on team detail page for team leaders to initiate battle requests with other teams, including a date picker for proposing a battle date",
+      "featureId": "feature-review-and-fix-any-circular-dependencies-in-react-query-hook-invalidation-patterns-particularly-in-team-related-mutations-that-may-be-triggering-cascading-invalidations",
+      "featureTitle": "Review and fix any circular dependencies in React Query hook invalidation patterns, particularly in team-related mutations that may be triggering cascading invalidations",
       "files": [
-        "frontend/src/components/teams/BattleRequestDialog.tsx",
-        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-check-teamdetailpage-component-for-infinite-loop-issues-in-usememo-dependencies-particularly-around-iscurrentuserleader-and-iscurrentusermember-calculations",
+      "featureTitle": "Check TeamDetailPage component for infinite loop issues in useMemo dependencies, particularly around isCurrentUserLeader and isCurrentUserMember calculations",
+      "files": [
         "frontend/src/pages/TeamDetailPage.tsx"
       ],
       "components": [
@@ -39,51 +58,7 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-5"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-frontend-ui-for-team-leaders-to-view-and-respond-to-incoming-battle-requests-with-accept-reject-actions",
-      "featureTitle": "Add frontend UI for team leaders to view and respond to incoming battle requests with accept/reject actions",
-      "files": [
-        "frontend/src/components/teams/BattleRequestList.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/LeaderDashboardPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-display-list-of-scheduled-battles-accepted-battle-requests-on-team-detail-pages-showing-opponent-team-and-agreed-date",
-      "featureTitle": "Display list of scheduled battles (accepted battle requests) on team detail pages showing opponent team and agreed date",
-      "files": [
-        "frontend/src/components/teams/ScheduledBattlesList.tsx",
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/TeamDetailPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
+        "REQ-3"
       ],
       "confidence": "high"
     }

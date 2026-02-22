@@ -1,109 +1,114 @@
 import Map "mo:core/Map";
-import List "mo:core/List";
 import Set "mo:core/Set";
+import List "mo:core/List";
 import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 import Storage "blob-storage/Storage";
 
 module {
-  type OldTeam = {
+  public type UserProfile = {
+    name : Text;
+    profilePicture : ?Storage.ExternalBlob;
+    aboutMe : Text;
+  };
+
+  public type Image = {
+    filename : Text;
+    contentType : Text;
+    bytes : [Nat8];
+  };
+
+  public type PDFDocument = {
+    filename : Text;
+    content : [Nat8];
+  };
+
+  public type TeamVideo = {
+    videoId : Text;
+    video : Storage.ExternalBlob;
+    uploader : Principal;
+  };
+
+  public type Team = {
     id : Nat;
     leader : Principal;
     name : Text;
     members : Set.Set<Principal>;
     joinRequests : List.List<Principal>;
-    files : List.List<{
-      filename : Text;
-      content : [Nat8];
-    }>;
-    icon : ?{
-      filename : Text;
-      contentType : Text;
-      bytes : [Nat8];
+    files : List.List<PDFDocument>;
+    icon : ?Image;
+    videos : List.List<TeamVideo>;
+  };
+
+  public type Mail = {
+    id : Nat;
+    recipient : Principal;
+    sender : Principal;
+    mailType : MailType;
+    content : MailContent;
+    isRead : Bool;
+  };
+
+  public type MailType = {
+    #joinRequest;
+    #notification;
+  };
+
+  public type MailContent = {
+    #joinRequest : {
+      teamId : Nat;
+      requester : Principal;
+      message : Text;
     };
-    videos : List.List<{
-      videoId : Text;
-      video : Storage.ExternalBlob;
-      uploader : Principal;
-    }>;
+    #notification : Text;
   };
 
-  type OldActor = {
-    userProfiles : Map.Map<Principal, {
-      name : Text;
-      profilePicture : ?Storage.ExternalBlob;
-      aboutMe : Text;
-    }>;
-    mailboxes : Map.Map<Principal, List.List<{
-      id : Nat;
-      recipient : Principal;
-      sender : Principal;
-      mailType : {
-        #joinRequest;
-        #notification;
-      };
-      content : {
-        #joinRequest : {
-          teamId : Nat;
-          requester : Principal;
-          message : Text;
-        };
-        #notification : Text;
-      };
-      isRead : Bool;
-    }>>;
-    nextMailId : Nat;
-    nextTeamId : Nat;
-    maxTeamSize : Nat;
-    maxFileSize : Nat;
-    teamMembers : Map.Map<Principal, Nat>;
-    teams : Map.Map<Nat, OldTeam>;
+  public type BattleRequestStatus = {
+    #pending;
+    #accepted;
+    #rejected;
   };
 
-  type NewTeam = OldTeam;
+  public type BattleRequest = {
+    id : Nat;
+    requestingTeam : Nat;
+    targetTeam : Nat;
+    proposedDate : Text;
+    status : BattleRequestStatus;
+  };
 
-  type NewActor = {
-    userProfiles : Map.Map<Principal, {
-      name : Text;
-      profilePicture : ?Storage.ExternalBlob;
-      aboutMe : Text;
-    }>;
-    mailboxes : Map.Map<Principal, List.List<{
-      id : Nat;
-      recipient : Principal;
-      sender : Principal;
-      mailType : {
-        #joinRequest;
-        #notification;
-      };
-      content : {
-        #joinRequest : {
-          teamId : Nat;
-          requester : Principal;
-          message : Text;
-        };
-        #notification : Text;
-      };
-      isRead : Bool;
-    }>>;
+  public type OldActor = {
+    userProfiles : Map.Map<Principal, UserProfile>;
+    mailboxes : Map.Map<Principal, List.List<Mail>>;
+    teamMembers : Map.Map<Principal, Nat>;
+    teams : Map.Map<Nat, Team>;
+    battleRequests : Map.Map<Nat, BattleRequest>;
     nextMailId : Nat;
     nextTeamId : Nat;
-    maxTeamSize : Nat;
-    maxFileSize : Nat;
+    nextBattleRequestId : Nat;
+  };
+
+  public type NewActor = {
+    userProfiles : Map.Map<Principal, UserProfile>;
+    mailboxes : Map.Map<Principal, List.List<Mail>>;
     teamMembers : Map.Map<Principal, Nat>;
-    teams : Map.Map<Nat, NewTeam>;
+    teams : Map.Map<Nat, Team>;
+    battleRequests : Map.Map<Nat, BattleRequest>;
+    nextMailId : Nat;
+    nextTeamId : Nat;
+    nextBattleRequestId : Nat;
   };
 
   public func run(old : OldActor) : NewActor {
     {
       userProfiles = old.userProfiles;
       mailboxes = old.mailboxes;
-      nextMailId = old.nextMailId;
-      nextTeamId = old.nextTeamId;
-      maxTeamSize = old.maxTeamSize;
-      maxFileSize = old.maxFileSize;
       teamMembers = old.teamMembers;
       teams = old.teams;
+      battleRequests = old.battleRequests;
+      nextMailId = old.nextMailId;
+      nextTeamId = old.nextTeamId;
+      nextBattleRequestId = old.nextBattleRequestId;
     };
   };
 };

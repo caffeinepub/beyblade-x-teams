@@ -1,31 +1,18 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useSaveCallerUserProfile } from '../../hooks/useQueries';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
 
-interface ProfileSetupModalProps {
-  open: boolean;
-}
-
-export default function ProfileSetupModal({ open }: ProfileSetupModalProps) {
+export default function ProfileSetupModal() {
   const [name, setName] = useState('');
-  const saveProfileMutation = useSaveCallerUserProfile();
+  const saveMutation = useSaveCallerUserProfile();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSave = useCallback(async () => {
     if (!name.trim()) return;
-
     try {
-      await saveProfileMutation.mutateAsync({ 
+      await saveMutation.mutateAsync({
         name: name.trim(),
         aboutMe: '',
         profilePicture: undefined,
@@ -33,46 +20,36 @@ export default function ProfileSetupModal({ open }: ProfileSetupModalProps) {
     } catch (error) {
       console.error('Failed to save profile:', error);
     }
-  };
+  }, [name, saveMutation]);
 
   return (
-    <Dialog open={open} modal>
-      <DialogContent className="max-w-xs sm:max-w-md mx-4" onInteractOutside={(e) => e.preventDefault()}>
+    <Dialog open={true}>
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-lg sm:text-xl">Welcome to Bey Hub X!</DialogTitle>
-          <DialogDescription className="text-sm">
-            Please enter your name to get started. You can add more details to your profile later.
+          <DialogTitle>Welcome!</DialogTitle>
+          <DialogDescription>
+            Please enter your name to get started.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm sm:text-base">Your Name</Label>
+            <Label htmlFor="name">Name</Label>
             <Input
               id="name"
-              type="text"
-              placeholder="Enter your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              disabled={saveProfileMutation.isPending}
-              className="min-h-11 text-sm sm:text-base"
-              autoFocus
+              placeholder="Enter your name"
+              disabled={saveMutation.isPending}
             />
           </div>
           <Button
-            type="submit"
-            disabled={!name.trim() || saveProfileMutation.isPending}
-            className="w-full gap-2 min-h-11"
+            onClick={handleSave}
+            disabled={!name.trim() || saveMutation.isPending}
+            className="w-full"
           >
-            {saveProfileMutation.isPending ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              'Continue'
-            )}
+            {saveMutation.isPending ? 'Saving...' : 'Continue'}
           </Button>
-        </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -1,92 +1,40 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Beyblade team management app with profile pictures and battle scheduling",
-  "architectural_notes": [
-    "Battle scheduling requires leader-to-leader communication/negotiation flow",
-    "Profile picture storage and display integration needed"
+  "summary": "New project",
+  "architectural_notes": [],
+  "known_issues": [
+    "Maximum call stack size exceeded error occurring again"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-display-the-user-s-profile-picture-on-the-profile-page-if-one-exists",
-      "title": "Display the user's profile picture on the profile page if one exists",
+      "id": "feature-identify-and-fix-the-infinite-recursion-or-circular-dependency-causing-the-maximum-call-stack-size-exceeded-error-in-the-application",
+      "title": "Identify and fix the infinite recursion or circular dependency causing the maximum call stack size exceeded error in the application",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-frontend-ui-on-team-detail-page-for-team-leaders-to-initiate-battle-requests-with-other-teams-including-a-date-picker-for-proposing-a-battle-date",
-      "title": "Add frontend UI on team detail page for team leaders to initiate battle requests with other teams, including a date picker for proposing a battle date",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-frontend-ui-for-team-leaders-to-view-and-respond-to-incoming-battle-requests-with-accept-reject-actions",
-      "title": "Add frontend UI for team leaders to view and respond to incoming battle requests with accept/reject actions",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-display-list-of-scheduled-battles-accepted-battle-requests-on-team-detail-pages-showing-opponent-team-and-agreed-date",
-      "title": "Display list of scheduled battles (accepted battle requests) on team detail pages showing opponent team and agreed date",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    }
-  ],
-  "new_feature_requests": [
-    {
-      "id": "AR-1",
-      "summary": "Display profile picture on profile page",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Team leader can request beybattle with another team",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Battle date agreement system between two team leaders",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Add backend data model for battle requests between teams, including the requesting team, target team, proposed date, and status (pending/accepted/rejected)",
+      "id": "feature-review-and-fix-any-circular-dependencies-in-react-query-hook-invalidation-patterns-particularly-in-team-related-mutations-that-may-be-triggering-cascading-invalidations",
+      "title": "Review and fix any circular dependencies in React Query hook invalidation patterns, particularly in team-related mutations that may be triggering cascading invalidations",
       "reqIds": [
         "REQ-2"
       ],
-      "status": "pending"
+      "version": 1
     },
     {
-      "id": "AR-6",
-      "summary": "Implement backend endpoint for team leaders to create a battle request with another team, specifying a proposed date",
+      "id": "feature-check-teamdetailpage-component-for-infinite-loop-issues-in-usememo-dependencies-particularly-around-iscurrentuserleader-and-iscurrentusermember-calculations",
+      "title": "Check TeamDetailPage component for infinite loop issues in useMemo dependencies, particularly around isCurrentUserLeader and isCurrentUserMember calculations",
       "reqIds": [
         "REQ-3"
       ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Implement backend endpoints for the receiving team leader to accept or reject battle requests",
-      "reqIds": [
-        "REQ-4"
-      ],
-      "status": "pending"
+      "version": 1
     }
   ],
-  "projectName": "Beyblade Arena",
+  "new_feature_requests": [],
+  "projectName": "Fix maximum call stack size exceeded error",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

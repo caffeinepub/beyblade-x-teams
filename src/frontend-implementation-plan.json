@@ -1,103 +1,94 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add profile picture display and team battle request system",
+  "title": "Fix maximum call stack size exceeded error",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Display user's profile picture on the profile page",
+      "summary": "Identify and fix the infinite recursion or circular dependency causing the maximum call stack size exceeded error",
       "acceptanceCriteria": [
-        "Profile picture is visible on the profile page when a user has uploaded one",
-        "Profile picture displays correctly using the existing profile picture data from the backend",
-        "Profile picture is styled consistently with the rest of the profile page"
+        "Application loads without throwing maximum call stack size exceeded errors",
+        "All React components render successfully without infinite loops",
+        "React Query hooks do not trigger infinite refetch cycles",
+        "useCallback and useMemo dependencies are correctly specified to prevent unnecessary re-renders"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/ProfilePage.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Update the profile display section to show the user's profile picture if one exists. Use the existing profilePicture field from UserProfile and render it using ExternalBlob's getDirectURL() method. Ensure the profile picture is displayed prominently in the profile view mode, styled consistently with the page layout."
-        }
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "summary": "Add UI for team leaders to initiate battle requests with date picker",
-      "acceptanceCriteria": [
-        "Team leaders see a button to request a battle when viewing other teams",
-        "Button opens a dialog with date picker for proposing a battle date",
-        "Successful battle request shows confirmation feedback",
-        "Leaders cannot request battles with their own team"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/teams/BattleRequestDialog.tsx",
-          "operation": "create",
-          "description": "Create a dialog component for initiating battle requests. Include a date picker input for selecting the proposed battle date, a submit button to create the request, and a cancel button. Use shadcn/ui Dialog and Calendar/DatePicker components. Display the target team name in the dialog title. Handle form submission by calling the createBattleRequest mutation and show success/error feedback via toast notifications."
+          "description": "Fix circular query invalidation patterns in team-related mutations. Review all mutation onSuccess handlers to ensure they don't create cascading invalidations that trigger each other. Specifically check useCreateTeam, useJoinTeam, useLeaveTeam, useApproveJoinRequests, useDenyJoinRequests, and useRemoveMember mutations to prevent them from invalidating queries that would trigger other mutations' invalidations in a loop."
         },
         {
           "path": "frontend/src/pages/TeamDetailPage.tsx",
           "operation": "modify",
-          "description": "Add a 'Request Battle' button that is visible only to authenticated team leaders viewing other teams (not their own team). The button should open the BattleRequestDialog component. Conditionally render the button based on: user is authenticated, user is a team leader of their own team, and the viewed team is not the user's team. Wire the BattleRequestDialog to pass the current team ID as the target team."
+          "description": "Fix infinite loop issues in useMemo dependencies for isCurrentUserLeader and isCurrentUserMember calculations. Ensure dependency arrays are stable and don't change on every render. Review all useMemo and useCallback hooks to verify their dependencies don't create circular re-render loops. Particularly check if currentUser, teamData, or membership status changes are causing derived state to recalculate and trigger re-renders."
         },
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/components/auth/ProfileSetupModal.tsx",
           "operation": "modify",
-          "description": "Add a useCreateBattleRequest mutation hook that calls actor.createBattleRequest with requestingTeamId, targetTeamId, and proposedDate. On success, invalidate relevant queries (battle requests, team details) and show a success toast. Include error handling with toast notifications for failures."
+          "description": "Review useCallback dependencies for handleSave to ensure the callback reference is stable and doesn't cause parent component re-renders that recreate the modal, which could contribute to stack overflow issues if the modal is conditionally rendered based on state that the callback modifies."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Review profile setup modal rendering logic and authentication state management to ensure no circular dependencies exist between user profile checks, authentication state, and modal visibility that could cause infinite re-render loops. Verify the showProfileSetup conditional logic doesn't create a state update loop."
+        },
+        {
+          "path": "frontend/src/hooks/useCurrentUser.ts",
+          "operation": "modify",
+          "description": "Verify that useGetCallerUserProfile and useGetCallerUserRole hooks have proper enabled conditions and don't trigger unnecessary refetches that could cascade into other query invalidations. Ensure the isLoading and isFetched state calculations are stable and don't cause consuming components to re-render infinitely."
+        },
+        {
+          "path": "frontend/src/components/layout/AppHeader.tsx",
+          "operation": "modify",
+          "description": "Review unread inbox badge counter and navigation menu state to ensure no infinite re-render loops exist. Check if inbox query refetches are triggering component updates that cause the query to refetch again."
+        },
+        {
+          "path": "frontend/src/pages/InboxPage.tsx",
+          "operation": "modify",
+          "description": "Review message list rendering and mutation handlers (mark as read, delete, approve/deny join requests) to ensure they don't create query invalidation loops with the inbox query or team-related queries."
         }
       ]
     },
     {
-      "id": "REQ-6",
-      "summary": "Add UI for team leaders to view and respond to incoming battle requests",
+      "id": "REQ-2",
+      "summary": "Review and fix circular dependencies in React Query hook invalidation patterns for team-related mutations",
       "acceptanceCriteria": [
-        "Team leaders can view incoming battle requests for their team",
-        "Each request shows the requesting team name and proposed date",
-        "Leaders can accept or reject requests with clear action buttons",
-        "Accepting a request confirms the battle date",
-        "UI updates after accepting or rejecting a request"
+        "Query invalidation after mutations does not create circular refetch loops",
+        "Team data queries (useTeamQuery, useCurrentTeam, useMyTeams) do not trigger each other infinitely",
+        "Mutation success handlers properly scope their invalidations to prevent cascading effects"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/teams/BattleRequestList.tsx",
-          "operation": "create",
-          "description": "Create a component to display incoming battle requests for a team. Show each request with the requesting team name, proposed date, and current status. For pending requests, display 'Accept' and 'Reject' action buttons. Format the proposed date in a user-friendly way. Include loading and empty states. Call the respond to battle request mutation when buttons are clicked."
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Audit all queryClient.invalidateQueries calls in mutation onSuccess handlers. Replace broad invalidation patterns (e.g., invalidating all 'teams' queries) with specific query key invalidations. For example, when approving a join request, only invalidate the specific team's data and the user's membership status, not all team-related queries. Add exact: true option where appropriate to prevent over-invalidation. Review the dependency chain: team mutations → team list queries → individual team queries → membership queries to break any circular patterns."
+        },
+        {
+          "path": "frontend/src/hooks/useActor.ts",
+          "operation": "modify",
+          "description": "Review the query invalidation logic in the useEffect that runs when identity changes. Ensure it doesn't trigger cascading invalidations that cause components to unmount/remount in ways that recreate the actor and trigger the effect again."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Check TeamDetailPage component for infinite loop issues in useMemo dependencies",
+      "acceptanceCriteria": [
+        "TeamDetailPage renders without causing stack overflow",
+        "useMemo hooks have stable dependency arrays that do not change on every render",
+        "Derived state calculations do not trigger re-renders that recalculate themselves"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/TeamDetailPage.tsx",
+          "operation": "modify",
+          "description": "Fix useMemo dependency arrays for isCurrentUserLeader and isCurrentUserMember to ensure they use stable references. If currentUser or teamData objects are recreated on every render, extract only the primitive values needed (e.g., currentUser?.id, teamData?.leader) as dependencies instead of the full objects. Review all computed values (canManageTeam, canInitiateBattle, etc.) to ensure their dependency chains don't create loops. Consider using useRef for values that shouldn't trigger recalculation."
         },
         {
           "path": "frontend/src/pages/LeaderDashboardPage.tsx",
           "operation": "modify",
-          "description": "Add a 'Battle Requests' section that displays the BattleRequestList component for the leader's team. Fetch incoming battle requests using a new query hook. Show the section only when the user is a team leader and has pending incoming requests. Position this section prominently on the dashboard above or below the existing team management sections."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add useListBattleRequestsForTeam query hook that calls actor.listBattleRequestsForTeam with the team ID and returns all battle requests. Add useRespondToBattleRequest mutation hook that calls actor.respondToBattleRequest with requestId and accept boolean. On success, invalidate battle request queries and show success toast. Filter the results in the component to show only incoming pending requests."
-        }
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "summary": "Display scheduled battles on team detail pages",
-      "acceptanceCriteria": [
-        "Team detail pages show upcoming scheduled battles",
-        "Each battle displays opponent team name and battle date",
-        "Battles are sorted by date",
-        "Both teams involved in a battle can see it on their respective team pages"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/teams/ScheduledBattlesList.tsx",
-          "operation": "create",
-          "description": "Create a component to display accepted battle requests (scheduled battles) for a team. Fetch battle requests using the listBattleRequestsForTeam query and filter for accepted status. For each battle, display the opponent team name (determine if current team is requesting or target team to show the other side), the agreed battle date, and format the date prominently. Sort battles by date (earliest first). Include empty state when no scheduled battles exist."
-        },
-        {
-          "path": "frontend/src/pages/TeamDetailPage.tsx",
-          "operation": "modify",
-          "description": "Add a 'Scheduled Battles' section on the team detail page that renders the ScheduledBattlesList component. Position this section below the team members list and above or alongside the team footage gallery. The section should be visible to all users viewing the team (not restricted to members or leaders). Use consistent card styling with other sections on the page."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "If not already added in REQ-6, add the useListBattleRequestsForTeam query hook that calls actor.listBattleRequestsForTeam. Ensure it returns the full BattleRequest array with all fields (id, requestingTeam, targetTeam, proposedDate, status). Add useGetTeam query hook if it doesn't exist to fetch team details by ID for displaying opponent team names."
+          "description": "Review any useMemo or useCallback hooks to ensure stable dependencies that don't cause infinite re-render loops when displaying team data or handling battle requests."
         }
       ]
     }
