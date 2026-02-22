@@ -25,15 +25,12 @@ export default function AppHeader() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-14 sm:h-16">
           <div className="flex items-center gap-4 sm:gap-8">
-            <button onClick={() => navigate('/')} className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
+            <button onClick={() => navigate('/')} className="hover:opacity-80 transition-opacity">
               <img 
-                src="/assets/generated/bey-hub-x-logo.dim_200x200.png" 
-                alt="Bey Hub X logo" 
-                className="h-8 w-8 sm:h-10 sm:w-10"
+                src="/assets/generated/beyblade-x-logo.dim_200x80.png" 
+                alt="Bey Hub X" 
+                className="h-8 sm:h-10 w-auto"
               />
-              <span className="text-base sm:text-xl font-bold bg-gradient-to-r from-primary to-chart-1 bg-clip-text text-transparent">
-                Bey Hub X
-              </span>
             </button>
             
             <nav className="hidden md:flex items-center gap-4 lg:gap-6">

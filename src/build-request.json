@@ -1,83 +1,43 @@
 {
   "kind": "build_request",
-  "title": "Rebrand to Bey Hub X, add customizable color scheme with dark/light mode, and set new logo",
+  "title": "Replace header logo with custom Beyblade X image",
   "projectName": "Bey Hub X",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Update the website title and all user-facing references from 'The X' to 'Bey Hub X' across all frontend files including index.html, AppHeader.tsx, HomePage.tsx, and any other components displaying the site name",
+      "text": "Replace the text-based logo in the AppHeader component with the custom Beyblade X image that was previously pasted by the user",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-latest"
         ],
         "quotes": [
-          "change the name to \"Bey Hub X\""
+          "when I said \"logo\" I mean the website logo on the top of the screen, like how target's website logo has a red target, etc. make THAT image pasted the website logo"
         ]
       },
       "acceptanceCriteria": [
-        "The browser tab title displays 'Bey Hub X'",
-        "The header navigation shows 'Bey Hub X' as the site name",
-        "The homepage hero section references 'Bey Hub X'",
-        "All meta tags and SEO references use 'Bey Hub X'"
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "Implement a customizable color scheme system with support for dark mode, light mode, and user preference persistence. Use the existing OKLCH-based color system in index.css as the foundation and add a theme switcher UI component that allows users to toggle between modes",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "make a customizable color scheme with a dark mode, light mode, etc"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A theme switcher component is accessible in the UI (e.g., in the header or settings)",
-        "Users can select between at least dark mode and light mode",
-        "The selected theme persists across browser sessions using localStorage",
-        "All existing UI components (buttons, cards, inputs, etc.) respond correctly to theme changes",
-        "The theme applies immediately without requiring a page reload"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Replace the current site logo with the uploaded Beyblade X image (featuring a blue and silver beyblade with lime green X background). Display this logo in the application header (AppHeader.tsx) and any other locations where branding appears",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-latest"
-        ],
-        "quotes": [
-          "make the logo the image PNG pasted"
-        ]
-      },
-      "acceptanceCriteria": [
-        "The new logo appears in the application header",
-        "The logo is responsive and scales appropriately on mobile devices",
+        "The AppHeader component displays the custom Beyblade X image instead of the text 'Bey Hub X'",
+        "The logo image is properly sized and positioned in the header",
         "The logo maintains its aspect ratio and visual quality",
-        "The logo file is stored as a static asset in frontend/public/assets/generated/"
+        "The logo is clickable and navigates to the home page",
+        "The logo is responsive and displays correctly on mobile and desktop viewports"
       ]
     }
   ],
   "constraints": [
-    "Do not modify Internet Identity authentication components",
-    "Do not modify files in frontend/src/components/ui as they are read-only",
-    "Maintain the existing OKLCH-based color system structure",
-    "Preserve all existing functionality while adding theme switching capabilities"
+    "Do not modify the AppHeader component's authentication controls or theme toggle",
+    "Preserve the existing navigation menu structure",
+    "Use the generated image as a static asset in frontend/public/assets/generated"
   ],
   "nonGoals": [
-    "Adding additional theme options beyond dark and light mode in this iteration",
-    "Customizing individual color values per user",
-    "Adding animation effects to theme transitions",
-    "Changing the backend data models or API"
+    "Changing the site title or branding text elsewhere in the application",
+    "Modifying the footer branding",
+    "Altering any backend functionality"
   ],
   "imageRequirements": {
     "required": [
-      "Beyblade X logo with blue and silver beyblade on lime green X background (bey-hub-x-logo.dim_200x200.png)"
+      "Beyblade X logo with red and black color scheme, bold geometric design suitable for website header (beyblade-x-logo.dim_200x80.png)"
     ],
     "edits": []
   }

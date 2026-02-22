@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Rebrand the application to "Bey Hub X", implement a dark/light mode theme switcher, and update the logo with the uploaded Beyblade X image.
+**Goal:** Replace the text-based header logo with the custom Beyblade X image.
 
 **Planned changes:**
-- Update all user-facing references from "The X" to "Bey Hub X" in the frontend (title, header, homepage, meta tags)
-- Implement a theme switcher component that allows users to toggle between dark mode and light mode
-- Persist the selected theme in localStorage so it remains active across sessions
-- Replace the current logo with the uploaded Beyblade X image in the header and other branding locations
+- Replace the text "Bey Hub X" in the AppHeader component with the custom Beyblade X image
+- Ensure the logo image is properly sized, positioned, and maintains aspect ratio
+- Make the logo clickable to navigate to the home page
+- Ensure responsive display on both mobile and desktop viewports
 
-**User-visible outcome:** Users will see the rebranded "Bey Hub X" name throughout the site, can switch between dark and light themes that persist across visits, and will see the new Beyblade X logo in the header.
+**User-visible outcome:** The website header displays a custom Beyblade X logo image instead of text, matching the branding style similar to how major websites display their logos.

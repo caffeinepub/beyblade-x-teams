@@ -5,29 +5,13 @@
   "architectural_notes": [],
   "known_issues": [],
   "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Beyblade X logo with blue and silver beyblade on lime green X background (bey-hub-x-logo.dim_200x200.png)",
+  "imageRequirements": "## Required Images\n- Beyblade X logo with red and black color scheme, bold geometric design suitable for website header (beyblade-x-logo.dim_200x80.png)",
   "existing_features": [
     {
-      "id": "feature-update-the-website-title-and-all-user-facing-references-from-the-x-to-bey-hub-x-across-all-frontend-files-including-index-html-appheader-tsx-homepage-tsx-and-any-other-components-displaying-the-site-name",
-      "title": "Update the website title and all user-facing references from 'The X' to 'Bey Hub X' across all frontend files including index.html, AppHeader.tsx, HomePage.tsx, and any other components displaying the site name",
+      "id": "feature-replace-the-text-based-logo-in-the-appheader-component-with-the-custom-beyblade-x-image-that-was-previously-pasted-by-the-user",
+      "title": "Replace the text-based logo in the AppHeader component with the custom Beyblade X image that was previously pasted by the user",
       "reqIds": [
         "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-a-customizable-color-scheme-system-with-support-for-dark-mode-light-mode-and-user-preference-persistence-use-the-existing-oklch-based-color-system-in-index-css-as-the-foundation-and-add-a-theme-switcher-ui-component-that-allows-users-to-toggle-between-modes",
-      "title": "Implement a customizable color scheme system with support for dark mode, light mode, and user preference persistence. Use the existing OKLCH-based color system in index.css as the foundation and add a theme switcher UI component that allows users to toggle between modes",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-replace-the-current-site-logo-with-the-uploaded-beyblade-x-image-featuring-a-blue-and-silver-beyblade-with-lime-green-x-background-display-this-logo-in-the-application-header-appheader-tsx-and-any-other-locations-where-branding-appears",
-      "title": "Replace the current site logo with the uploaded Beyblade X image (featuring a blue and silver beyblade with lime green X background). Display this logo in the application header (AppHeader.tsx) and any other locations where branding appears",
-      "reqIds": [
-        "REQ-3"
       ],
       "version": 1
     }
@@ -35,13 +19,7 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Implement customizable color scheme with dark mode and light mode",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Set logo to user-provided PNG image",
+      "summary": "Use custom image as website logo in header",
       "reqIds": [],
       "status": "pending"
     }

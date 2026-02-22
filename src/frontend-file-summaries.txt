@@ -4,7 +4,7 @@
   "frontend/src/hooks/useCurrentUser.ts": "Custom hooks for fetching current user profile and role with 30-second staleTime, proper actor dependency handling, and custom loading states to prevent profile setup modal flash.",
   "frontend/src/components/auth/LoginButton.tsx": "Login/logout button component with stable handleAuth callback using useCallback and proper query cache clearing on logout.",
   "frontend/src/components/auth/ProfileSetupModal.tsx": "Profile setup modal with stable handleSave callback using useCallback and controlled input state for name entry.",
-  "frontend/src/components/layout/AppHeader.tsx": "Application header with \"Bey Hub X\" branding, new logo image, theme toggle button, hamburger menu for mobile navigation, and responsive navigation items.",
+  "frontend/src/components/layout/AppHeader.tsx": "Application header displaying the custom Beyblade X logo image, theme toggle button, hamburger menu for mobile navigation, and responsive navigation items with authentication controls.",
   "frontend/src/components/layout/PageShell.tsx": "Reusable page container component with configurable max-width and optional title/description sections.",
   "frontend/src/components/files/PdfUploader.tsx": "Empty placeholder file as PDF upload functionality has been replaced with team footage uploads.",
   "frontend/src/components/files/PdfList.tsx": "Empty placeholder file as PDF list functionality has been replaced with team footage gallery.",
