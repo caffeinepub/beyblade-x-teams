@@ -3,28 +3,39 @@
   "projectStateVersion": 3,
   "summary": "New project",
   "architectural_notes": [],
-  "known_issues": [],
-  "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Beyblade X logo with red and black color scheme, bold geometric design suitable for website header (beyblade-x-logo.dim_200x80.png)",
+  "known_issues": [
+    "\"Actor not available\" error occurs when attempting to create a new team"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-replace-the-text-based-logo-in-the-appheader-component-with-the-custom-beyblade-x-image-that-was-previously-pasted-by-the-user",
-      "title": "Replace the text-based logo in the AppHeader component with the custom Beyblade X image that was previously pasted by the user",
+      "id": "feature-debug-and-fix-the-actor-not-available-error-that-occurs-when-users-attempt-to-create-a-new-team-through-the-createteampage",
+      "title": "Debug and fix the 'Actor not available' error that occurs when users attempt to create a new team through the CreateTeamPage",
       "reqIds": [
         "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-error-boundary-or-loading-state-handling-in-createteampage-to-prevent-premature-mutations-before-actor-is-ready",
+      "title": "Add error boundary or loading state handling in CreateTeamPage to prevent premature mutations before actor is ready",
+      "reqIds": [
+        "REQ-3"
       ],
       "version": 1
     }
   ],
   "new_feature_requests": [
     {
-      "id": "AR-1",
-      "summary": "Use custom image as website logo in header",
-      "reqIds": [],
+      "id": "AR-2",
+      "summary": "Verify that the backend actor initialization in useActor hook properly handles authentication state and access control setup",
+      "reqIds": [
+        "REQ-2"
+      ],
       "status": "pending"
     }
   ],
-  "projectName": "Bey Hub X",
+  "projectName": "Fix Actor not available error when creating teams",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

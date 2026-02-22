@@ -1,44 +1,69 @@
 {
   "kind": "build_request",
-  "title": "Replace header logo with custom Beyblade X image",
-  "projectName": "Bey Hub X",
-  "priority": "normal",
+  "title": "Fix Actor not available error when creating teams",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Replace the text-based logo in the AppHeader component with the custom Beyblade X image that was previously pasted by the user",
-      "target": "frontend",
+      "text": "Debug and fix the 'Actor not available' error that occurs when users attempt to create a new team through the CreateTeamPage",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-latest"
+          "msg-user-actor-error"
         ],
         "quotes": [
-          "when I said \"logo\" I mean the website logo on the top of the screen, like how target's website logo has a red target, etc. make THAT image pasted the website logo"
+          "when I try and make a new team, it says \"Actor not available\""
         ]
       },
       "acceptanceCriteria": [
-        "The AppHeader component displays the custom Beyblade X image instead of the text 'Bey Hub X'",
-        "The logo image is properly sized and positioned in the header",
-        "The logo maintains its aspect ratio and visual quality",
-        "The logo is clickable and navigates to the home page",
-        "The logo is responsive and displays correctly on mobile and desktop viewports"
+        "Users can successfully create new teams without encountering 'Actor not available' error",
+        "Team creation mutation completes successfully and navigates to the team detail page",
+        "Backend actor is properly initialized and accessible from the CreateTeamPage component"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Verify that the backend actor initialization in useActor hook properly handles authentication state and access control setup",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-actor-error"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Actor initialization completes before any mutations are attempted",
+        "Proper error handling displays meaningful messages if actor initialization fails",
+        "Authentication state is verified before allowing team creation"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add error boundary or loading state handling in CreateTeamPage to prevent premature mutations before actor is ready",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-user-actor-error"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Team creation form is disabled until actor is confirmed available",
+        "Clear loading indicator shows when actor is initializing",
+        "User-friendly error message displays if actor fails to initialize"
       ]
     }
   ],
   "constraints": [
-    "Do not modify the AppHeader component's authentication controls or theme toggle",
-    "Preserve the existing navigation menu structure",
-    "Use the generated image as a static asset in frontend/public/assets/generated"
+    "Do not change the existing authentication flow or Internet Identity integration",
+    "Preserve the current team creation data model and backend API structure",
+    "Maintain compatibility with existing useQueries hooks and React Query cache invalidation"
   ],
   "nonGoals": [
-    "Changing the site title or branding text elsewhere in the application",
-    "Modifying the footer branding",
-    "Altering any backend functionality"
+    "Redesigning the team creation UI or form layout",
+    "Adding new team creation features or fields",
+    "Modifying the backend actor architecture beyond fixing the availability issue"
   ],
   "imageRequirements": {
-    "required": [
-      "Beyblade X logo with red and black color scheme, bold geometric design suitable for website header (beyblade-x-logo.dim_200x80.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

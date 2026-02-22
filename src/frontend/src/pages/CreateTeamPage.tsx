@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useCreateTeam, useUploadTeamIcon, useGetTeamMembershipStatus } from '../hooks/useQueries';
+import { useActor } from '../hooks/useActor';
 import { useQueryClient } from '@tanstack/react-query';
 import PageShell from '../components/layout/PageShell';
 import TeamIconUploader from '../components/teams/TeamIconUploader';
@@ -14,21 +15,28 @@ import { toast } from 'sonner';
 
 export default function CreateTeamPage() {
   const { identity } = useInternetIdentity();
+  const { actor, isFetching: actorFetching } = useActor();
   const createTeamMutation = useCreateTeam();
   const uploadIconMutation = useUploadTeamIcon();
-  const { data: myTeamId } = useGetTeamMembershipStatus();
+  const { data: myTeamId, isLoading: membershipLoading } = useGetTeamMembershipStatus();
   const queryClient = useQueryClient();
   const [teamName, setTeamName] = useState('');
   const [iconFile, setIconFile] = useState<{ file: File; content: Uint8Array } | null>(null);
 
   const isAuthenticated = !!identity;
   const isAlreadyInTeam = myTeamId !== null && myTeamId !== undefined;
+  const isActorReady = !!actor && !actorFetching;
 
   const handleCreateTeam = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!teamName.trim()) {
       toast.error('Please enter a team name');
+      return;
+    }
+
+    if (!isActorReady) {
+      toast.error('Connection not ready. Please wait a moment and try again.');
       return;
     }
 
@@ -76,6 +84,20 @@ export default function CreateTeamPage() {
             Please log in to create a team.
           </AlertDescription>
         </Alert>
+      </PageShell>
+    );
+  }
+
+  // Show loading state while actor is initializing or checking membership
+  if (actorFetching || membershipLoading) {
+    return (
+      <PageShell title="Create Team">
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
+            <p className="text-muted-foreground">Initializing connection...</p>
+          </CardContent>
+        </Card>
       </PageShell>
     );
   }
@@ -128,7 +150,7 @@ export default function CreateTeamPage() {
                   value={teamName}
                   onChange={(e) => setTeamName(e.target.value)}
                   required
-                  disabled={createTeamMutation.isPending}
+                  disabled={createTeamMutation.isPending || !isActorReady}
                 />
               </div>
 
@@ -136,14 +158,14 @@ export default function CreateTeamPage() {
                 <Label>Team Icon (Optional)</Label>
                 <TeamIconUploader
                   onFileSelect={(file, content) => setIconFile({ file, content })}
-                  disabled={createTeamMutation.isPending}
+                  disabled={createTeamMutation.isPending || !isActorReady}
                 />
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <Button
                   type="submit"
-                  disabled={createTeamMutation.isPending || !teamName.trim()}
+                  disabled={createTeamMutation.isPending || !teamName.trim() || !isActorReady}
                   className="flex-1"
                 >
                   {createTeamMutation.isPending ? (

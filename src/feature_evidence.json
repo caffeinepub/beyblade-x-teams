@@ -2,10 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-replace-the-text-based-logo-in-the-appheader-component-with-the-custom-beyblade-x-image-that-was-previously-pasted-by-the-user",
-      "featureTitle": "Replace the text-based logo in the AppHeader component with the custom Beyblade X image that was previously pasted by the user",
+      "featureId": "feature-debug-and-fix-the-actor-not-available-error-that-occurs-when-users-attempt-to-create-a-new-team-through-the-createteampage",
+      "featureTitle": "Debug and fix the 'Actor not available' error that occurs when users attempt to create a new team through the CreateTeamPage",
       "files": [
-        "frontend/src/components/layout/AppHeader.tsx"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/CreateTeamPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -18,6 +19,26 @@
       ],
       "testIds": [
         "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-error-boundary-or-loading-state-handling-in-createteampage-to-prevent-premature-mutations-before-actor-is-ready",
+      "featureTitle": "Add error boundary or loading state handling in CreateTeamPage to prevent premature mutations before actor is ready",
+      "files": [
+        "frontend/src/pages/CreateTeamPage.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
       ],
       "confidence": "high"
     }

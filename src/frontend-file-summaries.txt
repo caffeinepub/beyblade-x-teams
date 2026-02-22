@@ -1,6 +1,6 @@
 {
   "frontend/src/App.tsx": "Main application component with hash-based routing, profile setup modal, and footer displaying \"Bey Hub X\" branding with caffeine.ai attribution.",
-  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations with scoped query invalidation using exact: true flag to prevent cascading refetches, increased staleTime to 30 seconds, and proper dependency management to avoid infinite loops.",
+  "frontend/src/hooks/useQueries.ts": "React Query hooks for all backend operations with scoped query invalidation using exact: true flag to prevent cascading refetches, increased staleTime to 30 seconds, proper dependency management to avoid infinite loops, and enhanced actor availability checks in mutations.",
   "frontend/src/hooks/useCurrentUser.ts": "Custom hooks for fetching current user profile and role with 30-second staleTime, proper actor dependency handling, and custom loading states to prevent profile setup modal flash.",
   "frontend/src/components/auth/LoginButton.tsx": "Login/logout button component with stable handleAuth callback using useCallback and proper query cache clearing on logout.",
   "frontend/src/components/auth/ProfileSetupModal.tsx": "Profile setup modal with stable handleSave callback using useCallback and controlled input state for name entry.",
@@ -10,7 +10,7 @@
   "frontend/src/components/files/PdfList.tsx": "Empty placeholder file as PDF list functionality has been replaced with team footage gallery.",
   "frontend/src/components/teams/JoinRequestButton.tsx": "Smart button component with responsive width (full on mobile, auto on larger screens), touch-friendly sizing with min-height, and mobile-optimized alert messages for team membership status.",
   "frontend/src/pages/HomePage.tsx": "Landing page with \"Bey Hub X\" branding in hero section, feature cards, and footer with attribution.",
-  "frontend/src/pages/CreateTeamPage.tsx": "Team creation form that waits for the createTeam mutation to complete (including query invalidation) before navigating to the team detail page, ensuring the user's membership status is properly refreshed.",
+  "frontend/src/pages/CreateTeamPage.tsx": "Team creation form that waits for actor initialization before allowing team creation, displays loading state while actor is fetching, and ensures proper error handling with user-friendly messages.",
   "frontend/src/pages/TeamListPage.tsx": "Grid view of all teams with responsive columns (1 on mobile, 2-4 on larger screens), mobile-optimized card padding, and touch-friendly view details buttons.",
   "frontend/src/pages/TeamDetailPage.tsx": "Team detail page with stable memoized values using primitive dependencies, proper type conversions to match component prop interfaces (TeamDTO for JoinRequestButton and TeamFootageGallery, bigint for TeamFootageUploader and BattleRequestDialog), and separate state management for icon file selection and upload.",
   "frontend/src/pages/LeaderDashboardPage.tsx": "Dashboard for team leaders showing their teams overview, incoming battle requests for each team via BattleRequestList component, and pending join requests notice with responsive layout.",

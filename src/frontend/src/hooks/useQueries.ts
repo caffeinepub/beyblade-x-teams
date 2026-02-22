@@ -101,12 +101,13 @@ export function useGetTeamWithMemberNames(teamId: string) {
 }
 
 export function useCreateTeam() {
-  const { actor } = useActor();
+  const { actor, isFetching: actorFetching } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ name, initialMembers }: { name: string; initialMembers: Principal[] }) => {
       if (!actor) throw new Error('Actor not available');
+      if (actorFetching) throw new Error('Actor is still initializing');
       const teamId = await actor.createTeam(name, initialMembers);
       return teamId;
     },
@@ -418,7 +419,6 @@ export function useCreateBattleRequest() {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['battleRequests', variables.requestingTeamId.toString()], exact: true });
-      queryClient.invalidateQueries({ queryKey: ['battleRequests', variables.targetTeamId.toString()], exact: true });
       toast.success('Battle request sent!');
     },
     onError: (error: Error) => {
@@ -437,13 +437,31 @@ export function useRespondToBattleRequest() {
       return actor.respondToBattleRequest(requestId, accept);
     },
     onSuccess: () => {
-      // Invalidate all battle requests queries (without exact to catch all team-specific queries)
-      queryClient.invalidateQueries({ queryKey: ['battleRequests'] });
-      toast.success('Battle request responded to!');
+      queryClient.invalidateQueries({ queryKey: ['battleRequests'], exact: false });
+      toast.success('Battle request response sent!');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to respond to battle request');
     },
+  });
+}
+
+export function useGetBattleRequest(requestId: string) {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<BattleRequest | null>({
+    queryKey: ['battleRequest', requestId],
+    queryFn: async () => {
+      if (!actor) return null;
+      if (!requestId || requestId === 'undefined' || requestId === 'null') {
+        return null;
+      }
+      return actor.getBattleRequest(BigInt(requestId));
+    },
+    enabled: !!actor && !actorFetching && !!requestId && requestId !== 'undefined' && requestId !== 'null',
+    staleTime: 30000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 }
 

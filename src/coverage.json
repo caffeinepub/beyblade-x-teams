@@ -1,24 +1,47 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-22T22:41:04.630Z",
+  "generatedAt": "2026-02-22T23:24:06.141Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 1,
-    "implemented": 1,
+    "total": 3,
+    "implemented": 2,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Replace the text-based logo in the AppHeader component with the custom Beyblade X image that was previously pasted by the user",
+        "summary": "Debug and fix the 'Actor not available' error that occurs when users attempt to create a new team through the CreateTeamPage",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/layout/AppHeader.tsx"
+          "frontend/src/pages/CreateTeamPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/layout/AppHeader.tsx"
+          "frontend/src/pages/CreateTeamPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Verify that the backend actor initialization in useActor hook properly handles authentication state and access control setup",
+        "status": "missing",
+        "plannedFiles": [
+          "frontend/src/hooks/useActor.ts"
+        ],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Add error boundary or loading state handling in CreateTeamPage to prevent premature mutations before actor is ready",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/CreateTeamPage.tsx",
+          "frontend/src/components/layout/PageShell.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/CreateTeamPage.tsx"
         ]
       }
     ]
@@ -28,8 +51,8 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/beyblade-x-logo.dim_200x80.png",
-    "frontend/src/components/layout/AppHeader.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/CreateTeamPage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Replace the text-based header logo with the custom Beyblade X image.
+**Goal:** Fix the "Actor not available" error that prevents users from creating new teams.
 
 **Planned changes:**
-- Replace the text "Bey Hub X" in the AppHeader component with the custom Beyblade X image
-- Ensure the logo image is properly sized, positioned, and maintains aspect ratio
-- Make the logo clickable to navigate to the home page
-- Ensure responsive display on both mobile and desktop viewports
+- Debug and resolve the actor initialization issue in the CreateTeamPage component
+- Add proper loading state handling to ensure actor is ready before allowing team creation
+- Improve error handling to display meaningful messages if actor initialization fails
+- Disable team creation form until backend actor is confirmed available
 
-**User-visible outcome:** The website header displays a custom Beyblade X logo image instead of text, matching the branding style similar to how major websites display their logos.
+**User-visible outcome:** Users can successfully create new teams without encountering errors, with clear loading indicators during initialization and helpful error messages if issues occur.

@@ -1,23 +1,63 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Replace header logo with custom Beyblade X image",
+  "title": "Fix Actor not available error when creating teams",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Replace the text-based logo in the AppHeader component with the custom Beyblade X image",
+      "summary": "Debug and fix the 'Actor not available' error that occurs when users attempt to create a new team through the CreateTeamPage",
       "acceptanceCriteria": [
-        "The AppHeader component displays the custom Beyblade X image instead of the text 'Bey Hub X'",
-        "The logo image is properly sized and positioned in the header",
-        "The logo maintains its aspect ratio and visual quality",
-        "The logo is clickable and navigates to the home page",
-        "The logo is responsive and displays correctly on mobile and desktop viewports"
+        "Users can successfully create new teams without encountering 'Actor not available' error",
+        "Team creation mutation completes successfully and navigates to the team detail page",
+        "Backend actor is properly initialized and accessible from the CreateTeamPage component"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/layout/AppHeader.tsx",
+          "path": "frontend/src/pages/CreateTeamPage.tsx",
           "operation": "modify",
-          "description": "Replace the text-based logo with an img element that references the generated Beyblade X logo at frontend/public/assets/generated/beyblade-x-logo.dim_200x80.png. Ensure the image is wrapped in a link to navigate home, has appropriate alt text, maintains proper sizing (max-height of 40-50px to fit header), and is responsive across mobile and desktop viewports. Keep all existing authentication controls, theme toggle, and navigation menu structure intact."
+          "description": "Update the CreateTeamPage component to ensure the actor is fully initialized before allowing team creation. Add a loading state that checks both the actor availability and the actorFetching state from useActor hook. Disable the team creation form submission until the actor is confirmed available. Display a loading indicator while the actor is initializing to prevent premature mutation attempts."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Update the useCreateTeam mutation hook to include proper actor availability checks. Ensure the mutation is only enabled when the actor is available and not in a fetching state. Add error handling that provides meaningful error messages if the actor is not available when the mutation is attempted. Consider adding a retry mechanism with exponential backoff if the actor becomes temporarily unavailable."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Verify that the backend actor initialization in useActor hook properly handles authentication state and access control setup",
+      "acceptanceCriteria": [
+        "Actor initialization completes before any mutations are attempted",
+        "Proper error handling displays meaningful messages if actor initialization fails",
+        "Authentication state is verified before allowing team creation"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useActor.ts",
+          "operation": "modify",
+          "description": "Review and enhance the actor initialization logic to ensure it properly waits for both the identity and access control setup to complete. Add explicit state tracking for the actor initialization status (initializing, ready, error). Ensure the isFetching state accurately reflects when the actor is still being set up. Add error boundary handling for actor creation failures with detailed error messages. Verify that the admin token initialization completes before marking the actor as ready."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add error boundary or loading state handling in CreateTeamPage to prevent premature mutations before actor is ready",
+      "acceptanceCriteria": [
+        "Team creation form is disabled until actor is confirmed available",
+        "Clear loading indicator shows when actor is initializing",
+        "User-friendly error message displays if actor fails to initialize"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/CreateTeamPage.tsx",
+          "operation": "modify",
+          "description": "Add comprehensive loading state UI that displays while the actor is initializing. Show a loading spinner or skeleton UI with a message like 'Initializing connection...' when actorFetching is true or actor is null. Disable the form submit button and all form inputs during this loading state. Add an error state display that shows user-friendly messages if actor initialization fails, such as 'Failed to connect to the backend. Please refresh the page and try again.' Include a retry button in the error state that allows users to attempt reinitialization."
+        },
+        {
+          "path": "frontend/src/components/layout/PageShell.tsx",
+          "operation": "modify",
+          "description": "Optionally enhance the PageShell component to support a loading prop that can display a consistent loading state across all pages. This allows CreateTeamPage and other pages to easily show loading UI while waiting for actor initialization. Add a loading variant that displays a centered spinner with optional loading text."
         }
       ]
     }
