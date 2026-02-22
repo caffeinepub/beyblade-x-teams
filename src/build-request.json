@@ -1,63 +1,54 @@
 {
   "kind": "build_request",
-  "title": "Fix maximum call stack size exceeded error",
-  "priority": "high",
+  "title": "Change website name to \"The X\"",
+  "projectName": "The X",
+  "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Identify and fix the infinite recursion or circular dependency causing the maximum call stack size exceeded error in the application",
-      "target": "both",
+      "text": "Update the website title in frontend/index.html from \"Beyblade X Teams\" to \"The X\"",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-final"
+          "msg-6"
+        ],
+        "quotes": [
+          "change the website name to \"The X\" instead of \"Beyblade X Teams\""
         ]
       },
       "acceptanceCriteria": [
-        "Application loads without throwing maximum call stack exceeded errors",
-        "All React components render successfully without infinite loops",
-        "React Query hooks do not trigger infinite refetch cycles",
-        "useCallback and useMemo dependencies are correctly specified to prevent unnecessary re-renders"
+        "The <title> tag in frontend/index.html displays \"The X\"",
+        "All Open Graph meta tags reference \"The X\" instead of \"Beyblade X Teams\"",
+        "The browser tab title shows \"The X\""
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Review and fix any circular dependencies in React Query hook invalidation patterns, particularly in team-related mutations that may be triggering cascading invalidations",
+      "text": "Update all user-facing text references from \"Beyblade X Teams\" to \"The X\" throughout the application",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-final"
+          "msg-6"
+        ],
+        "quotes": [
+          "change the website name to \"The X\" instead of \"Beyblade X Teams\""
         ]
       },
       "acceptanceCriteria": [
-        "Query invalidation after mutations does not create circular refetch loops",
-        "Team data queries (useTeamQuery, useCurrentTeam, useMyTeams) do not trigger each other infinitely",
-        "Mutation success handlers properly scope their invalidations to prevent cascading effects"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Check TeamDetailPage component for infinite loop issues in useMemo dependencies, particularly around isCurrentUserLeader and isCurrentUserMember calculations",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-final"
-        ]
-      },
-      "acceptanceCriteria": [
-        "TeamDetailPage renders without causing stack overflow",
-        "useMemo hooks have stable dependency arrays that do not change on every render",
-        "Derived state calculations do not trigger re-renders that recalculate themselves"
+        "The HomePage hero section and feature cards reference \"The X\" where appropriate",
+        "Any footer or about text uses \"The X\" as the website name",
+        "No instances of \"Beyblade X Teams\" remain in user-visible text"
       ]
     }
   ],
   "constraints": [
-    "Preserve existing functionality while fixing the stack overflow issue",
-    "Do not modify authentication or Internet Identity integration"
+    "Do not modify authentication logic or backend functionality",
+    "Preserve all existing features and routing behavior"
   ],
   "nonGoals": [
-    "Adding new features",
-    "Changing the UI design or layout",
-    "Modifying backend data models"
+    "Changing the domain name or deployment URL",
+    "Modifying the team management or battle request functionality",
+    "Altering the visual design or layout beyond text changes"
   ],
   "imageRequirements": {
     "required": [],

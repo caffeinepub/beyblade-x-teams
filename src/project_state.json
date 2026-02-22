@@ -3,38 +3,28 @@
   "projectStateVersion": 3,
   "summary": "New project",
   "architectural_notes": [],
-  "known_issues": [
-    "Maximum call stack size exceeded error occurring again"
-  ],
-  "isFixRequest": true,
+  "known_issues": [],
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-identify-and-fix-the-infinite-recursion-or-circular-dependency-causing-the-maximum-call-stack-size-exceeded-error-in-the-application",
-      "title": "Identify and fix the infinite recursion or circular dependency causing the maximum call stack size exceeded error in the application",
+      "id": "feature-update-the-website-title-in-frontend-index-html-from-beyblade-x-teams-to-the-x",
+      "title": "Update the website title in frontend/index.html from \"Beyblade X Teams\" to \"The X\"",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-review-and-fix-any-circular-dependencies-in-react-query-hook-invalidation-patterns-particularly-in-team-related-mutations-that-may-be-triggering-cascading-invalidations",
-      "title": "Review and fix any circular dependencies in React Query hook invalidation patterns, particularly in team-related mutations that may be triggering cascading invalidations",
+      "id": "feature-update-all-user-facing-text-references-from-beyblade-x-teams-to-the-x-throughout-the-application",
+      "title": "Update all user-facing text references from \"Beyblade X Teams\" to \"The X\" throughout the application",
       "reqIds": [
         "REQ-2"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-check-teamdetailpage-component-for-infinite-loop-issues-in-usememo-dependencies-particularly-around-iscurrentuserleader-and-iscurrentusermember-calculations",
-      "title": "Check TeamDetailPage component for infinite loop issues in useMemo dependencies, particularly around isCurrentUserLeader and isCurrentUserMember calculations",
-      "reqIds": [
-        "REQ-3"
       ],
       "version": 1
     }
   ],
   "new_feature_requests": [],
-  "projectName": "Fix maximum call stack size exceeded error",
+  "projectName": "The X",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

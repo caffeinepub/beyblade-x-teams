@@ -1,68 +1,46 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-22T14:18:21.028Z",
+  "generatedAt": "2026-02-22T22:16:22.057Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 3,
-    "implemented": 3,
+    "total": 2,
+    "implemented": 2,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Identify and fix the infinite recursion or circular dependency causing the maximum call stack size exceeded error in the application",
+        "summary": "Update the website title in frontend/index.html from \"Beyblade X Teams\" to \"The X\"",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/TeamDetailPage.tsx",
-          "frontend/src/components/auth/ProfileSetupModal.tsx",
-          "frontend/src/App.tsx",
-          "frontend/src/hooks/useCurrentUser.ts",
-          "frontend/src/components/layout/AppHeader.tsx",
-          "frontend/src/pages/InboxPage.tsx"
+          "frontend/index.html"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/pages/TeamDetailPage.tsx"
+          "frontend/index.html"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Review and fix any circular dependencies in React Query hook invalidation patterns, particularly in team-related mutations that may be triggering cascading invalidations",
+        "summary": "Update all user-facing text references from \"Beyblade X Teams\" to \"The X\" throughout the application",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/hooks/useActor.ts"
+          "frontend/src/pages/HomePage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts"
-        ]
-      },
-      {
-        "id": "REQ-3",
-        "summary": "Check TeamDetailPage component for infinite loop issues in useMemo dependencies, particularly around isCurrentUserLeader and isCurrentUserMember calculations",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/TeamDetailPage.tsx",
-          "frontend/src/pages/LeaderDashboardPage.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/TeamDetailPage.tsx"
+          "frontend/src/pages/HomePage.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/TeamDetailPage.tsx",
+    "frontend/index.html",
+    "frontend/src/pages/HomePage.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

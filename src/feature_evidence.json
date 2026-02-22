@@ -2,11 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-identify-and-fix-the-infinite-recursion-or-circular-dependency-causing-the-maximum-call-stack-size-exceeded-error-in-the-application",
-      "featureTitle": "Identify and fix the infinite recursion or circular dependency causing the maximum call stack size exceeded error in the application",
+      "featureId": "feature-update-the-website-title-in-frontend-index-html-from-beyblade-x-teams-to-the-x",
+      "featureTitle": "Update the website title in frontend/index.html from \"Beyblade X Teams\" to \"The X\"",
       "files": [
-        "frontend/src/hooks/useQueries.ts",
-        "frontend/src/pages/TeamDetailPage.tsx"
+        "frontend/index.html"
       ],
       "components": [
         "authorization@4.0.0",
@@ -23,10 +22,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-review-and-fix-any-circular-dependencies-in-react-query-hook-invalidation-patterns-particularly-in-team-related-mutations-that-may-be-triggering-cascading-invalidations",
-      "featureTitle": "Review and fix any circular dependencies in React Query hook invalidation patterns, particularly in team-related mutations that may be triggering cascading invalidations",
+      "featureId": "feature-update-all-user-facing-text-references-from-beyblade-x-teams-to-the-x-throughout-the-application",
+      "featureTitle": "Update all user-facing text references from \"Beyblade X Teams\" to \"The X\" throughout the application",
       "files": [
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/pages/HomePage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -39,26 +38,6 @@
       ],
       "testIds": [
         "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-check-teamdetailpage-component-for-infinite-loop-issues-in-usememo-dependencies-particularly-around-iscurrentuserleader-and-iscurrentusermember-calculations",
-      "featureTitle": "Check TeamDetailPage component for infinite loop issues in useMemo dependencies, particularly around isCurrentUserLeader and isCurrentUserMember calculations",
-      "files": [
-        "frontend/src/pages/TeamDetailPage.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
       ],
       "confidence": "high"
     }

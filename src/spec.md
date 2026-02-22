@@ -1,11 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Fix the maximum call stack size exceeded error preventing the application from loading.
+**Goal:** Rebrand the website from "Beyblade X Teams" to "The X".
 
 **Planned changes:**
-- Identify and resolve infinite recursion or circular dependencies causing stack overflow
-- Fix React Query hook invalidation patterns to prevent cascading refetch loops
-- Correct useMemo dependencies in TeamDetailPage component to prevent infinite re-renders
+- Update the website title in frontend/index.html to "The X"
+- Update all Open Graph meta tags to reference "The X"
+- Replace all user-facing text references from "Beyblade X Teams" to "The X" throughout the application
 
-**User-visible outcome:** The application loads successfully without crashing, and all team-related pages render correctly.
+**User-visible outcome:** The website now displays "The X" as its name in the browser tab, page content, and all metadata, with no remaining references to "Beyblade X Teams".
