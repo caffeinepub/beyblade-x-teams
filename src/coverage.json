@@ -1,93 +1,90 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-21T01:43:56.014Z",
+  "generatedAt": "2026-02-21T02:41:57.187Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 8,
-    "implemented": 5,
+    "total": 7,
+    "implemented": 4,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Add a profile picture field to user profiles that stores image data as a Blob",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
+        "summary": "Display the user's profile picture on the profile page if one exists",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/ProfilePage.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/ProfilePage.tsx"
+        ]
       },
       {
         "id": "REQ-2",
-        "summary": "Add an 'about me' text field to user profiles for bio/description content",
+        "summary": "Add backend data model for battle requests between teams, including the requesting team, target team, proposed date, and status (pending/accepted/rejected)",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
         "id": "REQ-3",
-        "summary": "Implement backend method to delete team footage videos by video ID, restricted to the video uploader or team leader",
+        "summary": "Implement backend endpoint for team leaders to create a battle request with another team, specifying a proposed date",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
         "id": "REQ-4",
-        "summary": "Create a profile page displaying user information including profile picture, username, and about me bio",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/ProfilePage.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/ProfilePage.tsx",
-          "frontend/src/App.tsx"
-        ]
+        "summary": "Implement backend endpoints for the receiving team leader to accept or reject battle requests",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
         "id": "REQ-5",
-        "summary": "Add profile picture upload component that allows users to select and upload images for their profile, similar to TeamIconUploader",
+        "summary": "Add frontend UI on team detail page for team leaders to initiate battle requests with other teams, including a date picker for proposing a battle date",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/profile/ProfilePictureUploader.tsx"
+          "frontend/src/components/teams/BattleRequestDialog.tsx",
+          "frontend/src/pages/TeamDetailPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/profile/ProfilePictureUploader.tsx"
+          "frontend/src/components/teams/BattleRequestDialog.tsx",
+          "frontend/src/pages/TeamDetailPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ]
       },
       {
         "id": "REQ-6",
-        "summary": "Display team footage videos in Twitter-style card format with poster's profile picture and team icon to the left of the video",
+        "summary": "Add frontend UI for team leaders to view and respond to incoming battle requests with accept/reject actions",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/teams/TeamFootageGallery.tsx"
+          "frontend/src/components/teams/BattleRequestList.tsx",
+          "frontend/src/pages/LeaderDashboardPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/teams/TeamFootageGallery.tsx"
+          "frontend/src/components/teams/BattleRequestList.tsx",
+          "frontend/src/pages/LeaderDashboardPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ]
       },
       {
         "id": "REQ-7",
-        "summary": "Add delete button to video cards that allows the video uploader or team leader to remove videos",
+        "summary": "Display list of scheduled battles (accepted battle requests) on team detail pages showing opponent team and agreed date",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/teams/TeamFootageGallery.tsx"
+          "frontend/src/components/teams/ScheduledBattlesList.tsx",
+          "frontend/src/pages/TeamDetailPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/teams/TeamFootageGallery.tsx"
-        ]
-      },
-      {
-        "id": "REQ-8",
-        "summary": "Update AppHeader navigation to include a link to the user's profile page",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/layout/AppHeader.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/layout/AppHeader.tsx"
+          "frontend/src/components/teams/ScheduledBattlesList.tsx",
+          "frontend/src/pages/TeamDetailPage.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ]
       }
     ]
@@ -99,17 +96,15 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
-    "frontend/src/components/auth/ProfileSetupModal.tsx",
-    "frontend/src/components/layout/AppHeader.tsx",
-    "frontend/src/components/profile/ProfilePictureUploader.tsx",
-    "frontend/src/components/teams/TeamFootageGallery.tsx",
-    "frontend/src/components/teams/TeamFootageUploader.tsx",
+    "frontend/src/components/teams/BattleRequestDialog.tsx",
+    "frontend/src/components/teams/BattleRequestList.tsx",
+    "frontend/src/components/teams/ScheduledBattlesList.tsx",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
     "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/LeaderDashboardPage.tsx",
     "frontend/src/pages/ProfilePage.tsx",
     "frontend/src/pages/TeamDetailPage.tsx",
     "project_state.json",

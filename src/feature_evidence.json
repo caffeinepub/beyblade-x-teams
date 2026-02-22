@@ -2,10 +2,9 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-create-a-profile-page-displaying-user-information-including-profile-picture-username-and-about-me-bio",
-      "featureTitle": "Create a profile page displaying user information including profile picture, username, and about me bio",
+      "featureId": "feature-display-the-user-s-profile-picture-on-the-profile-page-if-one-exists",
+      "featureTitle": "Display the user's profile picture on the profile page if one exists",
       "files": [
-        "frontend/src/App.tsx",
         "frontend/src/pages/ProfilePage.tsx"
       ],
       "components": [
@@ -18,15 +17,17 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-4"
+        "REQ-1"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-profile-picture-upload-component-that-allows-users-to-select-and-upload-images-for-their-profile-similar-to-teamiconuploader",
-      "featureTitle": "Add profile picture upload component that allows users to select and upload images for their profile, similar to TeamIconUploader",
+      "featureId": "feature-add-frontend-ui-on-team-detail-page-for-team-leaders-to-initiate-battle-requests-with-other-teams-including-a-date-picker-for-proposing-a-battle-date",
+      "featureTitle": "Add frontend UI on team detail page for team leaders to initiate battle requests with other teams, including a date picker for proposing a battle date",
       "files": [
-        "frontend/src/components/profile/ProfilePictureUploader.tsx"
+        "frontend/src/components/teams/BattleRequestDialog.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/TeamDetailPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -43,10 +44,12 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-display-team-footage-videos-in-twitter-style-card-format-with-poster-s-profile-picture-and-team-icon-to-the-left-of-the-video",
-      "featureTitle": "Display team footage videos in Twitter-style card format with poster's profile picture and team icon to the left of the video",
+      "featureId": "feature-add-frontend-ui-for-team-leaders-to-view-and-respond-to-incoming-battle-requests-with-accept-reject-actions",
+      "featureTitle": "Add frontend UI for team leaders to view and respond to incoming battle requests with accept/reject actions",
       "files": [
-        "frontend/src/components/teams/TeamFootageGallery.tsx"
+        "frontend/src/components/teams/BattleRequestList.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/LeaderDashboardPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -63,11 +66,12 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-delete-button-to-video-cards-that-allows-the-video-uploader-or-team-leader-to-remove-videos",
-      "featureTitle": "Add delete button to video cards that allows the video uploader or team leader to remove videos",
+      "featureId": "feature-display-list-of-scheduled-battles-accepted-battle-requests-on-team-detail-pages-showing-opponent-team-and-agreed-date",
+      "featureTitle": "Display list of scheduled battles (accepted battle requests) on team detail pages showing opponent team and agreed date",
       "files": [
-        "frontend/src/components/teams/TeamFootageGallery.tsx",
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/components/teams/ScheduledBattlesList.tsx",
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/TeamDetailPage.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -80,26 +84,6 @@
       ],
       "testIds": [
         "REQ-7"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-update-appheader-navigation-to-include-a-link-to-the-user-s-profile-page",
-      "featureTitle": "Update AppHeader navigation to include a link to the user's profile page",
-      "files": [
-        "frontend/src/components/layout/AppHeader.tsx"
-      ],
-      "components": [
-        "authorization@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-8"
       ],
       "confidence": "high"
     }

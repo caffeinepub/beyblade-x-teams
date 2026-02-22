@@ -1,169 +1,153 @@
 {
   "kind": "build_request",
-  "title": "Add user profile pictures, about me page, video deletion, and Twitter-style video display",
+  "title": "Add profile picture display and team battle request system",
+  "projectName": "Beyblade Arena",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Add a profile picture field to user profiles that stores image data as a Blob",
-      "target": "backend",
+      "text": "Display the user's profile picture on the profile page if one exists",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-final"
         ],
         "quotes": [
-          "Add the ability to have profile pictures"
+          "make the profile picture show on the profile page"
         ]
       },
       "acceptanceCriteria": [
-        "User profile type includes a profilePicture field that can store image bytes",
-        "Backend provides a method to upload/update user profile pictures",
-        "Backend provides a method to retrieve user profile pictures"
+        "Profile picture is visible on the profile page when a user has uploaded one",
+        "Profile picture displays correctly using the existing profile picture data from the backend",
+        "Profile picture is styled consistently with the rest of the profile page"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Add an 'about me' text field to user profiles for bio/description content",
+      "text": "Add backend data model for battle requests between teams, including the requesting team, target team, proposed date, and status (pending/accepted/rejected)",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-final"
         ],
         "quotes": [
-          "an about me page"
+          "the team leader can request to have a beybattle with the other team on a date"
         ]
       },
       "acceptanceCriteria": [
-        "User profile type includes an aboutMe text field",
-        "Backend provides a method to update the about me content",
-        "About me field supports multi-line text"
+        "Backend stores battle request data including both team IDs, proposed date, and request status",
+        "Only team leaders can create battle requests for their teams",
+        "Battle requests are persisted across canister upgrades"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Implement backend method to delete team footage videos by video ID, restricted to the video uploader or team leader",
+      "text": "Implement backend endpoint for team leaders to create a battle request with another team, specifying a proposed date",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-final"
         ],
         "quotes": [
-          "make it so that you can delete videos"
+          "the team leader can request to have a beybattle with the other team on a date"
         ]
       },
       "acceptanceCriteria": [
-        "Delete video method requires authentication",
-        "Only the user who uploaded the video or the team leader can delete it",
-        "Deleted videos are removed from storage and no longer appear in the gallery"
+        "Team leaders can send battle requests to other teams",
+        "Endpoint validates that the caller is a team leader",
+        "Endpoint validates that both teams exist",
+        "Endpoint prevents requesting battles with your own team"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Create a profile page displaying user information including profile picture, username, and about me bio",
-      "target": "frontend",
+      "text": "Implement backend endpoints for the receiving team leader to accept or reject battle requests",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-final"
         ],
         "quotes": [
-          "an about me page"
+          "a date that the two leaders can agree on"
         ]
       },
       "acceptanceCriteria": [
-        "Profile page is accessible via a route (e.g., /profile or /profile/:userId)",
-        "Page displays the user's profile picture if available",
-        "Page displays the user's about me text",
-        "Current user can edit their own profile picture and about me content"
+        "Team leaders can accept or reject incoming battle requests",
+        "Only the leader of the target team can respond to battle requests",
+        "Accepted battles are marked with an agreed-upon date",
+        "Rejected battles are marked as rejected"
       ]
     },
     {
       "id": "REQ-5",
-      "text": "Add profile picture upload component that allows users to select and upload images for their profile, similar to TeamIconUploader",
+      "text": "Add frontend UI on team detail page for team leaders to initiate battle requests with other teams, including a date picker for proposing a battle date",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-final"
         ],
         "quotes": [
-          "Add the ability to have profile pictures"
+          "the team leader can request to have a beybattle with the other team on a date"
         ]
       },
       "acceptanceCriteria": [
-        "Component accepts standard image formats (PNG, JPG, WebP)",
-        "Shows preview of selected image before upload",
-        "Validates file size (max 2MB)",
-        "Converts image to Uint8Array and uploads via backend"
+        "Team leaders see a button to request a battle when viewing other teams",
+        "Button opens a dialog with date picker for proposing a battle date",
+        "Successful battle request shows confirmation feedback",
+        "Leaders cannot request battles with their own team"
       ]
     },
     {
       "id": "REQ-6",
-      "text": "Display team footage videos in Twitter-style card format with poster's profile picture and team icon to the left of the video",
+      "text": "Add frontend UI for team leaders to view and respond to incoming battle requests with accept/reject actions",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-final"
         ],
         "quotes": [
-          "when a video IS posted, its like a tweet, where it has the posters pfp, and team icon to the left of it"
+          "a date that the two leaders can agree on"
         ]
       },
       "acceptanceCriteria": [
-        "Video cards show the uploader's profile picture on the left side",
-        "Video cards show the team icon on the left side",
-        "Layout resembles Twitter's tweet card design with media on the right",
-        "Video cards display the uploader's username",
-        "Cards are styled consistently with the rest of the app's theme"
+        "Team leaders can view incoming battle requests for their team",
+        "Each request shows the requesting team name and proposed date",
+        "Leaders can accept or reject requests with clear action buttons",
+        "Accepting a request confirms the battle date",
+        "UI updates after accepting or rejecting a request"
       ]
     },
     {
       "id": "REQ-7",
-      "text": "Add delete button to video cards that allows the video uploader or team leader to remove videos",
+      "text": "Display list of scheduled battles (accepted battle requests) on team detail pages showing opponent team and agreed date",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-latest"
+          "msg-final"
         ],
         "quotes": [
-          "make it so that you can delete videos"
+          "the two leaders can agree on"
         ]
       },
       "acceptanceCriteria": [
-        "Delete button appears only for authorized users (uploader or team leader)",
-        "Clicking delete shows a confirmation dialog",
-        "Successful deletion removes the video from the display",
-        "Error messages are shown if deletion fails"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Update AppHeader navigation to include a link to the user's profile page",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-latest"
-        ],
-        "quotes": [
-          "an about me page"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Profile link appears in the navigation menu when user is authenticated",
-        "Link routes to the current user's profile page",
-        "Mobile menu includes the profile link"
+        "Team detail pages show upcoming scheduled battles",
+        "Each battle displays opponent team name and battle date",
+        "Battles are sorted by date",
+        "Both teams involved in a battle can see it on their respective team pages"
       ]
     }
   ],
   "constraints": [
-    "Maintain single-actor backend architecture with all logic in backend/main.mo",
-    "Do not modify immutable frontend paths: useInternetIdentity.ts, useInternetIdentity.tsx, useActor.ts, main.tsx, components/ui",
-    "Follow existing pattern for image uploads using Uint8Array and ExternalBlob as seen in TeamIconUploader",
-    "Maintain consistency with existing authorization patterns for team leaders and members"
+    "Use existing team leader authorization patterns from the codebase",
+    "Battle requests must follow the same access control patterns as team management features",
+    "Profile picture display must use the existing profile picture data structure from ProfilePictureUploader"
   ],
   "nonGoals": [
-    "Public profile pages for other users (focus on own profile only)",
-    "Social features like following, liking, or commenting on videos",
-    "Video editing or processing capabilities",
-    "Profile picture cropping or advanced image editing"
+    "Battle result tracking or scoring system",
+    "Notifications for battle requests outside of the inbox",
+    "Editing or canceling battle requests after creation",
+    "Calendar integration for battle dates",
+    "Battle reminders or scheduling conflicts"
   ],
   "imageRequirements": {
     "required": [],

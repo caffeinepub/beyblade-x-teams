@@ -1,16 +1,14 @@
 # Specification
 
 ## Summary
-**Goal:** Add user profile pictures, about me pages, video deletion functionality, and Twitter-style video card display.
+**Goal:** Add profile picture display on profile pages and implement a team battle request system where team leaders can challenge other teams to Beyblade battles on specific dates.
 
 **Planned changes:**
-- Add profile picture field (Blob storage) and about me text field to user profiles
-- Implement profile picture upload and retrieval in backend
-- Add video deletion method restricted to uploader or team leader
-- Create profile page displaying profile picture, username, and about me bio
-- Add profile picture upload component with preview and validation
-- Redesign video cards in Twitter-style format with poster's profile picture and team icon on the left
-- Add delete button to video cards for authorized users
-- Add profile link to navigation menu
+- Display user profile pictures on profile pages when available
+- Add backend data model for battle requests between teams
+- Create backend endpoints for team leaders to send, accept, and reject battle requests
+- Add frontend UI for team leaders to request battles with other teams and select a proposed date
+- Add frontend UI for team leaders to view and respond to incoming battle requests
+- Display scheduled battles on team detail pages showing opponent and agreed date
 
-**User-visible outcome:** Users can upload profile pictures, write an about me bio, view their profile page, delete their own videos (or team videos if they're the leader), and see videos displayed in a Twitter-style card format with profile pictures and team icons.
+**User-visible outcome:** Users will see their profile pictures on their profile pages. Team leaders can challenge other teams to battles by proposing a date, accept or reject incoming battle requests, and view scheduled battles on team pages.

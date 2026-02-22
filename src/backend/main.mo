@@ -7,13 +7,13 @@ import Array "mo:core/Array";
 import Iter "mo:core/Iter";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
-import Migration "migration";
+
 import MixinStorage "blob-storage/Mixin";
 import Storage "blob-storage/Storage";
+import Migration "migration";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
 
-// [MIGRATION] Use migration module
 (with migration = Migration.run)
 actor {
   let accessControlState = AccessControl.initState();
@@ -123,6 +123,24 @@ actor {
   // Track all active team memberships. Each unique member is stored only once.
   let teamMembers = Map.empty<Principal, Nat>();
   let teams = Map.empty<Nat, Team>();
+
+  // Battle requests
+  public type BattleRequestStatus = {
+    #pending;
+    #accepted;
+    #rejected;
+  };
+
+  public type BattleRequest = {
+    id : Nat;
+    requestingTeam : Nat;
+    targetTeam : Nat;
+    proposedDate : Text;
+    status : BattleRequestStatus;
+  };
+
+  var nextBattleRequestId = 1;
+  let battleRequests = Map.empty<Nat, BattleRequest>();
 
   func teamToDTO(team : Team) : TeamDTO {
     {
@@ -505,7 +523,6 @@ actor {
     team.videos.add(teamVideo);
   };
 
-  // AUTHORIZATION FIX: Restrict deletion to video uploader or team leader
   public shared ({ caller }) func deleteTeamFootage(teamId : Nat, videoId : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can delete team footage");
@@ -549,5 +566,153 @@ actor {
     let team = checkTeamExists(teamId);
     team.videos.toArray().map(func(tv : TeamVideo) : Storage.ExternalBlob { tv.video });
   };
-};
 
+  // New type for mapping member IDs to names
+  public type TeamMember = {
+    id : Principal;
+    name : Text;
+  };
+
+  public type TeamWithMemberNamesDTO = {
+    id : Nat;
+    leader : Principal;
+    name : Text;
+    members : [TeamMember];
+    joinRequests : [Principal];
+    files : [PDFDocument];
+    icon : ?Image;
+    videos : [Storage.ExternalBlob];
+  };
+
+  public query ({ caller }) func getTeamWithMemberNames(teamId : Nat) : async TeamWithMemberNamesDTO {
+    let team = checkTeamExists(teamId);
+
+    // Fetch names for all members in a single pass
+    let memberNames = team.members.toArray().map(
+      func(memberId) {
+        {
+          id = memberId;
+          name = switch (userProfiles.get(memberId)) {
+            case (null) { "Unknown" };
+            case (?profile) { profile.name };
+          };
+        };
+      }
+    );
+
+    {
+      id = team.id;
+      leader = team.leader;
+      name = team.name;
+      members = memberNames;
+      joinRequests = team.joinRequests.toArray();
+      files = team.files.toArray();
+      icon = team.icon;
+      videos = team.videos.toArray().map(func(tv : TeamVideo) : Storage.ExternalBlob { tv.video });
+    };
+  };
+
+  public shared ({ caller }) func createBattleRequest(requestingTeamId : Nat, targetTeamId : Nat, proposedDate : Text) : async Nat {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can create battle requests");
+    };
+
+    let requestingTeam = checkTeamExists(requestingTeamId);
+
+    // Only team leader can create battle requests
+    if (requestingTeam.leader != caller) {
+      Runtime.trap("Unauthorized: Only requesting team leader can create a battle request");
+    };
+
+    let _targetTeam = checkTeamExists(targetTeamId);
+
+    let id = nextBattleRequestId;
+    let newRequest = {
+      id;
+      requestingTeam = requestingTeamId;
+      targetTeam = targetTeamId;
+      proposedDate;
+      status = #pending;
+    };
+
+    battleRequests.add(id, newRequest);
+    nextBattleRequestId += 1;
+    id;
+  };
+
+  public shared ({ caller }) func respondToBattleRequest(requestId : Nat, accept : Bool) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can respond to battle requests");
+    };
+
+    let request = switch (battleRequests.get(requestId)) {
+      case (null) { Runtime.trap("Battle request does not exist") };
+      case (?req) { req };
+    };
+
+    let targetTeam = checkTeamExists(request.targetTeam);
+
+    // Only team leader can accept/reject battle requests
+    if (targetTeam.leader != caller) {
+      Runtime.trap("Unauthorized: Only target team leader can respond to battle requests");
+    };
+
+    if (request.status != #pending) {
+      Runtime.trap("Battle request is no longer pending");
+    };
+
+    // Update status
+    let updatedRequest = {
+      request with
+      status = if (accept) {
+        #accepted;
+      } else { #rejected };
+    };
+
+    battleRequests.add(requestId, updatedRequest);
+  };
+
+  public query ({ caller }) func getBattleRequest(requestId : Nat) : async ?BattleRequest {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can view battle requests");
+    };
+
+    let request = battleRequests.get(requestId);
+    
+    // Authorization: caller must be involved in the battle request
+    switch (request) {
+      case (null) { null };
+      case (?req) {
+        let requestingTeam = checkTeamExists(req.requestingTeam);
+        let targetTeam = checkTeamExists(req.targetTeam);
+        
+        // Check if caller is a member of either team
+        if (requestingTeam.members.contains(caller) or targetTeam.members.contains(caller)) {
+          request;
+        } else {
+          Runtime.trap("Unauthorized: Only team members involved in the battle request can view it");
+        };
+      };
+    };
+  };
+
+  public query ({ caller }) func listBattleRequestsForTeam(teamId : Nat) : async [BattleRequest] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can view battle requests");
+    };
+
+    let team = checkTeamExists(teamId);
+    
+    // Authorization: caller must be a member of the team
+    if (not team.members.contains(caller)) {
+      Runtime.trap("Unauthorized: Only team members can view battle requests for their team");
+    };
+
+    // Return all battle requests where this team is either requesting or target
+    battleRequests.values().toArray().filter(
+      func(req : BattleRequest) : Bool {
+        req.requestingTeam == teamId or req.targetTeam == teamId;
+      }
+    );
+  };
+};

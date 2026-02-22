@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import { useInternetIdentity } from './useInternetIdentity';
-import type { TeamDTO, UserProfile, Mail, ExternalBlob } from '../backend';
+import type { TeamDTO, TeamWithMemberNamesDTO, UserProfile, Mail, ExternalBlob, BattleRequest } from '../backend';
 import { Principal } from '@dfinity/principal';
 import { toast } from 'sonner';
 
@@ -67,6 +67,19 @@ export function useGetTeam(teamId: string) {
   });
 }
 
+export function useGetTeamWithMemberNames(teamId: string) {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<TeamWithMemberNamesDTO>({
+    queryKey: ['teamWithMemberNames', teamId],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getTeamWithMemberNames(BigInt(teamId));
+    },
+    enabled: !!actor && !actorFetching && !!teamId,
+  });
+}
+
 export function useCreateTeam() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
@@ -103,6 +116,7 @@ export function useRequestJoinTeam() {
     },
     onSuccess: (_, teamId) => {
       queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teamWithMemberNames', teamId.toString()] });
       queryClient.invalidateQueries({ queryKey: ['teams'] });
       toast.success('Join request sent to team leader!');
     },
@@ -132,6 +146,7 @@ export function useApproveJoinRequests() {
     },
     onSuccess: (_, { teamId }) => {
       queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teamWithMemberNames', teamId.toString()] });
       queryClient.invalidateQueries({ queryKey: ['teams'] });
       queryClient.invalidateQueries({ queryKey: ['inbox'] });
       toast.success('Join request approved!');
@@ -162,6 +177,7 @@ export function useDenyJoinRequests() {
     },
     onSuccess: (_, { teamId }) => {
       queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teamWithMemberNames', teamId.toString()] });
       queryClient.invalidateQueries({ queryKey: ['teams'] });
       queryClient.invalidateQueries({ queryKey: ['inbox'] });
       toast.success('Join request denied');
@@ -194,6 +210,7 @@ export function useUploadTeamIcon() {
     },
     onSuccess: (_, { teamId }) => {
       queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teamWithMemberNames', teamId.toString()] });
       queryClient.invalidateQueries({ queryKey: ['teams'] });
       toast.success('Team icon uploaded successfully!');
     },
@@ -276,6 +293,7 @@ export function useRemoveMemberFromTeam() {
     },
     onSuccess: (_, { teamId }) => {
       queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teamWithMemberNames', teamId.toString()] });
       queryClient.invalidateQueries({ queryKey: ['teams'] });
       toast.success('Member removed from team');
     },
@@ -404,6 +422,80 @@ export function useDeleteTeamFootage() {
   });
 }
 
+// Battle Requests
+export function useListBattleRequestsForTeam(teamId: string) {
+  const { actor, isFetching: actorFetching } = useActor();
+  const { identity } = useInternetIdentity();
+
+  return useQuery<BattleRequest[]>({
+    queryKey: ['battleRequests', teamId],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.listBattleRequestsForTeam(BigInt(teamId));
+    },
+    enabled: !!actor && !actorFetching && !!teamId && !!identity,
+  });
+}
+
+export function useCreateBattleRequest() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ 
+      requestingTeamId, 
+      targetTeamId, 
+      proposedDate 
+    }: { 
+      requestingTeamId: bigint; 
+      targetTeamId: bigint; 
+      proposedDate: string;
+    }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.createBattleRequest(requestingTeamId, targetTeamId, proposedDate);
+    },
+    onSuccess: (_, { requestingTeamId, targetTeamId }) => {
+      queryClient.invalidateQueries({ queryKey: ['battleRequests', requestingTeamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['battleRequests', targetTeamId.toString()] });
+      toast.success('Battle request sent successfully!');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to create battle request';
+      if (message.includes('Only requesting team leader')) {
+        toast.error('Only the team leader can request battles');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}
+
+export function useRespondToBattleRequest() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ requestId, accept }: { requestId: bigint; accept: boolean }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.respondToBattleRequest(requestId, accept);
+    },
+    onSuccess: (_, { accept }) => {
+      queryClient.invalidateQueries({ queryKey: ['battleRequests'] });
+      toast.success(accept ? 'Battle request accepted!' : 'Battle request rejected');
+    },
+    onError: (error: Error) => {
+      const message = error.message || 'Failed to respond to battle request';
+      if (message.includes('Only target team leader')) {
+        toast.error('Only the target team leader can respond to this request');
+      } else if (message.includes('no longer pending')) {
+        toast.error('This battle request has already been responded to');
+      } else {
+        toast.error(message);
+      }
+    },
+  });
+}
+
 // File Upload (kept for backward compatibility if needed elsewhere)
 export function useUploadFile() {
   const { actor } = useActor();
@@ -416,6 +508,7 @@ export function useUploadFile() {
     },
     onSuccess: (_, { teamId }) => {
       queryClient.invalidateQueries({ queryKey: ['team', teamId.toString()] });
+      queryClient.invalidateQueries({ queryKey: ['teamWithMemberNames', teamId.toString()] });
       queryClient.invalidateQueries({ queryKey: ['teams'] });
       toast.success('File uploaded successfully!');
     },

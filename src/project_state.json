@@ -1,51 +1,43 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Social video sharing app with team features, profile management, and Twitter-style video posts",
+  "summary": "Beyblade team management app with profile pictures and battle scheduling",
   "architectural_notes": [
-    "Video posts displayed in social feed format with user avatars and team branding",
-    "User profile system with customizable profile pictures and about pages"
+    "Battle scheduling requires leader-to-leader communication/negotiation flow",
+    "Profile picture storage and display integration needed"
   ],
   "known_issues": [],
   "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-create-a-profile-page-displaying-user-information-including-profile-picture-username-and-about-me-bio",
-      "title": "Create a profile page displaying user information including profile picture, username, and about me bio",
+      "id": "feature-display-the-user-s-profile-picture-on-the-profile-page-if-one-exists",
+      "title": "Display the user's profile picture on the profile page if one exists",
       "reqIds": [
-        "REQ-4"
+        "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-profile-picture-upload-component-that-allows-users-to-select-and-upload-images-for-their-profile-similar-to-teamiconuploader",
-      "title": "Add profile picture upload component that allows users to select and upload images for their profile, similar to TeamIconUploader",
+      "id": "feature-add-frontend-ui-on-team-detail-page-for-team-leaders-to-initiate-battle-requests-with-other-teams-including-a-date-picker-for-proposing-a-battle-date",
+      "title": "Add frontend UI on team detail page for team leaders to initiate battle requests with other teams, including a date picker for proposing a battle date",
       "reqIds": [
         "REQ-5"
       ],
       "version": 1
     },
     {
-      "id": "feature-display-team-footage-videos-in-twitter-style-card-format-with-poster-s-profile-picture-and-team-icon-to-the-left-of-the-video",
-      "title": "Display team footage videos in Twitter-style card format with poster's profile picture and team icon to the left of the video",
+      "id": "feature-add-frontend-ui-for-team-leaders-to-view-and-respond-to-incoming-battle-requests-with-accept-reject-actions",
+      "title": "Add frontend UI for team leaders to view and respond to incoming battle requests with accept/reject actions",
       "reqIds": [
         "REQ-6"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-delete-button-to-video-cards-that-allows-the-video-uploader-or-team-leader-to-remove-videos",
-      "title": "Add delete button to video cards that allows the video uploader or team leader to remove videos",
+      "id": "feature-display-list-of-scheduled-battles-accepted-battle-requests-on-team-detail-pages-showing-opponent-team-and-agreed-date",
+      "title": "Display list of scheduled battles (accepted battle requests) on team detail pages showing opponent team and agreed date",
       "reqIds": [
         "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-appheader-navigation-to-include-a-link-to-the-user-s-profile-page",
-      "title": "Update AppHeader navigation to include a link to the user's profile page",
-      "reqIds": [
-        "REQ-8"
       ],
       "version": 1
     }
@@ -53,54 +45,48 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Add profile pictures for users",
+      "summary": "Display profile picture on profile page",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Create an about me page for user profiles",
+      "summary": "Team leader can request beybattle with another team",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-3",
-      "summary": "Add ability to delete videos",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Display videos in Twitter-style format with poster's pfp and team icon",
+      "summary": "Battle date agreement system between two team leaders",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-5",
-      "summary": "Add a profile picture field to user profiles that stores image data as a Blob",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Add an 'about me' text field to user profiles for bio/description content",
+      "summary": "Add backend data model for battle requests between teams, including the requesting team, target team, proposed date, and status (pending/accepted/rejected)",
       "reqIds": [
         "REQ-2"
       ],
       "status": "pending"
     },
     {
-      "id": "AR-7",
-      "summary": "Implement backend method to delete team footage videos by video ID, restricted to the video uploader or team leader",
+      "id": "AR-6",
+      "summary": "Implement backend endpoint for team leaders to create a battle request with another team, specifying a proposed date",
       "reqIds": [
         "REQ-3"
       ],
       "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Implement backend endpoints for the receiving team leader to accept or reject battle requests",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
     }
   ],
-  "projectName": "Add user profile pictures, about me page, video deletion, and Twitter-style video display",
+  "projectName": "Beyblade Arena",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

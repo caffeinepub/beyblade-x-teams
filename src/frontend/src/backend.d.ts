@@ -14,22 +14,27 @@ export class ExternalBlob {
     static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
     withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
 }
-export interface Mail {
+export interface BattleRequest {
     id: bigint;
-    content: MailContent;
-    recipient: Principal;
-    isRead: boolean;
-    sender: Principal;
-    mailType: MailType;
-}
-export interface PDFDocument {
-    content: Uint8Array;
-    filename: string;
+    status: BattleRequestStatus;
+    requestingTeam: bigint;
+    proposedDate: string;
+    targetTeam: bigint;
 }
 export interface TeamDTO {
     id: bigint;
     files: Array<PDFDocument>;
     members: Array<Principal>;
+    joinRequests: Array<Principal>;
+    icon?: Image;
+    name: string;
+    leader: Principal;
+    videos: Array<ExternalBlob>;
+}
+export interface TeamWithMemberNamesDTO {
+    id: bigint;
+    files: Array<PDFDocument>;
+    members: Array<TeamMember>;
     joinRequests: Array<Principal>;
     icon?: Image;
     name: string;
@@ -52,10 +57,31 @@ export interface Image {
     filename: string;
     bytes: Uint8Array;
 }
+export interface PDFDocument {
+    content: Uint8Array;
+    filename: string;
+}
+export interface TeamMember {
+    id: Principal;
+    name: string;
+}
 export interface UserProfile {
     aboutMe: string;
     name: string;
     profilePicture?: ExternalBlob;
+}
+export interface Mail {
+    id: bigint;
+    content: MailContent;
+    recipient: Principal;
+    isRead: boolean;
+    sender: Principal;
+    mailType: MailType;
+}
+export enum BattleRequestStatus {
+    pending = "pending",
+    rejected = "rejected",
+    accepted = "accepted"
 }
 export enum MailType {
     notification = "notification",
@@ -69,24 +95,29 @@ export enum UserRole {
 export interface backendInterface {
     approveJoinRequests(teamId: bigint, approvals: Array<Principal>): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    createBattleRequest(requestingTeamId: bigint, targetTeamId: bigint, proposedDate: string): Promise<bigint>;
     createTeam(name: string, initialMembers: Array<Principal>): Promise<bigint>;
     deleteMailItem(mailId: bigint): Promise<void>;
     deleteTeamFootage(teamId: bigint, videoId: string): Promise<void>;
     denyJoinRequests(teamId: bigint, denials: Array<Principal>): Promise<void>;
     disbandTeam(teamId: bigint): Promise<void>;
+    getBattleRequest(requestId: bigint): Promise<BattleRequest | null>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getInbox(): Promise<Array<Mail>>;
     getTeam(teamId: bigint): Promise<TeamDTO>;
     getTeamFootage(teamId: bigint): Promise<Array<ExternalBlob>>;
     getTeamMembershipStatus(): Promise<bigint | null>;
+    getTeamWithMemberNames(teamId: bigint): Promise<TeamWithMemberNamesDTO>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
     leaveTeam(): Promise<void>;
+    listBattleRequestsForTeam(teamId: bigint): Promise<Array<BattleRequest>>;
     listTeams(): Promise<Array<TeamDTO>>;
     markMailItemAsRead(mailId: bigint): Promise<void>;
     removeMemberFromTeam(teamId: bigint, member: Principal): Promise<void>;
     requestJoinTeam(teamId: bigint): Promise<void>;
+    respondToBattleRequest(requestId: bigint, accept: boolean): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     uploadFile(teamId: bigint, filename: string, content: Uint8Array): Promise<void>;
     uploadTeamFootage(teamId: bigint, videoId: string, video: ExternalBlob): Promise<void>;

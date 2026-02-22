@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Shield, Crown, Mail } from 'lucide-react';
+import BattleRequestList from '../components/teams/BattleRequestList';
 
 export default function LeaderDashboardPage() {
   const { data: teams, isLoading } = useListTeams();
@@ -103,6 +104,11 @@ export default function LeaderDashboardPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Battle Requests for each team */}
+        {myTeams.map(team => (
+          <BattleRequestList key={team.id.toString()} teamId={team.id.toString()} />
+        ))}
 
         {/* Join Requests Notice */}
         {teamsWithRequests.length > 0 ? (

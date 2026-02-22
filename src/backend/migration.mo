@@ -6,102 +6,104 @@ import Principal "mo:core/Principal";
 import Storage "blob-storage/Storage";
 
 module {
-  // Locally redefine PDFDocument for use in migration
-  type PDFDocument = {
-    filename : Text;
-    content : [Nat8];
-  };
-
-  // Locally redefine Image for use in migration
-  type Image = {
-    filename : Text;
-    contentType : Text;
-    bytes : [Nat8];
-  };
-
-  type OldUserProfile = {
-    name : Text;
-  };
-
-  type OldTeamVideo = Storage.ExternalBlob;
-
   type OldTeam = {
     id : Nat;
     leader : Principal;
     name : Text;
     members : Set.Set<Principal>;
     joinRequests : List.List<Principal>;
-    files : List.List<PDFDocument>;
-    icon : ?Image;
-    videos : List.List<OldTeamVideo>;
+    files : List.List<{
+      filename : Text;
+      content : [Nat8];
+    }>;
+    icon : ?{
+      filename : Text;
+      contentType : Text;
+      bytes : [Nat8];
+    };
+    videos : List.List<{
+      videoId : Text;
+      video : Storage.ExternalBlob;
+      uploader : Principal;
+    }>;
   };
 
   type OldActor = {
-    userProfiles : Map.Map<Principal, OldUserProfile>;
+    userProfiles : Map.Map<Principal, {
+      name : Text;
+      profilePicture : ?Storage.ExternalBlob;
+      aboutMe : Text;
+    }>;
+    mailboxes : Map.Map<Principal, List.List<{
+      id : Nat;
+      recipient : Principal;
+      sender : Principal;
+      mailType : {
+        #joinRequest;
+        #notification;
+      };
+      content : {
+        #joinRequest : {
+          teamId : Nat;
+          requester : Principal;
+          message : Text;
+        };
+        #notification : Text;
+      };
+      isRead : Bool;
+    }>>;
+    nextMailId : Nat;
+    nextTeamId : Nat;
+    maxTeamSize : Nat;
+    maxFileSize : Nat;
+    teamMembers : Map.Map<Principal, Nat>;
     teams : Map.Map<Nat, OldTeam>;
   };
 
-  type NewUserProfile = {
-    name : Text;
-    profilePicture : ?Storage.ExternalBlob;
-    aboutMe : Text;
-  };
-
-  type NewTeamVideo = {
-    videoId : Text;
-    video : Storage.ExternalBlob;
-    uploader : Principal;
-  };
-
-  type NewTeam = {
-    id : Nat;
-    leader : Principal;
-    name : Text;
-    members : Set.Set<Principal>;
-    joinRequests : List.List<Principal>;
-    files : List.List<PDFDocument>;
-    icon : ?Image;
-    videos : List.List<NewTeamVideo>;
-  };
+  type NewTeam = OldTeam;
 
   type NewActor = {
-    userProfiles : Map.Map<Principal, NewUserProfile>;
+    userProfiles : Map.Map<Principal, {
+      name : Text;
+      profilePicture : ?Storage.ExternalBlob;
+      aboutMe : Text;
+    }>;
+    mailboxes : Map.Map<Principal, List.List<{
+      id : Nat;
+      recipient : Principal;
+      sender : Principal;
+      mailType : {
+        #joinRequest;
+        #notification;
+      };
+      content : {
+        #joinRequest : {
+          teamId : Nat;
+          requester : Principal;
+          message : Text;
+        };
+        #notification : Text;
+      };
+      isRead : Bool;
+    }>>;
+    nextMailId : Nat;
+    nextTeamId : Nat;
+    maxTeamSize : Nat;
+    maxFileSize : Nat;
+    teamMembers : Map.Map<Principal, Nat>;
     teams : Map.Map<Nat, NewTeam>;
   };
 
   public func run(old : OldActor) : NewActor {
-    let newUserProfiles = old.userProfiles.map<Principal, OldUserProfile, NewUserProfile>(
-      func(_principal, oldUserProfile) {
-        {
-          name = oldUserProfile.name;
-          profilePicture = null;
-          aboutMe = "";
-        };
-      }
-    );
-
-    let newTeams = old.teams.map<Nat, OldTeam, NewTeam>(
-      func(_teamId, oldTeam) {
-        let newVideos = oldTeam.videos.map<OldTeamVideo, NewTeamVideo>(
-          func(oldVideo) {
-            {
-              videoId = "";
-              video = oldVideo;
-              uploader = oldTeam.leader; // Default to team leader for existing videos
-            };
-          }
-        );
-        {
-          oldTeam with
-          videos = newVideos;
-        };
-      }
-    );
-
     {
-      userProfiles = newUserProfiles;
-      teams = newTeams;
+      userProfiles = old.userProfiles;
+      mailboxes = old.mailboxes;
+      nextMailId = old.nextMailId;
+      nextTeamId = old.nextTeamId;
+      maxTeamSize = old.maxTeamSize;
+      maxFileSize = old.maxFileSize;
+      teamMembers = old.teamMembers;
+      teams = old.teams;
     };
   };
 };
-

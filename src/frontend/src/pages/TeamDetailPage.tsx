@@ -1,35 +1,43 @@
-import { useGetTeam, useGetTeamFootage, useDisbandTeam, useLeaveTeam, useRemoveMemberFromTeam } from '../hooks/useQueries';
+import { useState } from 'react';
+import { useGetTeamWithMemberNames, useGetTeamFootage, useDisbandTeam, useLeaveTeam, useRemoveMemberFromTeam, useGetTeamMembershipStatus } from '../hooks/useQueries';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import PageShell from '../components/layout/PageShell';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Users, Crown, AlertTriangle, LogOut, UserMinus } from 'lucide-react';
+import { Users, Crown, AlertTriangle, LogOut, UserMinus, Swords } from 'lucide-react';
 import JoinRequestButton from '../components/teams/JoinRequestButton';
 import TeamIconUploader from '../components/teams/TeamIconUploader';
 import TeamFootageUploader from '../components/teams/TeamFootageUploader';
 import TeamFootageGallery from '../components/teams/TeamFootageGallery';
+import BattleRequestDialog from '../components/teams/BattleRequestDialog';
+import ScheduledBattlesList from '../components/teams/ScheduledBattlesList';
 import { useUploadTeamIcon } from '../hooks/useQueries';
-import { useState } from 'react';
+import type { TeamDTO } from '../backend';
 
 interface TeamDetailPageProps {
   teamId: string;
 }
 
 export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
-  const { data: team, isLoading } = useGetTeam(teamId);
+  const { data: team, isLoading } = useGetTeamWithMemberNames(teamId);
   const { data: footage, isLoading: footageLoading } = useGetTeamFootage(teamId);
+  const { data: myTeamId } = useGetTeamMembershipStatus();
   const { identity } = useInternetIdentity();
   const uploadIconMutation = useUploadTeamIcon();
   const disbandMutation = useDisbandTeam();
   const leaveMutation = useLeaveTeam();
   const removeMemberMutation = useRemoveMemberFromTeam();
   const [iconFile, setIconFile] = useState<{ file: File; content: Uint8Array } | null>(null);
+  const [battleDialogOpen, setBattleDialogOpen] = useState(false);
 
   const isAuthenticated = !!identity;
   const isLeader = team && identity && team.leader.toString() === identity.getPrincipal().toString();
-  const isMember = team && identity && team.members.some(m => m.toString() === identity.getPrincipal().toString());
+  const isMember = team && identity && team.members.some(m => m.id.toString() === identity.getPrincipal().toString());
+  
+  // Check if user is a team leader of their own team (not this team)
+  const isLeaderOfOtherTeam = myTeamId !== null && myTeamId !== undefined && myTeamId.toString() !== teamId;
 
   const handleIconUpload = async () => {
     if (!iconFile || !team) return;
@@ -79,7 +87,7 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
     }
   };
 
-  const handleRemoveMember = async (memberPrincipal: string) => {
+  const handleRemoveMember = async (memberPrincipalStr: string) => {
     if (!team) return;
     
     const confirmed = window.confirm(
@@ -90,7 +98,7 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
       try {
         await removeMemberMutation.mutateAsync({
           teamId: team.id,
-          member: { toString: () => memberPrincipal } as any,
+          member: { toString: () => memberPrincipalStr } as any,
         });
       } catch (error) {
         console.error('Failed to remove member:', error);
@@ -125,6 +133,22 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
     );
   }
 
+  // Convert team to TeamDTO format for JoinRequestButton and TeamFootageGallery compatibility
+  const teamDTO: TeamDTO = {
+    id: team.id,
+    leader: team.leader,
+    name: team.name,
+    members: team.members.map(m => m.id),
+    joinRequests: team.joinRequests,
+    files: team.files,
+    icon: team.icon,
+    videos: team.videos,
+  };
+
+  // Find leader name
+  const leaderMember = team.members.find(m => m.id.toString() === team.leader.toString());
+  const leaderName = leaderMember ? leaderMember.name : 'Unknown';
+
   return (
     <PageShell title={team.name} description={`Team ID: ${team.id}`}>
       <div className="space-y-6">
@@ -147,9 +171,21 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
                   </p>
                 </div>
               </div>
-              {!isMember && isAuthenticated && (
-                <JoinRequestButton team={team} />
-              )}
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                {!isMember && isAuthenticated && (
+                  <JoinRequestButton team={teamDTO} />
+                )}
+                {isLeaderOfOtherTeam && !isMember && (
+                  <Button
+                    onClick={() => setBattleDialogOpen(true)}
+                    variant="default"
+                    className="w-full sm:w-auto min-h-[44px]"
+                  >
+                    <Swords className="h-4 w-4 mr-2" />
+                    Request Battle
+                  </Button>
+                )}
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -183,17 +219,17 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
               </h3>
               <div className="space-y-2">
                 {team.members.map((member) => {
-                  const memberStr = member.toString();
-                  const isCurrentLeader = memberStr === team.leader.toString();
-                  const isCurrentUser = identity && memberStr === identity.getPrincipal().toString();
+                  const memberIdStr = member.id.toString();
+                  const isCurrentLeader = memberIdStr === team.leader.toString();
+                  const isCurrentUser = identity && memberIdStr === identity.getPrincipal().toString();
                   
                   return (
                     <div
-                      key={memberStr}
+                      key={memberIdStr}
                       className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
                     >
                       <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <span className="text-xs sm:text-sm font-mono truncate">{memberStr}</span>
+                        <span className="text-sm sm:text-base font-medium truncate">{member.name}</span>
                         {isCurrentLeader && (
                           <Badge variant="default" className="flex-shrink-0">
                             <Crown className="h-3 w-3 mr-1" />
@@ -208,9 +244,9 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleRemoveMember(memberStr)}
+                          onClick={() => handleRemoveMember(memberIdStr)}
                           disabled={removeMemberMutation.isPending}
-                          className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10 flex-shrink-0 min-h-[44px] min-w-[44px]"
                         >
                           <UserMinus className="h-4 w-4" />
                         </Button>
@@ -229,7 +265,7 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
                     variant="destructive"
                     onClick={handleDisband}
                     disabled={disbandMutation.isPending}
-                    className="w-full sm:w-auto min-h-11"
+                    className="w-full sm:w-auto min-h-[44px] px-6"
                   >
                     <AlertTriangle className="h-4 w-4 mr-2" />
                     {disbandMutation.isPending ? 'Disbanding...' : 'Disband Team'}
@@ -239,7 +275,7 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
                     variant="outline"
                     onClick={handleLeave}
                     disabled={leaveMutation.isPending}
-                    className="w-full sm:w-auto min-h-11"
+                    className="w-full sm:w-auto min-h-[44px] px-6"
                   >
                     <LogOut className="h-4 w-4 mr-2" />
                     {leaveMutation.isPending ? 'Leaving...' : 'Leave Team'}
@@ -250,19 +286,38 @@ export default function TeamDetailPage({ teamId }: TeamDetailPageProps) {
           </CardContent>
         </Card>
 
+        {/* Scheduled Battles */}
+        <ScheduledBattlesList teamId={teamId} />
+
         {/* Team Footage Section */}
-        {isMember && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Team Footage</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg sm:text-xl">Team Footage</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {isMember && (
               <TeamFootageUploader teamId={team.id} />
-              <TeamFootageGallery footage={footage || []} isLoading={footageLoading} team={team} />
-            </CardContent>
-          </Card>
-        )}
+            )}
+            
+            <TeamFootageGallery 
+              footage={footage || []} 
+              isLoading={footageLoading}
+              team={teamDTO}
+            />
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Battle Request Dialog */}
+      {myTeamId !== null && myTeamId !== undefined && (
+        <BattleRequestDialog
+          open={battleDialogOpen}
+          onOpenChange={setBattleDialogOpen}
+          requestingTeamId={myTeamId}
+          targetTeamId={team.id}
+          targetTeamName={team.name}
+        />
+      )}
     </PageShell>
   );
 }

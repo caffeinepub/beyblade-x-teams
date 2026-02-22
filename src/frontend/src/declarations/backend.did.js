@@ -24,6 +24,18 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
+export const BattleRequestStatus = IDL.Variant({
+  'pending' : IDL.Null,
+  'rejected' : IDL.Null,
+  'accepted' : IDL.Null,
+});
+export const BattleRequest = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : BattleRequestStatus,
+  'requestingTeam' : IDL.Nat,
+  'proposedDate' : IDL.Text,
+  'targetTeam' : IDL.Nat,
+});
 export const ExternalBlob = IDL.Vec(IDL.Nat8);
 export const UserProfile = IDL.Record({
   'aboutMe' : IDL.Text,
@@ -69,6 +81,20 @@ export const TeamDTO = IDL.Record({
   'leader' : IDL.Principal,
   'videos' : IDL.Vec(ExternalBlob),
 });
+export const TeamMember = IDL.Record({
+  'id' : IDL.Principal,
+  'name' : IDL.Text,
+});
+export const TeamWithMemberNamesDTO = IDL.Record({
+  'id' : IDL.Nat,
+  'files' : IDL.Vec(PDFDocument),
+  'members' : IDL.Vec(TeamMember),
+  'joinRequests' : IDL.Vec(IDL.Principal),
+  'icon' : IDL.Opt(Image),
+  'name' : IDL.Text,
+  'leader' : IDL.Principal,
+  'videos' : IDL.Vec(ExternalBlob),
+});
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -100,17 +126,24 @@ export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
   'approveJoinRequests' : IDL.Func([IDL.Nat, IDL.Vec(IDL.Principal)], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'createBattleRequest' : IDL.Func([IDL.Nat, IDL.Nat, IDL.Text], [IDL.Nat], []),
   'createTeam' : IDL.Func([IDL.Text, IDL.Vec(IDL.Principal)], [IDL.Nat], []),
   'deleteMailItem' : IDL.Func([IDL.Nat], [], []),
   'deleteTeamFootage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
   'denyJoinRequests' : IDL.Func([IDL.Nat, IDL.Vec(IDL.Principal)], [], []),
   'disbandTeam' : IDL.Func([IDL.Nat], [], []),
+  'getBattleRequest' : IDL.Func([IDL.Nat], [IDL.Opt(BattleRequest)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getInbox' : IDL.Func([], [IDL.Vec(Mail)], ['query']),
   'getTeam' : IDL.Func([IDL.Nat], [TeamDTO], ['query']),
   'getTeamFootage' : IDL.Func([IDL.Nat], [IDL.Vec(ExternalBlob)], ['query']),
   'getTeamMembershipStatus' : IDL.Func([], [IDL.Opt(IDL.Nat)], ['query']),
+  'getTeamWithMemberNames' : IDL.Func(
+      [IDL.Nat],
+      [TeamWithMemberNamesDTO],
+      ['query'],
+    ),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
@@ -118,10 +151,16 @@ export const idlService = IDL.Service({
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'leaveTeam' : IDL.Func([], [], []),
+  'listBattleRequestsForTeam' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Vec(BattleRequest)],
+      ['query'],
+    ),
   'listTeams' : IDL.Func([], [IDL.Vec(TeamDTO)], ['query']),
   'markMailItemAsRead' : IDL.Func([IDL.Nat], [], []),
   'removeMemberFromTeam' : IDL.Func([IDL.Nat, IDL.Principal], [], []),
   'requestJoinTeam' : IDL.Func([IDL.Nat], [], []),
+  'respondToBattleRequest' : IDL.Func([IDL.Nat, IDL.Bool], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'uploadFile' : IDL.Func([IDL.Nat, IDL.Text, IDL.Vec(IDL.Nat8)], [], []),
   'uploadTeamFootage' : IDL.Func([IDL.Nat, IDL.Text, ExternalBlob], [], []),
@@ -150,6 +189,18 @@ export const idlFactory = ({ IDL }) => {
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
+  });
+  const BattleRequestStatus = IDL.Variant({
+    'pending' : IDL.Null,
+    'rejected' : IDL.Null,
+    'accepted' : IDL.Null,
+  });
+  const BattleRequest = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : BattleRequestStatus,
+    'requestingTeam' : IDL.Nat,
+    'proposedDate' : IDL.Text,
+    'targetTeam' : IDL.Nat,
   });
   const ExternalBlob = IDL.Vec(IDL.Nat8);
   const UserProfile = IDL.Record({
@@ -196,6 +247,17 @@ export const idlFactory = ({ IDL }) => {
     'leader' : IDL.Principal,
     'videos' : IDL.Vec(ExternalBlob),
   });
+  const TeamMember = IDL.Record({ 'id' : IDL.Principal, 'name' : IDL.Text });
+  const TeamWithMemberNamesDTO = IDL.Record({
+    'id' : IDL.Nat,
+    'files' : IDL.Vec(PDFDocument),
+    'members' : IDL.Vec(TeamMember),
+    'joinRequests' : IDL.Vec(IDL.Principal),
+    'icon' : IDL.Opt(Image),
+    'name' : IDL.Text,
+    'leader' : IDL.Principal,
+    'videos' : IDL.Vec(ExternalBlob),
+  });
   
   return IDL.Service({
     '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -227,17 +289,32 @@ export const idlFactory = ({ IDL }) => {
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
     'approveJoinRequests' : IDL.Func([IDL.Nat, IDL.Vec(IDL.Principal)], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'createBattleRequest' : IDL.Func(
+        [IDL.Nat, IDL.Nat, IDL.Text],
+        [IDL.Nat],
+        [],
+      ),
     'createTeam' : IDL.Func([IDL.Text, IDL.Vec(IDL.Principal)], [IDL.Nat], []),
     'deleteMailItem' : IDL.Func([IDL.Nat], [], []),
     'deleteTeamFootage' : IDL.Func([IDL.Nat, IDL.Text], [], []),
     'denyJoinRequests' : IDL.Func([IDL.Nat, IDL.Vec(IDL.Principal)], [], []),
     'disbandTeam' : IDL.Func([IDL.Nat], [], []),
+    'getBattleRequest' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(BattleRequest)],
+        ['query'],
+      ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getInbox' : IDL.Func([], [IDL.Vec(Mail)], ['query']),
     'getTeam' : IDL.Func([IDL.Nat], [TeamDTO], ['query']),
     'getTeamFootage' : IDL.Func([IDL.Nat], [IDL.Vec(ExternalBlob)], ['query']),
     'getTeamMembershipStatus' : IDL.Func([], [IDL.Opt(IDL.Nat)], ['query']),
+    'getTeamWithMemberNames' : IDL.Func(
+        [IDL.Nat],
+        [TeamWithMemberNamesDTO],
+        ['query'],
+      ),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
@@ -245,10 +322,16 @@ export const idlFactory = ({ IDL }) => {
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'leaveTeam' : IDL.Func([], [], []),
+    'listBattleRequestsForTeam' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Vec(BattleRequest)],
+        ['query'],
+      ),
     'listTeams' : IDL.Func([], [IDL.Vec(TeamDTO)], ['query']),
     'markMailItemAsRead' : IDL.Func([IDL.Nat], [], []),
     'removeMemberFromTeam' : IDL.Func([IDL.Nat, IDL.Principal], [], []),
     'requestJoinTeam' : IDL.Func([IDL.Nat], [], []),
+    'respondToBattleRequest' : IDL.Func([IDL.Nat, IDL.Bool], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'uploadFile' : IDL.Func([IDL.Nat, IDL.Text, IDL.Vec(IDL.Nat8)], [], []),
     'uploadTeamFootage' : IDL.Func([IDL.Nat, IDL.Text, ExternalBlob], [], []),

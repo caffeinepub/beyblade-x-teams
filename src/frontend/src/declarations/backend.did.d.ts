@@ -10,6 +10,16 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface BattleRequest {
+  'id' : bigint,
+  'status' : BattleRequestStatus,
+  'requestingTeam' : bigint,
+  'proposedDate' : string,
+  'targetTeam' : bigint,
+}
+export type BattleRequestStatus = { 'pending' : null } |
+  { 'rejected' : null } |
+  { 'accepted' : null };
 export type ExternalBlob = Uint8Array;
 export interface Image {
   'contentType' : string,
@@ -39,6 +49,17 @@ export interface TeamDTO {
   'id' : bigint,
   'files' : Array<PDFDocument>,
   'members' : Array<Principal>,
+  'joinRequests' : Array<Principal>,
+  'icon' : [] | [Image],
+  'name' : string,
+  'leader' : Principal,
+  'videos' : Array<ExternalBlob>,
+}
+export interface TeamMember { 'id' : Principal, 'name' : string }
+export interface TeamWithMemberNamesDTO {
+  'id' : bigint,
+  'files' : Array<PDFDocument>,
+  'members' : Array<TeamMember>,
   'joinRequests' : Array<Principal>,
   'icon' : [] | [Image],
   'name' : string,
@@ -83,24 +104,29 @@ export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
   'approveJoinRequests' : ActorMethod<[bigint, Array<Principal>], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'createBattleRequest' : ActorMethod<[bigint, bigint, string], bigint>,
   'createTeam' : ActorMethod<[string, Array<Principal>], bigint>,
   'deleteMailItem' : ActorMethod<[bigint], undefined>,
   'deleteTeamFootage' : ActorMethod<[bigint, string], undefined>,
   'denyJoinRequests' : ActorMethod<[bigint, Array<Principal>], undefined>,
   'disbandTeam' : ActorMethod<[bigint], undefined>,
+  'getBattleRequest' : ActorMethod<[bigint], [] | [BattleRequest]>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getInbox' : ActorMethod<[], Array<Mail>>,
   'getTeam' : ActorMethod<[bigint], TeamDTO>,
   'getTeamFootage' : ActorMethod<[bigint], Array<ExternalBlob>>,
   'getTeamMembershipStatus' : ActorMethod<[], [] | [bigint]>,
+  'getTeamWithMemberNames' : ActorMethod<[bigint], TeamWithMemberNamesDTO>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'leaveTeam' : ActorMethod<[], undefined>,
+  'listBattleRequestsForTeam' : ActorMethod<[bigint], Array<BattleRequest>>,
   'listTeams' : ActorMethod<[], Array<TeamDTO>>,
   'markMailItemAsRead' : ActorMethod<[bigint], undefined>,
   'removeMemberFromTeam' : ActorMethod<[bigint, Principal], undefined>,
   'requestJoinTeam' : ActorMethod<[bigint], undefined>,
+  'respondToBattleRequest' : ActorMethod<[bigint, boolean], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'uploadFile' : ActorMethod<[bigint, string, Uint8Array], undefined>,
   'uploadTeamFootage' : ActorMethod<[bigint, string, ExternalBlob], undefined>,

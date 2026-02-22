@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useGetCallerUserProfile } from '../hooks/useCurrentUser';
 import { useSaveCallerUserProfile } from '../hooks/useQueries';
@@ -28,13 +28,13 @@ export default function ProfilePage() {
   const isAuthenticated = !!identity;
 
   // Initialize form when profile loads
-  useState(() => {
+  useEffect(() => {
     if (userProfile) {
       setName(userProfile.name);
       setAboutMe(userProfile.aboutMe || '');
       setProfilePicture(userProfile.profilePicture || null);
     }
-  });
+  }, [userProfile]);
 
   if (!isAuthenticated) {
     return (
@@ -120,7 +120,7 @@ export default function ProfilePage() {
     setProfilePicture(blobWithProgress);
   };
 
-  const profilePictureUrl = profilePicture?.getDirectURL() || userProfile.profilePicture?.getDirectURL();
+  const profilePictureUrl = userProfile.profilePicture?.getDirectURL();
   const initials = userProfile.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
 
   return (
